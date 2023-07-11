@@ -1,0 +1,11 @@
+# Ignore files without extension
+*
+!*.*
+!*/
+
+# Ingore generated and temp files
+**/*.tmp
+CPH/
+*.md
+*.in
+*.out
