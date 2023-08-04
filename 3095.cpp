@@ -32,7 +32,7 @@ ll Coordinate(ll x, ll y)
 }
 void Input()
 {
-    scanf("%lld %lld", &n, &m);
+    scanf("%lld%lld", &n, &m);
     getchar();
     for (ll i = 1; i <= n; i++)
     {

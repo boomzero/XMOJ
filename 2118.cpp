@@ -36,11 +36,11 @@ int main()
         for (ll j = 1; j <= n; j++)
             To[j].clear();
         memset(In, 0, sizeof(In));
-        scanf("%lld %lld", &n, &m);
+        scanf("%lld%lld", &n, &m);
         for (ll j = 0; j < m; j++)
         {
             ll a, b;
-            scanf("%lld %lld", &a, &b);
+            scanf("%lld%lld", &a, &b);
             In[a]++;
             To[b].push_back(a);
         }

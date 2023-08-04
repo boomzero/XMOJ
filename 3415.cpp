@@ -30,6 +30,6 @@ int main()
     }
     dfs(1, 0);
     for (int i = 1; i <= n; ++i)
-        printf("%d %d\n", e[i] - s[i] + 1, dep[i]);
+        printf("%d%d\n", e[i] - s[i] + 1, dep[i]);
     return 0;
 }

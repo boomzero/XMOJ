@@ -30,7 +30,7 @@ int main()
                 }
             if (flag)
             {
-                printf("%lld %lld %lld\n", x, y, H);
+                printf("%lld%lld %lld\n", x, y, H);
                 return 0;
             }
         }

@@ -35,5 +35,5 @@ int main()
             }
         return Answer;
     };
-    printf("%d %d\n", Do(a, b), 2 * n - Do(b, a));
+    printf("%d%d\n", Do(a, b), 2 * n - Do(b, a));
 }

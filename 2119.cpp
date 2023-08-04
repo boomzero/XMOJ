@@ -68,7 +68,7 @@ int main()
     for (ll i = 1; i <= n; i++)
         if (OutputLayer[i] && c[i] > 0)
         {
-            printf("%lld %lld\n", i, c[i]);
+            printf("%lld%lld\n", i, c[i]);
             FoundAnswer = true;
         }
     if (!FoundAnswer)

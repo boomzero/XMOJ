@@ -47,7 +47,7 @@ int main()
             scanf("%s", Operation);
             if (strcmp(Operation, "End") == 0)
                 break;
-            scanf("%d %d", &i, &j);
+            scanf("%d%d", &i, &j);
             if (strcmp(Operation, "Add") == 0)
                 Add(i, j);
             else if (strcmp(Operation, "Sub") == 0)

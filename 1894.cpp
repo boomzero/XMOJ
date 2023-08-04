@@ -30,6 +30,6 @@ int main()
             else if (MaxValue == f[i][j])
                 MaxCount++;
         }
-    printf("%lld %lld\n", MaxCount, MaxValue);
+    printf("%lld%lld\n", MaxCount, MaxValue);
     return 0;
 }

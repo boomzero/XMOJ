@@ -46,7 +46,7 @@ int main()
             in[i] = 0;
         }
         Added.clear();
-        scanf("%lld %lld%*c", &n, &m);
+        scanf("%lld%lld%*c", &n, &m);
         if (n == 0 && m == 0)
             break;
         ll i;

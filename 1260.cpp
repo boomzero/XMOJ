@@ -7,7 +7,7 @@ int main()
 {
     freopen("level.in", "r", stdin);
     freopen("level.out", "w", stdout);
-    scanf("%d %d", &n, &m);
+    scanf("%d%d", &n, &m);
     for (int i = 1; i <= m; i++)
     {
         bool IsIn[N];
@@ -48,6 +48,6 @@ int main()
         }
         Answer++;
     }
-    printf("%d", Answer);
+    printf("%d\n", Answer);
     return 0;
 }

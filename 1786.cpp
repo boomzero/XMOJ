@@ -51,7 +51,7 @@ int main()
         else if (Count == Max)
             Record.push_back(k);
     }
-    printf("%lld %lld\n", Max, Record.size());
+    printf("%lld%lld\n", Max, Record.size());
     for (ll i = 0; i <= Record.size() - 1; i++)
         printf("%lld ", Record[i]);
     printf("\n");

@@ -42,14 +42,14 @@ ll Prim()
 }
 int main()
 {
-    scanf("%lld %lld", &n, &m);
+    scanf("%lld%lld", &n, &m);
     for (int i = 1; i <= m; i++)
     {
         ll u = 0, v = 0, c = 0;
-        scanf("%lld %lld %lld", &u, &v, &c);
+        scanf("%lld%lld %lld", &u, &v, &c);
         Edges[u].push_back({v, c});
         Edges[v].push_back({u, c});
     }
-    printf("%lld %lld\n", n - 1, Prim());
+    printf("%lld%lld\n", n - 1, Prim());
     return 0;
 }

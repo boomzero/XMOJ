@@ -61,7 +61,7 @@ void F(ll u)
 }
 int main()
 {
-    scanf("%lld %lld", &n, &m);
+    scanf("%lld%lld", &n, &m);
     for (ll i = 1; i <= n; i++)
     {
         char Type = 0;
@@ -73,12 +73,12 @@ int main()
             for (ll j = 1; j <= C; j++)
             {
                 ll v = 0, w = 0;
-                scanf("%lld %lld", &v, &w);
+                scanf("%lld%lld", &v, &w);
                 AddEdge(i, v, w);
             }
         }
         else
-            scanf("%lld %lld", &Cost[i], &Limit[i]);
+            scanf("%lld%lld", &Cost[i], &Limit[i]);
     }
     for (ll i = 0; i < N; i++)
         for (ll j = 0; j < 105; j++)

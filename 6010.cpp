@@ -48,7 +48,7 @@ void Dijkstra()
 }
 int main()
 {
-    scanf("%lld%lld", &n, &m);
+    scanf("%lld%lld%lld%lld", &n, &m, &s, &t);
     for (ll i = 1; i <= m; i++)
     {
         ll u, v, w;
@@ -56,7 +56,6 @@ int main()
         AddEdge(u, v, w);
         AddEdge(v, u, w);
     }
-    scanf("%lld%lld", &s, &t);
     Dijkstra();
     if (Distance[t] == INF)
         printf("-1\n");
