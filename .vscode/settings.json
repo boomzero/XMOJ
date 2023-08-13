@@ -85,7 +85,12 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "rope": "cpp"
     },
-    "ReadNovel.filePath": "/home/langningc2009/XMOJ/Test2.txt"
+    "ReadNovel.filePath": "/home/langningc2009/XMOJ/Test2.txt",
+    "workbench.colorCustomizations": {
+        "minimap.background": "#00000088",
+        "scrollbar.shadow": "#00000088"
+    }
 }

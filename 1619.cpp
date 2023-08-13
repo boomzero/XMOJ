@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <bits/stdc++.h>
 const int N = 100005;
 int Root, Total, Father[N], Child[N][2], Value[N], Count[N], Size[N];
 void PushUp(int x)

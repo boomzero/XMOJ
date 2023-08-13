@@ -58,6 +58,8 @@ ll query(ll qx, ll qy, ll l, ll r, ll rt)
 }
 int main()
 {
+    freopen("score.in", "r", stdin);
+    freopen("score.out", "w", stdout);
     scanf("%lld\n", &T);
     while (T-- > 0)
     {

@@ -28,6 +28,8 @@ public:
     }
     void Print()
     {
+        if (Length == 0)
+            printf("0");
         for (ll i = Length - 1; i >= 0; i--)
             printf("%d", Data[i]);
         printf("\n");

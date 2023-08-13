@@ -2,7 +2,7 @@
 using namespace std;
 const int dx[8] = {1, 2, 1, 2, -1, -2, -1, -2};
 const int dy[8] = {2, 1, -2, -1, 2, 1, -2, -1};
-const int N = 55;
+const int N = 105;
 int x, y, Answer, Distances[N][N];
 void GoInto50()
 {
@@ -20,8 +20,8 @@ void BFS()
 {
     memset(Distances, -1, sizeof(Distances));
     queue<pair<int, int>> Queue;
-    Distances[0][0] = 0;
-    Queue.push(make_pair(0, 0));
+    Distances[x][y] = 0;
+    Queue.push(make_pair(x, y));
     while (!Queue.empty())
     {
         int ux = Queue.front().first, uy = Queue.front().second;
@@ -37,17 +37,19 @@ void BFS()
             Queue.push(make_pair(tx, ty));
         }
     }
-    Answer += Distances[x][y];
+    Answer += Distances[50][50];
 }
 int main()
 {
-    // freopen("knight.in", "r", stdin);
-    // freopen("knight.out", "w", stdout);
+    freopen("knight.in", "r", stdin);
+    freopen("knight.out", "w", stdout);
     int xp, yp, xs, ys;
     scanf("%d%d%d%d", &xp, &yp, &xs, &ys);
     x = abs(xp - xs);
     y = abs(yp - ys);
     GoInto50();
+    x += 50;
+    y += 50;
     BFS();
     printf("%d\n", Answer);
     return 0;

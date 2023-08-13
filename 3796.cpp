@@ -1,67 +1,98 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 300'005;
-const int LOG_N = 20;
-int n, a[N], Depth[N], Father[N][LOG_N], Count[N];
-vector<int> Graph[N];
-void DFS(int u, int f)
+typedef long long ll;
+const ll N = 300005;
+const ll LOG_N = 20;
+const ll M = 600005;
+ll n, a[N], EdgeCount, Head[N], LogDepth, Tag[N];
+struct EDGE
 {
-    Depth[u] = Depth[f] + 1;
-    Father[u][0] = f;
-    for (int i = 1; i < LOG_N; i++)
-        Father[u][i] = Father[Father[u][i - 1]][i - 1];
-    for (auto v : Graph[u])
-        if (v != f)
-            DFS(v, u);
+    ll Next, v;
+} Edges[M];
+void AddEdge(ll u, ll v)
+{
+    EdgeCount++;
+    Edges[EdgeCount].Next = Head[u];
+    Edges[EdgeCount].v = v;
+    Head[u] = EdgeCount;
 }
-int LCA(int u, int v)
+ll Depth[N], Father[N][LOG_N], MaxDepth;
+void PreDFS(ll u, ll f)
+{
+    for (ll i = Head[u]; i; i = Edges[i].Next)
+    {
+        ll v = Edges[i].v;
+        if (v == f)
+            continue;
+        Father[v][0] = u;
+        Depth[v] = Depth[u] + 1;
+        PreDFS(v, u);
+    }
+    MaxDepth = max(MaxDepth, Depth[u]);
+}
+ll LCA(ll u, ll v)
 {
     if (Depth[u] < Depth[v])
         swap(u, v);
-    for (int i = LOG_N - 1; i >= 0; i--)
-        if (Depth[Father[u][i]] >= Depth[v])
-            u = Father[u][i];
+    ll t = Depth[u] - Depth[v];
+    ll x = 0;
+    while (t)
+    {
+        if (t % 2 == 1)
+            u = Father[u][x];
+        t /= 2;
+        x++;
+    }
     if (u == v)
         return u;
-    for (int i = LOG_N - 1; i >= 0; i--)
+    for (ll i = LogDepth; i >= 0; i--)
         if (Father[u][i] != Father[v][i])
-            u = Father[u][i], v = Father[v][i];
+        {
+            u = Father[u][i];
+            v = Father[v][i];
+        }
     return Father[u][0];
+}
+void DFS(ll u)
+{
+    for (ll i = Head[u]; i; i = Edges[i].Next)
+    {
+        ll v = Edges[i].v;
+        if (v == Father[u][0])
+            continue;
+        DFS(v);
+        Tag[u] += Tag[v];
+    }
 }
 int main()
 {
-    freopen("visit.in", "r", stdin);
-    freopen("visit.out", "w", stdout);
-    scanf("%d", &n);
-    for (int i = 1; i <= n; i++)
-        scanf("%d", &a[i]);
-    for (int i = 1; i < n; i++)
+    // freopen("visit.in", "r", stdin);
+    // freopen("visit.out", "w", stdout);
+    scanf("%lld", &n);
+    for (ll i = 1; i <= n; i++)
+        scanf("%lld", &a[i]);
+    for (ll i = 1; i < n; i++)
     {
-        int u, v;
-        scanf("%d%d", &u, &v);
-        Graph[u].push_back(v);
-        Graph[v].push_back(u);
+        ll u, v;
+        scanf("%lld%lld", &u, &v);
+        AddEdge(u, v);
+        AddEdge(v, u);
     }
-    DFS(1, 0);
-    Count[a[1]]++;
-    for (int i = 1; i < n; i++)
+    PreDFS(1, 1);
+    LogDepth = log2(MaxDepth);
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= LogDepth; j++)
+            Father[i][j] = Father[Father[i][j - 1]][j - 1];
+    for (ll i = 2; i <= n; i++)
     {
-        int lca = LCA(a[i], a[i + 1]);
-        int x = a[i];
-        Count[x]++;
-        while (x != lca)
-        {
-            x = Father[x][0];
-            Count[x]++;
-        }
-        x = a[i + 1];
-        while (x != lca)
-        {
-            Count[x]++;
-            x = Father[x][0];
-        }
+        ll LCAValue = LCA(a[i - 1], a[i]);
+        Tag[a[i - 1]]++;
+        Tag[Father[a[i]][0]]++;
+        Tag[LCAValue]--;
+        Tag[Father[LCAValue][0]]--;
     }
-    for (int i = 1; i <= n; i++)
-        printf("%d\n", Count[i] - 1);
+    DFS(1);
+    for (ll i = 1; i <= n; i++)
+        printf("%lld\n", Tag[i]);
     return 0;
 }

@@ -58,8 +58,8 @@ ll C(ll n, ll m)
 }
 int main()
 {
-    // freopen("digital.in", "r", stdin);
-    // freopen("digital.out", "w", stdout);
+    freopen("digital.in", "r", stdin);
+    freopen("digital.out", "w", stdout);
     scanf("%lld%lld", &k, &w);
     ll Max = pow(2, k);
     ll Wei = w / k + 1;
