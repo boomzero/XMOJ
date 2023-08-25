@@ -19,7 +19,7 @@ int main()
         }
         for (ull i = 1; i <= sLength; ++i)
             if (h[i] == h[sLength] - h[sLength - i] * p[i])
-                printf("%d ", i);
+                printf("%lld ", i);
         printf("\n");
     }
     return 0;

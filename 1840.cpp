@@ -1,28 +1,51 @@
-/*
-假设 $x_1<x_2<...<x_n$ 且 $x_1$ 与 $x_2$ 互质。考虑所有的单调递增序列，其首项为 $0$ 且相邻两项之差是 $x_1,x_2,...,x_n$ 之一。
-例如，当 $n=2$，$x_1=4$，$x_2=7$ 时，序列可以是 $0, 4, 8, 15, 19, 26, 33, 40, 44$。
-那么请问不出现在任何序列中最大的数是多少？
-
-第一行，一个正整数 $n$
-第二行，一共 $n$ 个整数 $x_1,x_2,...,x_n$
-
-一个整数，表示不出现在任何序列中最大的数
-
-对于 $40\%$ 的数据，$1<n<6$，$x_1>1$，$x_n<1000$；
-对于另外 $30\%$ 的数据，$n=2$，$x_n<10^9$；
-对于另外 $30\%$ 的数据，$1<n<6$，$1<x_1<10^{6-n}$，$x_2>10^{n+11}$，$x_n<10^{n+12}$。
-
-注意到 $x_1$ 与 $x_2$ 互质，所以 $x_1$ 与 $x_2$ 的最小公倍数为 $x_1x_2$。
-因此，对于任意的 $i$，$x_i$ 与 $x_{i+1}$ 的最小公倍数为 $x_ix_{i+1}$。
-*/
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-ll n, x[6], Answer = 1;
+const ll N = 1000005;
+const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
+ll n, a[10], Answer, Distance[N];
+bool Visited[N];
+queue<ll> Queue;
+void Dijkstra()
+{
+    fill(Distance, Distance + N, INF);
+    Queue.push(0);
+    Visited[0] = true;
+    Distance[0] = 0;
+    while (!Queue.empty())
+    {
+        ll u = Queue.front();
+        Queue.pop();
+        Visited[u] = 0;
+        for (ll i = 2; i <= n; i++)
+        {
+            ll v = (u + a[i] % a[1]) % a[1];
+            if (Distance[v] > Distance[u] + a[i])
+            {
+                Distance[v] = Distance[u] + a[i];
+                if (!Visited[v])
+                {
+                    Visited[v] = 1;
+                    Queue.push(v);
+                }
+            }
+        }
+    }
+}
 int main()
 {
     scanf("%lld", &n);
     for (ll i = 1; i <= n; i++)
-        scanf("%lld", &x[i]);
+        scanf("%lld", &a[i]);
+    if (n == 2)
+    {
+        printf("%lld\n", a[1] * a[2] - a[1] - a[2]);
+        return 0;
+    }
+    Dijkstra();
+    Answer = -1;
+    for (ll i = 1; i < a[1]; i++)
+        Answer = max(Answer, Distance[i]);
+    printf("%lld\n", Answer - a[1]);
     return 0;
 }
