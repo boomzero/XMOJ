@@ -1,20 +1,41 @@
-/*
-小明在玩一个圈地游戏。他在一个建立了直角坐标系的平面上画了 $N$ 个长方形，每个长方形的长和宽都平行于 $x$ 轴或 $y$ 轴、四个端点都在格点上。接下来他翻出一张纸牌，纸牌上有一个数字 $K$，他的得分是恰好被 $K$ 个长方形覆盖的面积。
-使用二维差分
-*/
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, k;
+int diff[1005][1005];
+int n, k, mx = 0, my = 0;
+
 int main()
 {
-    // freopen("game.in", "r", stdin);
-    // freopen("game.out", "w", stdout);
-    scanf("%lld%lld", &n, &k);
-    for (ll i = 0; i < n; i++)
+    freopen("game.in", "r", stdin);
+    freopen("game.out", "w", stdout);
+    int mk = 0;
+    // cin >> n >> k;
+    scanf("%d%d", &n, &k);
+    for (int i = 1; i <= n; ++i)
     {
-        ll x1, y1, x2, y2;
+        int x1, x2, y1, y2;
+        //        cin >> x2 >> y1 >> x1 >> y2;
+        //        cin >> x1 >> y1 >> x2 >> y2;
+        scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+        x1++, y1++, x2++, y2++;
+        mx = max(mx, max(x1, x2));
+        my = max(my, max(y1, y2));
+        ++diff[x1][y1];
+        --diff[x1][y2];
+        --diff[x2][y1];
+        ++diff[x2][y2];
     }
+    int ans = 0;
+    for (int i = 1; i <= 1000; ++i)
+    {
+        for (int j = 1; j <= 1000; ++j)
+        {
+            diff[i][j] += diff[i - 1][j] + diff[i][j - 1] - diff[i - 1][j - 1];
+            if (diff[i][j] == k)
+                ++ans;
+        }
+    }
+
+    cout << ans << endl;
     return 0;
 }
