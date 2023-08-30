@@ -1,67 +1,140 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstdio>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1005;
-const ll LOG_N = 21;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-ll n, m, q, EdgeCount, Next[N * 2], Head[N * 2], To[N * 2], Depth[N], Fathers[N][LOG_N], Weight[N * 2], Distance[N];
-void AddEdge(ll u, ll v, ll w)
+
+const int SZ = 1010;
+
+struct Edge
+
 {
-    EdgeCount++;
-    Next[EdgeCount] = Head[u];
-    Head[u] = EdgeCount;
-    To[EdgeCount] = v;
-    Weight[EdgeCount] = w;
-}
-ll LCA(ll x, ll y)
+
+	int f, t, d;
+
+} es[SZ << 1];
+
+int first[SZ << 1], nxt[SZ << 1], tot = 1;
+
+int depth[SZ], fa[SZ], dis[SZ], jump[SZ][20];
+
+inline void build(int f, int t, int d)
+
 {
-    if (Depth[x] < Depth[y])
-        swap(x, y);
-    for (ll i = LOG_N - 1; i >= 0; i--)
-    {
-        if (Depth[Fathers[x][i]] >= Depth[y])
-            x = Fathers[x][i];
-        if (x == y)
-            return x;
-    }
-    for (ll i = LOG_N - 1; i >= 0; i--)
-        if (Fathers[x][i] != Fathers[y][i])
-        {
-            x = Fathers[x][i];
-            y = Fathers[y][i];
-        }
-    return Fathers[x][0];
+
+	es[++tot] = (Edge){f, t, d};
+
+	nxt[tot] = first[f];
+
+	first[f] = tot;
 }
-void DFS(ll x, ll Father)
+
+inline void dfs(int u, int f)
+
 {
-    Fathers[x][0] = Father;
-    Depth[x] = Depth[Father] + 1;
-    for (ll i = Head[x]; i != 0; i = Next[i])
-        if (To[i] != Father)
-        {
-            Distance[To[i]] = Distance[x] + Weight[i];
-            DFS(To[i], x);
-        }
+
+	depth[u] = depth[f] + 1;
+
+	fa[u] = f;
+
+	jump[u][0] = f;
+
+	for (int i = 1; i <= 16; i++)
+
+		jump[u][i] = jump[jump[u][i - 1]][i - 1];
+
+	for (int i = first[u]; i; i = nxt[i])
+
+	{
+
+		int v = es[i].t;
+
+		if (v == f)
+
+			continue;
+
+		dis[v] = dis[u] + es[i].d;
+
+		dfs(v, u);
+	}
 }
+
+inline int lca(int l, int r)
+
+{
+
+	if (depth[l] < depth[r])
+
+		swap(l, r);
+
+	int t = depth[l] - depth[r];
+
+	for (int i = 0; i <= 16; i++)
+
+		if (t & (1 << i))
+
+			l = jump[l][i];
+
+	for (int i = 16; i >= 0; i--)
+
+		if (jump[l][i] != jump[r][i])
+
+			l = jump[l][i], r = jump[r][i];
+
+	if (l == r)
+
+		return l;
+
+	return jump[l][0];
+
+	// maybe the problem is here(?
+}
+
 int main()
+
 {
-    scanf("%lld%lld", &n, &q);
-    for (ll i = 1; i < n; i++)
-    {
-        ll x, y, z;
-        scanf("%lld%lld%lld", &x, &y, &z);
-        AddEdge(x, y, z);
-        AddEdge(y, x, z);
-    }
-    DFS(1, 0);
-    for (ll i = 1; i <= LOG_N - 1; i++)
-        for (ll j = 1; j <= n; j++)
-            Fathers[j][i] = Fathers[Fathers[j][i - 1]][i - 1];
-    for (ll i = 1; i <= q; i++)
-    {
-        ll p1, p2;
-        scanf("%lld%lld", &p1, &p2);
-        printf("%lld\n", Distance[p1] + Distance[p2] - Distance[LCA(p1, p2)] * 2);
-    }
-    return 0;
+
+	int n, q;
+
+	scanf("%d%d", &n, &q);
+
+	//	n=read(),q=read();
+
+	int f, t, d;
+
+	// 离散化？
+
+	for (int i = 1; i < n; i++)
+
+	{
+
+		scanf("%d%d%d", &f, &t, &d);
+
+		//		f=read(),t=read(),d=read();
+
+		build(f, t, d);
+
+		build(t, f, d); // maybe the build is wrong(?
+
+		//		build(t,f,t);
+	}
+
+	dfs(1, 0);
+
+	for (int i = 1; i <= q; i++)
+
+	{
+
+		scanf("%d%d", &f, &t);
+
+		//		f=read(),t=read();
+
+		int F = lca(f, t);
+
+		int ans = dis[f] + dis[t] - 2 * dis[F];
+
+		printf("%d\n", ans);
+	}
+
+	return 0;
 }

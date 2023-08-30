@@ -1,34 +1,71 @@
 #include <stdio.h>
+
 #include <algorithm>
+
 using namespace std;
-typedef long long ll;
-const ll MOD = 1000000;
-const ll T = 1005;
-ll Answer, t, n, s, b, k, Counter[T], Sum[T], f[2][T * T], sd[T * T];
-int main()
+
+#define mod 1000000
+
+int cnt[1005], sum[1005], dp[2][100005], sd[100005];
+
+int main(void)
+
 {
-    scanf("%lld%lld%lld%lld", &t, &n, &s, &b);
-    for (ll i = 0; i < n; i++)
-    {
-        ll Temp;
-        scanf("%lld", &Temp);
-        Counter[Temp]++;
-    }
-    for (ll i = 1; i <= t; i++)
-        Sum[i] = Sum[i - 1] + Counter[i];
-    f[0][0] = 1;
-    for (ll i = 0; i <= n; i++)
-        sd[i] = 1;
-    for (ll i = 1; i <= t; i++)
-    {
-        for (ll j = 0; j <= Sum[i]; j++)
-            f[i % 2][j] = ((sd[j] - sd[j - min(Counter[i], j) - 1]) % MOD + MOD) % MOD;
-        sd[0] = f[i % 2][0];
-        for (ll j = 1; j <= n; j++)
-            sd[j] = (sd[j - 1] + f[i % 2][j]) % MOD;
-    }
-    for (ll i = s; i <= b; i++)
-        Answer = (Answer + f[t % 2][i]) % MOD;
-    printf("%lld\t", Answer);
-    return 0;
+
+	int ans, n, m, a, b, x, i, j, k, y;
+
+	scanf("%d%d%d%d", &n, &m, &a, &b);
+
+	for (i = 1; i <= m; i++)
+
+	{
+
+		scanf("%d", &x);
+
+		cnt[x]++;
+	}
+
+	for (i = 1; i <= n; i++)
+
+		sum[i] = sum[i - 1] + cnt[i];
+
+	dp[0][0] = 1;
+
+	for (i = 0; i <= m; i++)
+
+		sd[i] = 1;
+
+	for (i = 1; i <= n; i++)
+
+	{
+
+		y = i & 1;
+
+		for (j = 0; j <= sum[i]; j++)
+
+		{
+
+			dp[y][j] = ((sd[j] - sd[j - min(cnt[i], j) - 1]) % mod + mod) % mod;
+
+			/*for(k=min(cnt[i],j);k>=0;k--)
+
+			  dp[y][j] = (dp[y][j]+dp[y^1][j-k])%mod;*/
+		}
+
+		sd[0] = dp[y][0];
+
+		for (j = 1; j <= m; j++)
+
+			sd[j] = (sd[j - 1] + dp[y][j]) % mod;
+	}
+
+	ans = 0;
+
+	for (i = a; i <= b; i++)
+
+		ans = (ans + dp[n & 1][i]) % mod;
+
+	printf("%d\n", ans);
+
+	return 0;
 }

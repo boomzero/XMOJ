@@ -1,59 +1,127 @@
-#include <bits/stdc++.h>
+#include <cstring>
+
+#include <iostream>
+
+#include <algorithm>
+
+#include <map>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1005;
-const ll M = 105;
-const ll INF = 0x3FFF'FFFF;
-ll k, m, s, t, Head[N], EdgeCount, Distance[N];
-struct EDGE
+
+const int N = 210;
+
+int k, n, m, S, E;
+
+int g[N][N];
+
+int res[N][N];
+
+void mul(int c[][N], int a[][N], int b[][N])
 {
-    ll u, w, Next;
-} Edges[M];
-void AddEdge(ll u, ll v, ll w)
-{
-    EdgeCount++;
-    Edges[EdgeCount].u = v;
-    Edges[EdgeCount].w = w;
-    Edges[EdgeCount].Next = Head[u];
-    Head[u] = EdgeCount;
+
+	static int temp[N][N];
+
+	memset(temp, 0x3f, sizeof temp);
+
+	for (int k = 1; k <= n; k++)
+
+		for (int i = 1; i <= n; i++)
+
+			for (int j = 1; j <= n; j++)
+
+				temp[i][j] = min(temp[i][j], a[i][k] + b[k][j]);
+
+	memcpy(c, temp, sizeof temp);
 }
-void Dijkstra()
+
+void qmi()
 {
-    Distance[s] = 0;
-    priority_queue<pair<ll, pair<ll, ll>>> q;
-    q.push({0, {1, s}});
-    while (!q.empty())
-    {
-        ll VisitedEdges = q.top().second.first;
-        if (VisitedEdges > k)
-            break;
-        ll u = q.top().second.second;
-        q.pop();
-        for (ll i = Head[u]; i; i = Edges[i].Next)
-        {
-            ll v = Edges[i].u;
-            if (Distance[v] > Distance[u] + Edges[i].w)
-            {
-                Distance[v] = Distance[u] + Edges[i].w;
-                q.push({-Distance[v], {VisitedEdges + 1, v}});
-            }
-        }
-    }
+
+	memset(res, 0x3f, sizeof res);
+
+	for (int i = 1; i <= n; i++)
+
+		res[i][i] = 0; // pass 0 edges
+
+	while (k)
+	{
+
+		if (k & 1)
+			mul(res, res, g); // res=res*g
+
+		mul(g, g, g); // g=g*g
+
+		k >>= 1;
+	}
 }
+
+template <typename T>
+void read(T &a)
+{
+
+	a = 0;
+	int f = 1;
+	char ch = getchar();
+
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-')
+			f = -1;
+		ch = getchar();
+	}
+
+	do
+	{
+		a = a * 10 + ch - '0';
+		ch = getchar();
+	} while ('0' <= ch && ch <= '9');
+
+	a *= f;
+}
+
 int main()
+
 {
-    freopen("walk.in", "r", stdin);
-    freopen("walk.out", "w", stdout);
-    scanf("%lld%lld%lld%lld", &k, &m, &s, &t);
-    for (ll i = 1; i <= m; i++)
-    {
-        ll u, v, w;
-        scanf("%lld%lld%lld", &w, &u, &v);
-        AddEdge(u, v, w);
-        AddEdge(v, u, w);
-    }
-    fill(Distance, Distance + N, INF);
-    Dijkstra();
-    printf("%lld\n", Distance[t]);
-    return 0;
+
+	freopen("walk.in", "r", stdin);
+
+	freopen("walk.out", "w", stdout);
+
+	read(k), read(m), read(S), read(E);
+
+	memset(g, 0x3f, sizeof g);
+
+	map<int, int> ids;
+
+	if (!ids.count(S))
+		ids[S] = ++n;
+
+	if (!ids.count(E))
+		ids[E] = ++n;
+
+	S = ids[S], E = ids[E];
+
+	while (m--)
+	{
+
+		int a, b, c;
+
+		read(c), read(a), read(b);
+
+		if (!ids.count(a))
+			ids[a] = ++n;
+
+		if (!ids.count(b))
+			ids[b] = ++n;
+
+		a = ids[a], b = ids[b];
+
+		g[a][b] = g[b][a] = min(g[a][b], c);
+	}
+
+	qmi();
+
+	printf("%d", res[S][E]);
+
+	return 0;
 }

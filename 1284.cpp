@@ -1,97 +1,178 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstdio>
+
+#include <queue>
+
+#include <cstring>
+
 using namespace std;
-typedef long long ll;
-const ll N = 30;
-ll n, m, in[N], Temp[N];
-map<ll, map<ll, bool>> Added;
-vector<int> g[N];
-queue<int> Order;
-int TopoSort()
+
+long long ans[1000010], tot, n, m, head[1000010], ins[1000010], inst[1000010], q[1000010];
+
+char str[1000010];
+
+int vis[30][30];
+
+string answer;
+
+struct jgt
+
 {
-    bool Return1 = false;
-    queue<int> q;
-    int cnt = 0;
-    for (int i = 1; i <= n; i++)
-        if (Temp[i] == 0)
-            q.push(i);
-    while (!q.empty())
-    {
-        if (q.size() > 1)
-            Return1 = true;
-        int k = q.front();
-        q.pop();
-        cnt++;
-        if (!Return1)
-            Order.push(k);
-        for (int i = 0; i < g[k].size(); i++)
-        {
-            Temp[g[k][i]]--;
-            if (Temp[g[k][i]] == 0)
-                q.push(g[k][i]);
-        }
-    }
-    if (cnt != n)
-        return 2;
-    if (Return1)
-        return 1;
-    return 0;
+
+	long long x, y, nxt;
+
+} f[1000010];
+
+int topsort()
+
+{
+
+	long long i, l, r = 0;
+
+	for (i = 1; i <= n; i++)
+
+		if (!inst[i])
+
+		{
+
+			q[++r] = i;
+
+			ans[i] = 1;
+		}
+
+	for (l = 1; l <= r; l++)
+
+	{
+
+		for (i = head[q[l]]; i; i = f[i].nxt)
+
+		{
+
+			inst[f[i].y]--;
+
+			ans[f[i].y] = max(ans[f[i].y], ans[q[l]] + 1);
+
+			if (!inst[f[i].y])
+
+				q[++r] = f[i].y;
+		}
+	}
+
+	if (r < n)
+
+		return 0;
+
+	if (ans[q[r]] == n)
+
+	{
+
+		for (i = 1; i <= r; i++)
+
+			answer += char(q[i] + 'A' - 1);
+
+		return 1;
+	}
+
+	return -1;
 }
+
 int main()
+
 {
-    while (true)
-    {
-        for (int i = 1; i <= n; i++)
-        {
-            g[i].clear();
-            in[i] = 0;
-        }
-        Added.clear();
-        scanf("%lld%lld%*c", &n, &m);
-        if (n == 0 && m == 0)
-            break;
-        ll i;
-        for (i = 0; i < m; i++)
-        {
-            while (!Order.empty())
-                Order.pop();
-            char a, b;
-            scanf("%c<%c%*c", &a, &b);
-            if (Added[a][b])
-                continue;
-            Added[a][b] = true;
-            g[a - 'A' + 1].push_back(b - 'A' + 1);
-            in[b - 'A' + 1]++;
-            for (int i = 1; i <= n; i++)
-                Temp[i] = in[i];
-            ll Answer = TopoSort();
-            if (Answer == 0)
-            {
-                printf("Sorted sequence determined after %lld relations: ", i + 1);
-                while (!Order.empty())
-                {
-                    printf("%c", Order.front() + 'A' - 1);
-                    Order.pop();
-                }
-                printf(".\n");
-                break;
-            }
-            if (Answer == 2)
-            {
-                printf("Inconsistency found after %lld relations.\n", i + 1);
-                break;
-            }
-        }
-        if (i < m)
-        {
-            i++;
-            while (i < m)
-            {
-                scanf("%*c<%*c%*c");
-                i++;
-            }
-            continue;
-        }
-        printf("Sorted sequence cannot be determined.\n");
-    }
-    return 0;
+
+	long long i, j, t;
+
+	bool light;
+
+	scanf("%lld%lld", &n, &m);
+
+	while (n || m)
+
+	{
+
+		memset(vis, 0, sizeof vis);
+
+		tot = 0;
+
+		light = 1;
+
+		answer = "";
+
+		memset(ins, 0, sizeof(ins));
+
+		memset(head, 0, sizeof(head));
+
+		memset(ans, 0, sizeof(ans));
+
+		memset(inst, 0, sizeof(inst));
+
+		memset(q, 0, sizeof(q));
+
+		for (i = 1; i <= m; i++)
+
+		{
+
+			tot++;
+
+			scanf("%s", &str);
+
+			if (vis[str[0] - 'A'][str[2] - 'A'] == 0)
+			{
+
+				vis[str[0] - 'A'][str[2] - 'A'] = 1;
+			}
+
+			else
+				continue;
+
+			f[tot].x = str[0] - 'A' + 1;
+
+			f[tot].y = str[2] - 'A' + 1;
+
+			f[tot].nxt = head[f[tot].x];
+
+			head[f[tot].x] = tot;
+
+			ins[f[tot].y]++;
+
+			for (j = 1; j <= n; j++)
+
+				inst[j] = ins[j];
+
+			t = topsort();
+
+			if (t == 0)
+
+			{
+
+				printf("Inconsistency found after %lld relations.\n", i);
+
+				light = 0;
+
+				for (i++; i <= m; i++)
+					scanf("%*s");
+			}
+
+			if (t == 1)
+
+			{
+
+				printf("Sorted sequence determined after %lld relations: %s.\n", i, answer.c_str());
+
+				light = 0;
+
+				for (i++; i <= m; i++)
+					scanf("%*s");
+			}
+		}
+
+		if (light)
+
+			printf("Sorted sequence cannot be determined.\n");
+
+		scanf("%lld%lld", &n, &m);
+	}
+
+	return 0;
 }

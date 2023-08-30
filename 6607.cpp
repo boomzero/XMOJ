@@ -1,45 +1,83 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 50005;
-int n, m, Top, Position[N], c[N];
-int LowBit(int x)
+
+inline char tc(void)
+
 {
-    return x & (-x);
+
+	static char fl[10000], *A = fl, *B = fl;
+
+	return A == B && (B = (A = fl) + fread(fl, 1, 10000, stdin), A == B) ? EOF : *A++;
 }
-void Add(int Index, int Value)
+
+inline int read(void)
+
 {
-    while (Index <= n)
-    {
-        c[Index] += Value;
-        Index += LowBit(Index);
-    }
+
+	int a = 0;
+	static char c;
+
+	while ((c = tc()) < '0' || c > '9')
+		;
+
+	while (c >= '0' && c <= '9')
+
+		a = a * 10 + c - '0', c = tc();
+
+	return a;
 }
-int Sum(int Index)
+
+int n, w, pos[50001], h[100001], ans;
+
+inline void add(int x, int y)
+
 {
-    int ReturnValue = 0;
-    while (Index > 0)
-    {
-        ReturnValue += c[Index];
-        Index -= LowBit(Index);
-    }
-    return ReturnValue;
+
+	for (; x <= w; x += x & -x)
+
+		h[x] += y;
+
+	return;
 }
-int main()
+
+inline int sum(int x)
+
 {
-    scanf("%d", &n);
-    for (int i = 1; i <= 2 * n; i++)
-    {
-        int a = 0;
-        scanf("%d", &a);
-        if (Position[a])
-        {
-            m += Top - Position[a] - Sum(Position[a]);
-            Add(1, 1);
-            Add(Position[a], -1);
-        }
-        else
-            Position[a] = ++Top;
-    }
-    printf("%d\n", m);
-    return 0;
+
+	int sum = 0;
+
+	for (; x; x -= x & -x)
+
+		sum += h[x];
+
+	return sum;
+}
+
+int main(void)
+
+{
+
+	int i, x;
+
+	n = read(), w = 2 * n;
+
+	for (i = 1; i <= w; ++i)
+
+	{
+
+		x = read();
+
+		if (!pos[x])
+
+			pos[x] = i, add(i, 1);
+
+		else
+
+			ans += sum(i) - sum(pos[x]), add(pos[x], -1);
+	}
+
+	printf("%d", ans);
+
+	return 0;
 }

@@ -2,29 +2,24 @@
 
 using namespace std;
 
-char mfi(char in) {
-    in--;
-    if (in < 'A') in = 'Z';
-    return in;
-}
+int n;
 
-char mf(char in, int i) {
-    for (int j = 0; j < i; ++j) {
-        in = mfi(in);
-    }
-    return in;
-}
+char s[10000];
 
-int main() {
-    freopen("cipher.in", "r", stdin);
-    freopen("cipher.out", "w", stdout);
-    string in;
-    cin >> in;
-    string ans;
-    for (int i = 0; i < in.length(); ++i) {
-        ans.push_back(mf(in[i], i + 1));
-    }
-    cout << ans << endl;
-    return 0;
-}
+int main()
+{
 
+	freopen("cipher.in", "r", stdin);
+
+	freopen("cipher.out", "w", stdout);
+
+	scanf("%s", s);
+
+	for (int i = 0; s[i]; ++i)
+
+		s[i] = (s[i] - 'A' - i - 1 + 2600) % 26 + 'A';
+
+	puts(s);
+
+	return 0;
+}

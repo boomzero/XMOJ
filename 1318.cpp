@@ -2,38 +2,71 @@
 
 using namespace std;
 
-string push(string in) {
-    in.push_back(in[0]);
-    in.erase(in.begin());
-    return in;
+string str;
+
+int ans = 0, len;
+
+bool check()
+{
+
+	for (int i = 0, j = len - 1; j > i; i++, j--)
+
+	{
+
+		if (str[i] != str[j])
+
+		{
+
+			return false;
+		}
+	}
+
+	return true;
 }
 
-bool ir(string in) {
-    string r = in;
-    reverse(r.begin(), r.end());
-    return r == in;
-}
+int main()
 
-int main() {
-    string a, ba;
-    cin >> a;
-    ba = a;
-    if (ir(a)) {
-        cout << 0 << endl << a << endl;
-        return 0;
-    }
-    int ans = 0;
-    a = push(a);
-    ans++;
-    while (a != ba) {
-        if (ir(a)) {
-            cout << ans << endl << a << endl;
-            return 0;
-        }
-        a = push(a);
-        ans++;
-    }
-    cout << -1 << endl;
-    return 0;
-}
+{
 
+	cin >> str;
+
+	len = str.size();
+
+	if (check() == true)
+	{
+
+		printf("0\n");
+
+		cout << str;
+
+		return 0;
+	}
+
+	for (int i = 0; i < 2 * len; i++)
+	{
+
+		if (check() == true)
+		{
+
+			break;
+		}
+
+		str = str.substr(1, len - 1) + str[0];
+
+		ans++;
+	}
+
+	if (ans > len)
+	{
+
+		printf("-1");
+
+		return 0;
+	}
+
+	printf("%d\n", ans);
+
+	cout << str;
+
+	return 0;
+}

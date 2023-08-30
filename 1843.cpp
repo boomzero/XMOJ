@@ -1,53 +1,117 @@
-/*
-小明是今年超级跳棋比赛的裁判，每轮有三名选手参加，结束时统计的分数一定是正整数，形如 $a:b:c$。小明的任务是在一块特殊的计分板上展示分数，他一共准备了 $n$ 块写有正整数 $x_1,x_2,...,x_n$ 的卡片，可供填写在 $a$、$b$、$c$ 的位置上。此外，小明了解到超级跳棋的规则，他发现 $a$、$b$、$c$ 之间最多相差 $k$ 倍，例如 $c / a > k$ 就是不合法的分数。
-为了检验他准备得是否充分，你需要计算小明可以在计分板上摆放出多少种不同的分数，即 $(a,b,c)$ 这样的三元组有多少个。
-
-第一行，两个整数 $n$ 和 $k$。
-第二行，$n$ 个整数 $x_1,x_2,...,x_n$。
-
-一个整数，表示 $(a,b,c)$ 三元组的个数。
-
-对于 $20\%$ 的数据，$3 \le n \le 100,000$，$k=1$，$1 \le x_i \le 100,000$
-对于另外 $20\%$ 的数据，$3 \le n \le 100$，$1 \le k \le 100$，$1 \le x_i \le 100$
-对于另外 $30\%$ 的数据，$3 \le n \le 100,000$，$1 \le k$，$x_i \le 10^9$ 且所有 $x_i$ 互不相同
-对于另外 $30\%$ 的数据，$3 \le n \le 100,000$，$1 \le k$，$x_i \le 10^9$
-*/
 #include <bits/stdc++.h>
+
 using namespace std;
+
+namespace Read
+{
+
+	template <typename T>
+	void read(T &t)
+	{
+
+		char ch = getchar();
+		int f = 1;
+		t = 0;
+
+		while ('0' > ch || ch > '9')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+
+		do
+		{
+			(t *= 10) += ch - '0';
+			ch = getchar();
+		} while ('0' <= ch && ch <= '9');
+		t *= f;
+	}
+
+}
+
+using namespace Read;
+
 typedef long long ll;
-const ll N = 100005;
-ll n, k, x[N];
-void Solve1()
-{
-    map<ll, ll> Map;
-    for (ll i = 1; i <= n; i++)
-        Map[x[i]]++;
-    ll Answer = 0;
-    for (auto i : Map)
-        if (i.second >= 3)
-            Answer++;
-    printf("%lld\n", Answer);
-}
-void Solve100()
-{
-    set<tuple<ll, ll, ll>> Set;
-    for (ll a = 1; a <= n; a++)
-        for (ll b = 1; b <= n; b++)
-            if (a != b && x[b] <= x[a] * k && x[a] <= x[b] * k)
-                for (ll c = 1; c <= n; c++)
-                    if (a != c && x[c] <= x[a] * k && x[a] <= x[c] * k &&
-                        b != c && x[c] <= x[b] * k && x[b] <= x[c] * k)
-                        Set.insert({x[a], x[b], x[c]});
-    printf("%ld\n", Set.size());
-}
+
+const int maxn = 100010;
+
+int n, k, x[maxn], a[maxn], sz;
+
+map<int, int> m;
+
+ll ans;
+
 int main()
 {
-    scanf("%lld%lld", &n, &k);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &x[i]);
-    if (k == 1)
-        Solve1();
-    else
-        Solve100();
-    return 0;
+
+	read(n);
+	read(k);
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		read(x[i]);
+		m[x[i]]++;
+	}
+
+	sort(x + 1, x + (n + 1));
+
+	for (int i = 1; i <= n; i++)
+
+		if (x[i] != x[i - 1])
+
+			a[++sz] = x[i];
+
+	int pos = 0, c1 = 0, c2 = 0;
+
+	for (int i = 1; i <= sz; i++)
+	{
+
+		while (pos < sz && a[pos + 1] <= (ll)a[i] * k)
+		{
+
+			pos++;
+
+			if (m[a[pos]] >= 2)
+
+				c1++;
+
+			else
+				c2++;
+		}
+
+		int v = 0;
+
+		if (m[a[i]] >= 2)
+
+			v++;
+
+		int s = c1 + c2 - 1;
+
+		ans += 3 * (c1 - v);
+
+		if (s > 1)
+
+			ans += 3LL * s * (s - 1);
+
+		if (m[a[i]] >= 2)
+
+			ans += 3 * (c1 + c2 - 1);
+
+		if (m[a[i]] >= 3)
+
+			ans++;
+
+		if (m[a[i]] >= 2)
+
+			c1--;
+
+		else
+			c2--;
+	}
+
+	printf("%lld", ans);
+
+	return 0;
 }

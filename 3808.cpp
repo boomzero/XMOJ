@@ -1,60 +1,97 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-ll n;
-std::string Original, Answer;
-int main()
+
+#define int long long
+
+#define N 210000
+
+int n, l, r, len;
+
+char a[N], ans[N];
+
+signed main()
 {
-    freopen("order.in", "r", stdin);
-    freopen("order.out", "w", stdout);
-    scanf("%lld", &n);
-    for (int i = 1; i <= n; i++)
-    {
-        char s[2];
-        scanf("%s", s);
-        Original += s[0];
-    }
-    ll Left = 0;
-    ll Right = n - 1;
-    while (Left <= Right)
-    {
-        if (Original[Left] < Original[Right])
-        {
-            Answer += Original[Left];
-            Left++;
-        }
-        else if (Original[Left] > Original[Right])
-        {
-            Answer += Original[Right];
-            Right--;
-        }
-        else
-        {
-            ll Left2 = Left + 1, Right2 = Right - 1;
-            while (Left2 <= Right2 && Original[Left2] == Original[Right2])
-                Left2++, Right2--;
-            if (Left2 > Right2)
-            {
-                Answer += Original[Left];
-                Left++;
-            }
-            else if (Original[Left2] < Original[Right2])
-            {
-                Answer += Original[Left];
-                Left++;
-            }
-            else
-            {
-                Answer += Original[Right];
-                Right--;
-            }
-        }
-    }
-    for (int i = 0; i < n; i++)
-    {
-        printf("%c", Answer[i]);
-        if ((i + 1) % 80 == 0)
-            printf("\n");
-    }
-    return 0;
+
+	freopen("order.in", "r", stdin);
+
+	freopen("order.out", "w", stdout);
+
+	cin >> n;
+
+	for (int i = 1; i <= n; ++i)
+		cin >> a[i];
+
+	l = 1, r = n;
+
+	while (l <= r)
+	{
+
+		if (a[l] < a[r])
+		{
+
+			ans[++len] = a[l];
+
+			l += 1;
+		}
+
+		else if (a[r] < a[l])
+		{
+
+			ans[++len] = a[r];
+
+			r -= 1;
+		}
+
+		else
+		{
+
+			bool flag = true;
+
+			for (int i = 1; l + i <= r - i; ++i)
+			{
+
+				if (a[l + i] != a[r - i])
+				{
+
+					if (a[l + i] < a[r - i])
+					{
+
+						ans[++len] = a[l];
+
+						l += 1;
+					}
+
+					else
+					{
+
+						ans[++len] = a[r];
+
+						r -= 1;
+					}
+
+					flag = false;
+
+					break;
+				}
+			}
+
+			if (flag)
+			{
+
+				ans[++len] = a[l];
+
+				l += 1;
+			}
+		}
+	}
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		cout << ans[i];
+
+		if (i % 80 == 0)
+			cout << endl;
+	}
 }

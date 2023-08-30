@@ -1,30 +1,64 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
+
+#include <string.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1000005;
-char a[N];
-int aLength, kmp[N];
+
+const int maxn = 1e6 + 10;
+
+char s1[maxn];
+
+unsigned long long power[maxn], h[maxn];
+
+unsigned long long n, s, base = 131, mod = 1 << 31;
+
+int check(unsigned long long v, int k)
+{
+
+	for (unsigned long long i = 0; i < n; i += k)
+	{
+
+		if (h[i + k] - h[i] * power[k] != v)
+			return 0;
+	}
+
+	return 1;
+}
+
 int main()
 {
-    a[0] = ' ';
-    scanf("%s", a + 1);
-    while (strcmp(a + 1, "."))
-    {
-        aLength = strlen(a + 1);
-        int j = 0;
-        kmp[0] = kmp[1] = 0;
-        for (int i = 2; i <= aLength; ++i)
-        {
-            while (a[i] != a[j + 1] && j != 0)
-                j = kmp[j];
-            if (a[i] == a[j + 1])
-                j++;
-            kmp[i] = j;
-        }
-        if (aLength % (aLength - kmp[aLength]) == 0)
-            printf("%d\n", aLength / (aLength - kmp[aLength]));
-        else
-            printf("1\n");
-        scanf("%s", a + 1);
-    }
+
+	power[0] = 1;
+
+	for (int i = 1; i <= 101000; i++)
+		power[i] = power[i - 1] * base;
+
+	while (scanf("%s", s1 + 1))
+	{
+
+		if (s1[1] == '.')
+			break;
+
+		n = strlen(s1 + 1);
+
+		h[0] = 0;
+
+		for (int i = 1; i <= n; i++)
+			h[i] = h[i - 1] * base + (unsigned long long)(s1[i] - 'A' + 1);
+
+		for (int i = 1; i <= n; i++)
+		{
+
+			if (n % i == 0)
+			{
+
+				if (check(h[i], i) == 1)
+				{
+
+					printf("%d\n", n / i);
+					break;
+				}
+			}
+		}
+	}
 }

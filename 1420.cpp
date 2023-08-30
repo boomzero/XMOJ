@@ -1,36 +1,95 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int DAY[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
-int yy1,mm1,dd1,hh1,mi1,yy2,mm2,dd2,hh2,mi2;
-int n,t[5000],ans;
-long long minutes;
-int main(){
-    scanf("%d-%d-%d-%d:%d",&yy1,&mm1,&dd1,&hh1,&mi1);
-    scanf("%d-%d-%d-%d:%d",&yy2,&mm2,&dd2,&hh2,&mi2);
-    minutes-=hh1*60+mi1; // 回到起点当天的0点整
-    minutes+=hh2*60+mi2;
-    while(!(yy1==yy2&&mm1==mm2&&dd1==dd2)){
-        if(yy1%400==0||yy1%4==0&&yy1%100) DAY[2]=29;
-        else DAY[2]=28;
-        minutes+=1440;
-        ++dd1;
-        if(dd1>DAY[mm1]){
-            dd1=1;
-            ++mm1;
-            if(mm1==13){
-                mm1=1;
-                ++yy1;
+
+int DAY[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+int day[2][5];
+
+int n, t[5000], ans = 0;
+
+bool bad(int year, int mon, int day)
+
+{
+
+    if (day <= DAY[mon])
+        return false;
+
+    if (mon == 2 && (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) && day == 29)
+        return false;
+
+    return true;
+}
+
+void add(int d[], int min)
+
+{
+
+    d[4] += min;
+
+    d[3] += d[4] / 60;
+
+    d[4] %= 60;
+
+    int delta = d[3] / 24;
+
+    d[3] %= 24;
+
+    for (int i = 0; i < delta; ++i)
+
+        if (bad(d[0], d[1], ++d[2]))
+        {
+
+            d[2] = 1;
+
+            if (++d[1] == 13)
+            {
+
+                d[1] = 1;
+
+                ++d[0];
             }
         }
+}
+
+bool good(int d1[], int d2[])
+
+{
+
+    for (int i = 0; i < 5; ++i)
+
+        if (d1[i] != d2[i])
+
+            return d1[i] < d2[i];
+
+    return true;
+}
+
+int main()
+
+{
+
+    scanf("%d-%d-%d-%d:%d", &day[0][0], &day[0][1], &day[0][2], &day[0][3], &day[0][4]);
+
+    scanf("%d-%d-%d-%d:%d", &day[1][0], &day[1][1], &day[1][2], &day[1][3], &day[1][4]);
+
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; ++i)
+        scanf("%d", &t[i]);
+
+    sort(t, t + n);
+
+    for (ans = 0; ans < n; ++ans)
+    {
+
+        add(day[0], t[ans]);
+
+        if (!good(day[0], day[1]))
+            break;
     }
-    scanf("%d",&n);
-    for(int i=0;i<n;++i) scanf("%d",&t[i]);
-    sort(t,t+n);
-    for(int i=0;i<n;++i){
-        minutes-=t[i];
-        if(minutes<0) break;
-        ++ans;
-    }
-    printf("%d\n",ans);
+
+    cout << ans << endl;
+
     return 0;
 }

@@ -1,51 +1,85 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 60005;
-int n, Head[N], EdgeCount, Size[N], Answer[N], AnswerCount;
-struct EDGE
+
+const int MAXN = 60010;
+
+vector<int> g[MAXN];
+
+int dp[MAXN];
+
+bool vis[MAXN];
+
+int ans[MAXN], len, n;
+
+void dfs(int x, int to)
 {
-    int to, next;
-} Edges[N << 1];
-void add(int u, int v)
-{
-    EdgeCount++;
-    Edges[EdgeCount] = (EDGE){v, Head[u]};
-    Head[u] = EdgeCount;
+
+	dp[x] = 1;
+
+	bool flag = true;
+
+	for (int i = 0; i < g[x].size(); i++)
+	{
+
+		int y = g[x][i];
+
+		if (!vis[y])
+		{
+
+			vis[y] = true;
+
+			dfs(y, x);
+
+			dp[x] += dp[y];
+
+			if (dp[y] > n / 2)
+			{
+
+				flag = false;
+			}
+		}
+	}
+
+	if (n - dp[x] > n / 2)
+	{
+
+		flag = false;
+	}
+
+	if (flag)
+	{
+
+		ans[++len] = x;
+	}
 }
-void dfs(int u, int f)
-{
-    Size[u] = 1;
-    int MaxSize = 0;
-    for (int i = Head[u]; i; i = Edges[i].next)
-    {
-        int v = Edges[i].to;
-        if (v != f)
-        {
-            dfs(v, u);
-            Size[u] += Size[v];
-            MaxSize = max(MaxSize, Size[v]);
-        }
-    }
-    MaxSize = max(MaxSize, n - Size[u]);
-    if (MaxSize < Answer[0])
-        Answer[0] = MaxSize, AnswerCount = 1, Answer[AnswerCount] = u;
-    else if (MaxSize == Answer[0])
-        Answer[++AnswerCount] = u;
-}
+
 int main()
 {
-    scanf("%d", &n);
-    for (int i = 1; i < n; i++)
-    {
-        int u, v;
-        scanf("%d%d", &u, &v);
-        add(u, v);
-        add(v, u);
-    }
-    Answer[0] = n;
-    dfs(1, 0);
-    sort(Answer + 1, Answer + AnswerCount + 1);
-    for (int i = 1; i <= AnswerCount; i++)
-        printf("%d\n", Answer[i]);
-    return 0;
+
+	scanf("%d", &n);
+
+	for (int i = 1; i <= n - 1; i++)
+	{
+
+		int u, v;
+
+		scanf("%d %d", &u, &v);
+
+		g[u].push_back(v);
+
+		g[v].push_back(u);
+	}
+
+	dfs(1, -1);
+
+	sort(ans + 1, ans + 1 + len);
+
+	for (int i = 1; i <= len; i++)
+	{
+
+		printf("%d\n", ans[i]);
+	}
+
+	return 0;
 }

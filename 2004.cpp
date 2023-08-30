@@ -1,97 +1,124 @@
 #include <bits/stdc++.h>
-using namespace std;
-const int N = 500100;
-int x, y, n, m, tot, ans, p[N], f1[N], lin[N], f[N][25], d[N], vis[N];
-struct
+int N, key, Q, ans;
+int st[100009], d[100009], p[100009], size[100009], xx[100009];
+int an[100009][20];
+struct node_t
 {
-    int x, y, next;
-} a[N * 2];
-void add(int x, int y)
+    int next;
+    int node;
+} s[200009];
+void link(int a, int b)
 {
-    a[++tot].x = x;
-    a[tot].y = y;
-    a[tot].next = lin[x];
-    lin[x] = tot;
+    key++;
+    s[key].next = st[b];
+    s[key].node = a;
+    st[b] = key;
 }
-void bfs(int x)
+void df(int pa, int nodex)
 {
-    queue<int> q;
-    q.push(1);
-    d[1] = 1;
-    while (q.size())
+    d[nodex] = d[pa] + 1;
+    p[nodex] = pa;
+    int x = st[nodex];
+    while (x)
     {
-        int x = q.front();
-        q.pop();
-        for (int i = lin[x]; i; i = a[i].next)
+        if (s[x].node == pa)
         {
-            int y = a[i].y;
-            if (d[y])
-                continue;
-            d[y] = d[x] + 1;
-            f[y][0] = x;
-            for (int j = 1; j <= 23; j++)
-            {
-                f[y][j] = f[f[y][j - 1]][j - 1];
-            }
-            q.push(y);
+            x = s[x].next;
+            continue;
+        }
+        df(nodex, s[x].node);
+        x = s[x].next;
+    }
+}
+void df2(int pa, int nodex)
+{
+    size[nodex] = xx[nodex];
+    int x = st[nodex];
+    while (x)
+    {
+        if (s[x].node == pa)
+        {
+            x = s[x].next;
+            continue;
+        }
+        df2(nodex, s[x].node);
+        size[nodex] += size[s[x].node];
+        x = s[x].next;
+    }
+    if (size[nodex] == 1)
+    {
+        ans++;
+    }
+    else if (pa != 0 && size[nodex] == 0)
+    {
+        ans += Q;
+    }
+}
+void cu(void)
+{
+    for (int i = 1; i <= N; i++)
+    {
+        an[i][0] = p[i];
+    }
+    for (int i = 1; i < 20; i++)
+    {
+        for (int j = 1; j <= N; j++)
+        {
+            an[j][i] = an[an[j][i - 1]][i - 1];
         }
     }
 }
-int lca(int x, int y)
-{
-    if (d[x] > d[y])
-        swap(x, y);
-    for (int i = 23; i >= 0; i--)
+int ca(int a, int b)
+{ // d[a]>=d[b]
+    if (d[a] < d[b])
     {
-        if (d[f[y][i]] >= d[x])
-            y = f[y][i];
+        int tmp = a;
+        a = b;
+        b = tmp;
     }
-    if (x == y)
-        return x;
-    for (int i = 23; i >= 0; i--)
+    int x = d[a] - d[b];
+    for (int i = 19; i >= 0; i--)
     {
-        if (f[x][i] != f[y][i])
-            x = f[x][i], y = f[y][i];
+        if (x >= (1 << i))
+        {
+            x -= (1 << i);
+            a = an[a][i];
+        }
     }
-    return f[x][0];
+    for (int i = 19; i >= 0; i--)
+    {
+        if (an[a][i] != an[b][i])
+        {
+            a = an[a][i];
+            b = an[b][i];
+        }
+    }
+    if (a == b)
+        return a;
+    else
+        return p[a];
 }
-void dfs(int x)
+int main(void)
 {
-    vis[x] = 1;
-    for (int i = lin[x]; i; i = a[i].next)
+    scanf("%d %d", &N, &Q);
+    for (int i = 0; i < N - 1; i++)
     {
-        int y = a[i].y;
-        if (vis[y])
-            continue;
-        dfs(y);
-        p[x] += p[y];
+        int a, b;
+        scanf("%d %d", &a, &b);
+        link(a, b);
+        link(b, a);
     }
-}
-int main()
-{
-    scanf("%d%d", &n, &m);
-    int x, y;
-    for (int i = 1; i < n; i++)
+    df(0, 1);
+    p[1] = 1;
+    cu();
+    for (int i = 0; i < Q; i++)
     {
-        scanf("%d%d", &x, &y);
-        add(x, y);
-        add(y, x);
+        int c, d;
+        scanf("%d %d", &c, &d);
+        xx[c]++;
+        xx[d]++;
+        xx[ca(c, d)] -= 2;
     }
-    bfs(1);
-    for (int i = 1; i <= m; i++)
-    {
-        scanf("%d%d", &x, &y);
-        p[x]++, p[y]++;
-        p[lca(x, y)] -= 2;
-    }
-    dfs(1);
-    for (int i = 2; i <= n; i++)
-    {
-        if (!p[i])
-            ans += m;
-        if (p[i] == 1)
-            ans += 1;
-    }
+    df2(0, 1);
     printf("%d\n", ans);
-    return 0;
 }

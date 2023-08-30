@@ -2,32 +2,48 @@
 
 using namespace std;
 
-int main() {
-    string s;
-    cin >> s;
-    if (s.length() > 1) {
-        string ee = s.substr(s.length() - 2, 2), se = s.substr(s.length() - 3, 3);
-        while (ee == "er" || ee == "ly" || se == "ing") {
-            if (ee == "er" || ee == "ly") {
-                s.pop_back();
-                s.pop_back();
-            }
-            if (se == "ing") {
-                s.pop_back();
-                s.pop_back();
-                s.pop_back();
-            }
-            if (s.length() > 2) {
-                ee = s.substr(s.length() - 2, 2), se = s.substr(s.length() - 3, 3);
-            } else {
-                ee.clear();
-                se.clear();
-            }
+char s[210];
 
+int ls, found;
+
+int main()
+{
+
+    cin >> s;
+
+    ls = strlen(s);
+
+    while (true)
+    {
+
+        found = false;
+
+        if (ls > 2 && (s[ls - 1] == 'r' && s[ls - 2] == 'e' || s[ls - 1] == 'y' && s[ls - 2] == 'l'))
+        {
+
+            s[ls - 2] = '\0';
+
+            ls -= 2;
+
+            found = true;
         }
+
+        if (ls > 3 && s[ls - 1] == 'g' && s[ls - 2] == 'n' && s[ls - 3] == 'i')
+        {
+
+            s[ls - 3] = '\0';
+
+            ls -= 3;
+
+            found = true;
+        }
+
+        if (!found)
+
+            break;
     }
-    cout << s << endl;
+
+    cout << s;
+
     return 0;
 }
-
-

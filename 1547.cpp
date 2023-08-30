@@ -1,22 +1,32 @@
-#include <bits/stdc++.h>
+#include <iostream>
 
 using namespace std;
-int h[100005] = {0}, n, len = 1, g[100005] = {0};
 
-int main() {
-//    freopen("lis.in", "r", stdin);
-//    freopen("lis.out", "w", stdout);
+const int MAX = 100010;
+
+int n, a[MAX], f[MAX], len = 1;
+
+int main()
+
+{
+
     cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> h[i];
-    }
-    g[1] = h[1];
-    for (int i = 2; i <= n; ++i) {
-        int j = lower_bound(g + 1, g + 1 + len, h[i]) - g;
-        g[j] = h[i];
-        len = max(len, j);
-    }
-    cout << len << endl;
-    return 0;
-}
 
+    for (int i = 0; i < n; ++i)
+
+        cin >> a[i];
+
+    f[0] = a[0];
+
+    for (int i = 1; i < n; ++i)
+    {
+
+        int pos = lower_bound(f, f + len, a[i]) - f;
+
+        f[pos] = a[i];
+
+        len = max(len, pos + 1);
+    }
+
+    cout << len << endl;
+}

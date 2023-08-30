@@ -1,66 +1,80 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100'005;
-const ll M = 2000'005;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-struct EDGE
+
+int n, m, q, s, t, dist[100010];
+
+queue<int> q1;
+
+queue<int> q2;
+
+struct Edge
 {
-    ll To, Next;
-    ll Weight;
-} Edges[M];
-ll Head[N], EdgeCount;
-void AddEdge(ll u, ll v, ll w)
-{
-    EdgeCount++;
-    Edges[EdgeCount].To = v;
-    Edges[EdgeCount].Next = Head[u];
-    Edges[EdgeCount].Weight = w;
-    Head[u] = EdgeCount;
-}
-ll n, m, s, t, Distance[N];
-bool Visited[N];
-void Dijkstra()
-{
-    for (ll i = 1; i <= n; i++)
-        Distance[i] = INF;
-    Distance[s] = 0;
-    priority_queue<pair<ll, ll>> PriorityQueue;
-    PriorityQueue.push(make_pair(0, s));
-    while (!PriorityQueue.empty())
-    {
-        ll u = PriorityQueue.top().second;
-        PriorityQueue.pop();
-        if (Visited[u])
-            continue;
-        Visited[u] = true;
-        for (ll i = Head[u]; i; i = Edges[i].Next)
-        {
-            ll v = Edges[i].To;
-            ll w = Edges[i].Weight;
-            if (Distance[v] > Distance[u] + w)
-            {
-                Distance[v] = Distance[u] + w;
-                PriorityQueue.push(make_pair(-Distance[v], v));
-            }
-        }
-    }
-}
+
+	int v, w;
+};
+
+vector<Edge> g[100010];
+
 int main()
+
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= m; i++)
-    {
-        ll u, v, w;
-        scanf("%lld%lld%lld", &u, &v, &w);
-        AddEdge(u, v, w);
-        AddEdge(v, u, w);
-    }
-    scanf("%lld%lld", &s, &t);
-    Dijkstra();
-    if (Distance[t] == INF)
-        printf("-1\n");
-    else
-        printf("%lld\n", Distance[t]);
-    return 0;
+
+	cin >> n >> m;
+
+	for (int i = 0; i < m; i++)
+	{
+
+		int a, b, d;
+
+		cin >> a >> b >> d;
+
+		g[a].push_back((Edge){b, d});
+
+		g[b].push_back((Edge){a, d});
+	}
+
+	cin >> s >> t;
+
+	memset(dist, -1, sizeof(dist));
+
+	dist[s] = 0;
+
+	q1.push(s);
+
+	while (!(q1.empty() && q2.empty()))
+	{
+
+		if (q1.empty())
+
+			swap(q1, q2);
+
+		int u = q1.front();
+		q1.pop();
+
+		if (u == t)
+			break;
+
+		for (int i = 0; i < g[u].size(); i++)
+		{
+
+			int v = g[u][i].v, w = g[u][i].w;
+
+			if (dist[v] == -1 || dist[u] + w < dist[v])
+			{
+
+				dist[v] = dist[u] + w;
+
+				if (w == 0)
+					q1.push(v);
+
+				else
+					q2.push(v);
+			}
+		}
+	}
+
+	cout << dist[t];
+
+	return 0;
 }

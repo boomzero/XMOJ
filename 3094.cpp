@@ -1,38 +1,115 @@
-/*
-小明有 $N$ 张牌编号分别为 $1, 2, \cdots ,N$。他把这 $N$ 张牌打乱排成一排，然后他要做一次旋转使得旋转后固定点尽可能多。如果第 $i$ 个位置的牌的编号为 $i$，我们就称之为固定点。
-旋转可以被认为是将其中的一个子段旋转 180 度，这意味着子段的第一张牌和最后一张牌交换位置，以及第二张牌和倒数第二张牌交换位置，等等。写一个程序，找到旋转子段（子段长度可以为 $1$）。
-
-第一行包含一个整数 $N$。 第二行有 $N$ 个数，第 $i$ 个数表示旋转之前第 $i$ 个位置的牌的编号。
-
-找到固定点最多的旋转所选的子段，输出旋转之后固定点的个数。
-
-100% 的数据满足：$1 \le N \le 100000$。
-
-
-假设最优的反转区间是 $[l,r]$，那么如果 $a[l] \ne r \wedge a[r] \ne l$，也就反转这一次区间时两个端点对答案没有任何贡献，那么 $[l+1,r-1]$ 也是一个最优解。依次类推，直到出现一个位置使得 $a[l] = r \vee a[r] = l$。
-也就是说，一个区间如果想成为最优解，那么必须满足左右端点之中最少有一个有反转过后成为固定点。也就是答案必定在所有的 $[\min(a[i],i),\max[(a[i],i)]$ 之中产生，其中 $i$ 取遍 $1 \sim n$。于是就变成了一个查询问题，我们只需要查询 $n$ 次即可获得结果。
-问题在于怎么在 $n$ 次查询之中快速获取反转区间后的固定点个数。
-对于一个反转区间，如果在反转过后其内部有点成为固定点，那么在反转之前，这个点必然满足 $a[j] + j = a[i] + i$，并且这个点对也可能有成为最优解的反转区间。所以我们把所有的旋转区间按照中心旋转点分类（每个用一个 vector 存起来），之后每次按照反转区间长度从小到大排序。于是，每个点在 vector 中的位置，就是它内部所包含的反转过后能成为固定点的点的数目（因为比他小的都包含在里面，随着它反转必然成为固定点），然后还要加上 $1$（这个点本身的贡献）。
-剩下的不反转的区间直接使用前缀和维护固定点个数即可。总复杂度 $O(n \log n)$。
-*/
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100'005;
-ll n, a[N];
+
+const int N = 200010;
+
+int n, a[N], pos[N], sum[N];
+
+vector<int> cir[N];
+
+inline int sz(int x)
+{
+
+	return cir[x].size();
+}
+
+inline int S(int l, int r)
+{
+
+	return sum[r] - sum[l - 1];
+}
+
+inline int read()
+{
+
+	int s = 0;
+
+	char c = getchar();
+
+	while (c < '0' || c > '9')
+
+		c = getchar();
+
+	while (c >= '0' && c <= '9')
+
+		s = s * 10 + c - 48, c = getchar();
+
+	return s;
+}
+
 int main()
 {
-    // freopen("rotate.in", "r", stdin);
-    // freopen("rotate.out", "w", stdout);
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    vector<ll> v[N];
-    for (ll i = 1; i <= n; i++)
-    {
-        ll l = min(a[i], i);
-        ll r = max(a[i], i);
-        v[(l + r) / 2].push_back(r - l + 1);
-    }
-    return 0;
+
+	freopen("rotate.in", "r", stdin);
+
+	freopen("rotate.out", "w", stdout);
+
+	n = read();
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		a[i] = read();
+
+		pos[a[i]] = i;
+
+		if (a[i] == i)
+
+			sum[i] = sum[i - 1] + 1;
+
+		else
+
+			sum[i] = sum[i - 1];
+	}
+
+	for (int i = 1; i <= n; ++i)
+
+		cir[i + pos[i]].push_back(abs(i - pos[i]) + 1);
+
+	int ans = sum[n];
+
+	for (int i = 1; i <= 2 * n; ++i)
+	{
+
+		if (sz(i) == 0)
+
+			continue;
+
+		int cnt = 0;
+
+		int mid = i / 2;
+
+		sort(cir[i].begin(), cir[i].end());
+
+		for (int j = 0; j < sz(i); ++j)
+		{
+
+			int len = cir[i][j], l, r;
+
+			if (i % 2 == 0)
+			{
+
+				l = mid - len / 2;
+
+				r = mid + len / 2;
+			}
+
+			if (i % 2 == 1)
+			{
+
+				l = mid - len / 2 + 1;
+
+				r = mid + len / 2;
+			}
+
+			cnt++;
+
+			ans = max(ans, cnt + S(1, l - 1) + S(r + 1, n));
+		}
+	}
+
+	printf("%d", ans);
+
+	return 0;
 }

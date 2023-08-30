@@ -1,44 +1,62 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-typedef pair<int, int> pii;
-int n, m, s, t, d[505], ec[505] = {0};
-bool vis[505] = {false}, nr = false;
-const int INF = numeric_limits<int>::max();
-vector<pii> g[505];
 
-int main() {
-    cin >> n >> m;
-    for (int i = 1; i <= m; ++i) {
-        int a, b, w;
-        cin >> a >> b >> w;
-        g[a].emplace_back(b, w);
-    }
-    cin >> s >> t;
-    fill(d, d + n + 1, INF);
+const int MAXN = 10010;
+
+const int MAXE = 100010;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge
+{
+    int u, v, w;
+} e[MAXE];
+
+int n, m, s, t, d[MAXN];
+
+int main()
+
+{
+
+    scanf("%d%d", &n, &m);
+
+    memset(d, INF, sizeof(d));
+
+    for (int i = 0; i < m; ++i)
+
+        scanf("%d%d%d", &e[i].u, &e[i].v, &e[i].w);
+
+    scanf("%d%d", &s, &t);
+
     d[s] = 0;
-    queue<int> q;
-    q.push(s);
-    ec[s]++;
-    while (!q.empty()) {
-        int c = q.front();
-        q.pop();
-        vis[c] = false;
-        for (pii i: g[c]) {
-            if (d[c] + i.second < d[i.first]) {
-                d[i.first] = d[c] + i.second;
-                vis[i.first] = true;
-                ec[i.first]++;
-                if (ec[i.first] > n) {
-                    nr = true;
-                    break;
-                }
-                q.push(i.first);
+
+    int tt;
+
+    for (tt = 0; tt < n; ++tt)
+    {
+
+        bool f = true;
+
+        for (int i = 0; i < m; ++i)
+
+            if (d[e[i].u] < INF && d[e[i].u] + e[i].w < d[e[i].v])
+            {
+
+                d[e[i].v] = d[e[i].u] + e[i].w;
+
+                f = false;
             }
-        }
-        if (nr) break;
+
+        if (f)
+            break;
     }
-    if (d[t] == INF || nr) cout << -1 << endl;
-    else cout << d[t] << endl;
+
+    if (tt == n || d[t] == INF)
+        cout << -1 << endl;
+
+    else
+        cout << d[t] << endl;
+
     return 0;
 }

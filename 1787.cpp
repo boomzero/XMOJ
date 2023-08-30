@@ -1,50 +1,118 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstring>
+
+#include <algorithm>
+
 using namespace std;
-typedef long long ll;
-const ll N = 500'005;
-const ll MAGIC_NUMBER = 1'000'000'007;
-ll n, Answer, Power[N], LeftHash[N], RightHash[N];
-char s[N];
-bool Check(ll LeftBound, ll RightBound, ll x)
+
+typedef unsigned long long ull;
+
+const int maxn = 5e5 + 10;
+
+const ull base = 1e9 + 7;
+
+int n, ans;
+
+ull power[maxn], hash_l[maxn], hash_r[maxn];
+
+char s[maxn];
+
+inline bool check(int l, int r, int x)
 {
-    ll Temp1 = LeftHash[LeftBound + x - 1] - LeftHash[LeftBound - 1];
-    ll Temp2 = RightHash[RightBound + x - 1] - RightHash[RightBound - 1];
-    if (LeftBound > RightBound)
-    {
-        swap(Temp1, Temp2);
-        swap(LeftBound, RightBound);
-    }
-    Temp1 *= Power[RightBound - LeftBound];
-    return Temp1 == Temp2;
+
+	ull s1, s2;
+
+	int t1 = l + x - 1, t2 = r + x - 1;
+
+	s1 = hash_l[t1] - hash_l[l - 1];
+
+	s2 = hash_r[t2] - hash_r[r - 1];
+
+	if (l > r)
+	{
+
+		swap(s1, s2), swap(l, r);
+	}
+
+	s1 *= power[r - l];
+
+	if (s1 == s2)
+
+		return 1;
+
+	else
+
+		return 0;
 }
+
+inline ull read()
+{
+
+	ull s = 0;
+
+	char c = getchar();
+
+	while (c < '0' || c > '9')
+
+		c = getchar();
+
+	while (c >= '0' && c <= '9')
+
+		s = s * 10 + c - 48, c = getchar();
+
+	return s;
+}
+
 int main()
 {
-    scanf("%lld%s", &n, s);
-    Power[0] = 1;
-    for (ll i = 1; i <= n; i++)
-        Power[i] = Power[i - 1] * MAGIC_NUMBER;
-    for (ll i = 1; i <= n; i++)
-        LeftHash[i] = LeftHash[i - 1] + s[i - 1] * Power[i];
-    for (ll i = 1; i <= n; i++)
-        RightHash[i] = RightHash[i - 1] + (s[n - i] ^ 1) * Power[i];
-    for (ll i = 2; i <= n; i++)
-    {
-        ll LeftBound = 1;
-        ll RightBound = min(n - i + 1, i - 1);
-        ll Total = 0;
-        while (LeftBound <= RightBound)
-        {
-            ll Middle = (LeftBound + RightBound) >> 1;
-            if (Check(i, n - i + 2, Middle))
-            {
-                Total = max(Middle, Total);
-                LeftBound = Middle + 1;
-            }
-            else
-                RightBound = Middle - 1;
-        }
-        Answer += Total;
-    }
-    printf("%lld\n", Answer);
-    return 0;
+
+	n = read();
+
+	cin >> s;
+
+	power[0] = 1;
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		power[i] = power[i - 1] * base;
+	}
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		hash_l[i] = hash_l[i - 1] + s[i - 1] * power[i];
+	}
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		hash_r[i] = hash_r[i - 1] + (s[n - i] ^ 1) * power[i];
+	}
+
+	for (int i = 2; i <= n; i++)
+	{
+
+		int k = n - i + 2, l = 1, r = min(n - i + 1, i - 1);
+
+		int tot = 0;
+
+		while (l <= r)
+		{
+
+			int mid = (l + r) >> 1;
+
+			if (check(i, k, mid))
+
+				tot = max(mid, tot), l = mid + 1;
+
+			else
+				r = mid - 1;
+		}
+
+		ans += tot;
+	}
+
+	printf("%d", ans);
 }

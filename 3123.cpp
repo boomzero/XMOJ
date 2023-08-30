@@ -1,11 +1,9 @@
 #include <iostream>
-
 using namespace std;
 struct discount {
     int val = 0, startTime = 0;
 } discountPile[40001];
 int currentD = 0;
-
 int main() {
     freopen("transfer.in", "r", stdin);
     freopen("transfer.out", "w", stdout);
@@ -41,4 +39,3 @@ int main() {
     cout << price << endl;
     return 0;
 }
-

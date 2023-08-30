@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 map<string, map<string, int>> st;
-
 int main() {
     int n;
     long long ans = 0;
@@ -19,4 +17,3 @@ int main() {
     cout << ans << endl;
     return 0;
 }
-

@@ -1,41 +1,90 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1005;
-ll n, a[N][N], f[N][N][2];
+
+int f[1010][1010][2], a[1010][1010], maxans;
+
+int n;
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 0; i < n; i++)
-        for (ll j = 0; j <= i; j++)
-            scanf("%lld", &a[i][j]);
-    f[0][0][0] = a[0][0];
-    f[0][0][1] = a[0][0] * 2;
-    for (ll i = 1; i < n; i++)
-        for (ll j = 0; j <= i; j++)
-        {
-            if (j == 0)
-            {
-                f[i][j][0] = f[i - 1][j][0] + a[i][j];
-                f[i][j][1] = max(f[i - 1][j][1] + a[i][j],
-                                 f[i - 1][j][0] + a[i][j] * 2);
-            }
-            else if (j == i)
-            {
-                f[i][j][0] = f[i - 1][j - 1][0] + a[i][j];
-                f[i][j][1] = max(f[i - 1][j - 1][1] + a[i][j],
-                                 f[i - 1][j - 1][0] + a[i][j] * 2);
-            }
-            else
-            {
-                f[i][j][0] = max(f[i - 1][j - 1][0], f[i - 1][j][0]) + a[i][j];
-                f[i][j][1] = max(max(f[i - 1][j - 1][1], f[i - 1][j][1]) + a[i][j],
-                                 max(f[i - 1][j - 1][0], f[i - 1][j][0]) + a[i][j] * 2);
-            }
-        }
-    ll Answer = 0;
-    for (ll i = 0; i < n; i++)
-        Answer = max(Answer, f[n - 1][i][1]);
-    printf("%lld\n", Answer);
-    return 0;
+
+	scanf("%d", &n);
+
+	for (int i = 0; i < n; i++)
+	{
+
+		for (int j = 0; j < i + 1; j++)
+		{
+
+			scanf("%d", &a[i][j]);
+
+			f[i][j][0] = a[i][j], f[i][j][1] = 2 * a[i][j];
+		}
+	}
+
+	//	for(int i=0;i<n;i++){
+
+	//		int j=i+1;
+
+	//		for(int k=0;k<j;k++){
+
+	////			maxans=max(maxans,max(f[0][0][0],f[0][0][1]));
+
+	//			printf("%d ",a[i][j]);
+
+	//		}
+
+	//		printf("\n");
+
+	//	}
+
+	for (int i = 0; i < n; i++)
+	{
+
+		for (int j = i + 1; j >= 0; j--)
+		{
+
+			f[i][j][0] = max(f[i - 1][j - 1][0], f[i - 1][j][0]) + a[i][j];
+
+			f[i][j][1] = max(max(f[i - 1][j][0], f[i - 1][j - 1][0]) + a[i][j] * 2, max(f[i - 1][j][1], f[i - 1][j - 1][1]) + a[i][j]);
+		}
+	}
+
+	//	for(int i=0;i<n;i++){
+
+	//		int j=i+1;
+
+	//		for(int k=0;k<j;k++){
+
+	////			maxans=max(maxans,max(f[0][0][0],f[0][0][1]));
+
+	//			printf("%d ",&f[i][k][0]);
+
+	//		}
+
+	//		printf("\n");
+
+	//	}
+
+	for (int i = 0; i < n; i++)
+	{
+
+		int j = i + 1;
+
+		for (int k = 0; k < j; k++)
+		{
+
+			maxans = max(maxans, max(f[i][k][0], f[i][k][1]));
+
+			//			printf("ld %lld ",f[i][k][0],f[i][k][1]);
+		}
+
+		//				printf("\n");
+	}
+
+	printf("%d", maxans);
+
+	return 0;
 }

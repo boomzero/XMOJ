@@ -1,58 +1,73 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 105;
-ll n;
-struct EDGE
+
+const int MAXN = 110;
+
+const int INF = 0x7f7f7f7f;
+
+int n, m, mapp[MAXN][MAXN], dist[MAXN], vis[MAXN], weight;
+
+void prim()
+
 {
-    ll to, next, w;
-} Edges[N * N];
-ll EdgeCount, Head[N];
-void AddEdge(ll u, ll v, ll w)
-{
-    Edges[++EdgeCount].to = v;
-    Edges[EdgeCount].next = Head[u];
-    Edges[EdgeCount].w = w;
-    Head[u] = EdgeCount;
-}
-bool Visited[N];
-ll Kruskal()
-{
-    ll Answer = 0;
-    ll ChosenEdgeCount = 0;
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> Queue;
-    Queue.push({0, 1});
-    while (!Queue.empty())
+
+    int mini = 1, w;
+
+    memset(dist, INF, sizeof(dist));
+
+    memset(vis, 0, sizeof(vis));
+
+    vis[1] = true;
+
+    dist[1] = weight = 0;
+
+    for (int i = 1; i < n; ++i)
     {
-        ll u = Queue.top().second;
-        ll w = Queue.top().first;
-        Queue.pop();
-        if (Visited[u])
-            continue;
-        Visited[u] = true;
-        Answer += w;
-        ChosenEdgeCount++;
-        if (ChosenEdgeCount == n)
-            break;
-        for (ll i = Head[u]; i; i = Edges[i].next)
-        {
-            ll v = Edges[i].to;
-            if (!Visited[v])
-                Queue.push({Edges[i].w, v});
-        }
+
+        for (int j = 1; j <= n; ++j)
+
+            if (!vis[j] && mapp[mini][j] < dist[j])
+
+                dist[j] = mapp[mini][j];
+
+        mini = 0, w = INF;
+
+        for (int j = 1; j <= n; ++j)
+
+            if (!vis[j] && dist[j] < w)
+
+                w = dist[mini = j];
+
+        vis[mini] = true;
+
+        weight += w;
     }
-    return Answer;
 }
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n * (n - 1) / 2; i++)
+
+    scanf("%d", &n);
+
+    memset(mapp, INF, sizeof(mapp));
+
+    m = n * (n - 1) / 2;
+
+    for (int i = 1; i <= m; ++i)
     {
-        ll u, v, w;
-        scanf("%lld%lld%lld", &u, &v, &w);
-        AddEdge(u, v, w);
-        AddEdge(v, u, w);
+
+        int x, y, z;
+
+        scanf("%d %d %d", &x, &y, &z);
+
+        mapp[x][y] = mapp[y][x] = z;
     }
-    printf("%lld\n", Kruskal());
+
+    prim();
+
+    cout << weight << endl;
+
     return 0;
 }

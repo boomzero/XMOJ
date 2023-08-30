@@ -2,27 +2,72 @@
 
 using namespace std;
 
-int main() {
-    set<string> c;
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        string in;
-        cin >> in;
-        if (in[0] == '+') {
-            in.erase(in.begin());
-            c.insert(in);
-        } else if (in[0] == '-') {
-            in.erase(in.begin());
-            c.erase(in);
-        } else {
-            cout << c.size() << endl;
-            for (const string &j: c) {
-                cout << j << " ";
-            }
-            cout << endl;
-        }
-    }
-    return 0;
-}
+int n;
 
+char str;
+
+map<string, int> mp;
+
+map<string, int>::iterator iter;
+
+int main()
+{
+
+	cin >> n;
+
+	for (int i = 0; i < n; i++)
+	{
+
+		cin >> str;
+
+		if (str == '+')
+		{
+
+			string name;
+
+			cin >> name;
+
+			mp[name]++;
+		}
+
+		else if (str == '-')
+		{
+
+			string name;
+
+			cin >> name;
+
+			mp[name] = 0;
+		}
+
+		else
+		{
+
+			int ans = 0;
+
+			for (iter = mp.begin(); iter != mp.end(); iter++)
+			{
+
+				if (iter->second != 0)
+				{
+
+					ans++;
+				}
+			}
+
+			cout << ans << endl;
+
+			for (iter = mp.begin(); iter != mp.end(); iter++)
+			{
+
+				if (iter->second != 0)
+				{
+
+					cout << iter->first.c_str() << " ";
+				}
+			}
+		}
+	}
+
+	return 0;
+}

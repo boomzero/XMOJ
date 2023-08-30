@@ -2,25 +2,47 @@
 
 using namespace std;
 
-int main() {
-    long long v, n[105] = {0}, k, c[105][105] = {{0}}, w[105][105] = {{0}}, dp[2000] = {0};
-    cin >> v >> k;
-    for (int i = 1; i <= k; ++i) {
-        cin >> n[i];
-        for (int j = 1; j <= n[i]; ++j) {
-            cin >> c[i][j] >> w[i][j];
-        }
-    }
-    for (int i = 1; i <= k; ++i) {
-        for (int j = v; j >= 0; --j) {
-            for (int l = 1; l <= n[i]; ++l) {
-                if (j >= c[i][l])
-                    dp[j] = max(dp[j], dp[j - c[i][l]] + w[i][l]);
-            }
-        }
-    }
-    cout << dp[v] << endl;
-    return 0;
+int n[110], V, K, c[110][30] /*体积*/, w[110][30] /*价值*/;
+
+int f[2000010];
+
+int main()
+{
+
+	cin >> V >> K;
+
+	for (int k = 1; k <= K; k++)
+	{
+
+		cin >> n[k];
+
+		for (int j = 1; j <= n[k]; j++)
+		{
+
+			cin >> c[k][j] >> w[k][j];
+		}
+	}
+
+	memset(f, 0, sizeof(f));
+
+	for (int k = 1; k <= K; k++)
+	{
+
+		for (int v = V; v >= 0; v--)
+		{
+
+			for (int i = 1; i <= n[k]; i++)
+			{
+
+				if (v - c[k][i] < 0)
+					continue;
+
+				f[v] = max(f[v], f[v - c[k][i]] + w[k][i]);
+			}
+		}
+	}
+
+	cout << f[V] << endl;
+
+	return 0;
 }
-
-

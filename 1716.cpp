@@ -1,96 +1,110 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+
+#include <iostream>
+
+#include <queue>
+
+#include <cmath>
+
+#define mod 1000000007
+
 using namespace std;
-typedef long long ll;
-const ll MOD = 1000000007;
-const ll INF = 0x3f3f3f3f3f3f3f3f;
-ll n, k, x, ans = 1, NegativeCount;
-priority_queue<ll, vector<ll>, less<ll>> NegativeQueue;
-priority_queue<ll, vector<ll>, greater<ll>> PositiveQueue;
-void Minus()
-{
-    ll v = PositiveQueue.top();
-    PositiveQueue.pop();
-    while (k && v)
-    {
-        k--;
-        v -= x;
-        if (v <= 0)
-        {
-            NegativeQueue.push(v);
-            return;
-        }
-    }
-    PositiveQueue.push(v);
-}
-void Add()
-{
-    ll v = NegativeQueue.top();
-    NegativeQueue.pop();
-    while (k && v <= 0)
-    {
-        k--;
-        v += x;
-        if (v > 0)
-        {
-            PositiveQueue.push(v);
-            return;
-        }
-    }
-    NegativeQueue.push(v);
-}
+
+int n, k, x, bz, a[200010], min1;
+
+long long minn = 0x3f3f3f3f;
+
+priority_queue<int, vector<int>, greater<int>> Q;
+
 int main()
 {
-    scanf("%lld%lld%lld", &n, &k, &x);
-    for (int i = 1; i <= n; i++)
-    {
-        ll t;
-        scanf("%lld", &t);
-        if (t <= 0)
-        {
-            NegativeQueue.push(t);
-            NegativeCount++;
-        }
-        else
-            PositiveQueue.push(t);
-    }
-    if (NegativeCount % 2 == 0)
-    {
-        if (NegativeCount == 0)
-            Minus();
-        else if (NegativeCount == n)
-            Add();
-        else if (abs(NegativeQueue.top()) < abs(PositiveQueue.top()))
-            Add();
-        else
-            Minus();
-    }
-    for (int i = 1; i <= k; i++)
-    {
-        ll t1 = NegativeQueue.empty() ? INF : NegativeQueue.top();
-        ll t2 = PositiveQueue.empty() ? INF : PositiveQueue.top();
-        if (abs(t1) > abs(t2))
-        {
-            PositiveQueue.pop();
-            t2 += x;
-            PositiveQueue.push(t2);
-        }
-        else
-        {
-            NegativeQueue.pop();
-            t1 -= x;
-            NegativeQueue.push(t1);
-        }
-    }
-    while (!NegativeQueue.empty())
-    {
-        ans = (ans * (NegativeQueue.top() % MOD)) % MOD;
-        NegativeQueue.pop();
-    }
-    while (!PositiveQueue.empty())
-    {
-        ans = (ans * (PositiveQueue.top() % MOD)) % MOD;
-        PositiveQueue.pop();
-    }
-    printf("%lld\n", (ans + MOD) % MOD);
-    return 0;
+
+	scanf("%d%d%d", &n, &k, &x);
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		int s;
+
+		scanf("%d", &s);
+
+		a[i] = abs(s);
+
+		if (s < 0)
+			bz++;
+
+		if (a[i] < minn)
+			minn = a[i], min1 = i;
+	}
+
+	bz %= 2;
+
+	if (bz == 0)
+	{
+
+		if (a[min1] < (long long)x * k)
+		{
+
+			int num = a[min1] / x + 1;
+
+			a[min1] -= num * x;
+
+			a[min1] = abs(a[min1]);
+
+			bz = 1;
+
+			k -= num;
+		}
+		else
+		{
+
+			a[min1] -= x * k;
+
+			long long ans = 1;
+
+			for (int i = 1; i <= n; i++)
+			{
+
+				ans *= a[i];
+
+				ans %= mod;
+			}
+
+			printf("%lld", ans);
+		}
+	}
+
+	if (bz == 1)
+	{
+
+		for (int i = 1; i <= n; i++)
+
+			Q.push(a[i]);
+
+		while (k--)
+		{
+
+			int t = Q.top();
+
+			Q.pop();
+
+			t += x;
+
+			Q.push(t);
+		}
+
+		long long ans = 1;
+
+		for (int i = 1; i <= n; i++)
+		{
+
+			int x = Q.top();
+
+			Q.pop();
+
+			ans = (ans * x) % mod;
+		}
+
+		printf("%lld", ans * (-1) + mod);
+	}
 }

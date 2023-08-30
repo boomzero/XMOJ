@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 int n, p[2001] = {0}, f[2001] = {0}, c;
-
 int cut(int l) {
     if (l == 0) return c;
     if (f[l] > 0) return f[l];
@@ -11,7 +9,6 @@ int cut(int l) {
     }
     return f[l];
 }
-
 int main() {
     fill_n(p, 2000, -1);
     cin >> n >> c;
@@ -21,5 +18,3 @@ int main() {
     cout << cut(n) << endl;
     return 0;
 }
-
-

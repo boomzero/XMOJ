@@ -1,9 +1,7 @@
 #include <bits/stdc++.h>
-
 typedef int mint;
 #define int long long
 using namespace std;
-
 mint main() {
     freopen("librarian.in", "r", stdin);
     freopen("librarian.out", "w", stdout);
@@ -32,4 +30,3 @@ mint main() {
     }
     return 0;
 }
-

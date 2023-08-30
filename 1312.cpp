@@ -2,28 +2,49 @@
 
 using namespace std;
 
-int main() {
-    string a, ba;
-    getline(cin, a);
-    ba = a;
-    reverse(a.begin(), a.end());
-    stringstream ss(a);
-    string b;
-    stack<string> s;
-    while (ss >> b) {
-        s.push(b);
-    }
-    int cs = 0;
-    while (!s.empty()) {
-        cout << s.top();
-        cs += s.top().length();
-        while (ba[cs] == ' ') {
-            putchar(' ');
-            cs++;
-        }
-        s.pop();
-    }
-    cout << endl;
-    return 0;
-}
+char a[510];
 
+int n, i, len, position;
+
+int main()
+
+{
+
+	fgets(a, 510, stdin);
+
+	n = strlen(a);
+
+	a[n] = ' ';
+
+	for (i = 0; i <= n; i++)
+
+	{
+
+		if (a[i] != ' ')
+
+			len++;
+
+		else if (len > 0)
+
+		{
+
+			position = i - len;
+
+			for (int j = position + len - 1; j >= position; j--)
+
+				cout << a[j];
+
+			len = 0;
+		}
+
+		if (a[i] == ' ')
+		{
+
+			cout << a[i];
+
+			//			printf("--end");
+		}
+	}
+
+	return 0;
+}

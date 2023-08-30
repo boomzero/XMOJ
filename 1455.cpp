@@ -1,63 +1,89 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int fa[50001], rootId[50001];
 
-int find(int t) {
-    if (fa[t] == t) return t;
-    return fa[t] = find(fa[t]);
+#define oo 0x13131313
+
+using namespace std;
+
+const int MAXN = 100000 * 2 + 1;
+
+int n, id[MAXN], sz[MAXN];
+
+int x[10000000], tot, ans;
+
+int find(int x)
+
+{
+
+    if (x == id[x])
+        return x;
+
+    return id[x] = find(id[x]);
 }
 
-void merge(int x, int y) {
-    x = find(x);
-    y = find(y);
-    if (x != y) {
-        fa[x] = y;
+void uni(int a, int b)
+
+{
+
+    int p = find(a);
+
+    int q = find(b);
+
+    if (p != q)
+    {
+
+        id[p] = q;
+
+        sz[q] += sz[p];
+
+        if (sz[q] > ans)
+            ans = sz[q];
     }
 }
 
-int assignMap[50001];
+int idx(int v)
 
-int main() {
-    int n;
-    cin >> n;
-    int assignId = 1;
-    for (int i = 1; i <= 50000; ++i) {
-        fa[i] = i;
-    }
-    for (int i = 1; i <= n; ++i) {
-        int a, b, x = -1, y = -1;
-        cin >> a >> b;
-        for (int j = 1; j <= assignId; ++j) {
-            if (assignMap[j] == a) {
-                x = j;
-            } else if (assignMap[j] == b) {
-                y = j;
-            }
+{
+
+    if (x[v] == 0)
+        x[v] = ++tot;
+
+    return x[v];
+}
+
+int main()
+
+{
+
+    while (scanf("%d", &n) != EOF)
+    {
+
+        memset(x, 0, sizeof(x));
+
+        tot = 0;
+
+        ans = 1;
+
+        for (int i = 1; i < MAXN; ++i)
+            id[i] = i, sz[i] = 1;
+
+        for (int i = 0; i < n; ++i)
+        {
+
+            int a, b;
+
+            scanf("%d %d", &a, &b);
+
+            a = idx(a);
+
+            b = idx(b);
+
+            uni(a, b);
         }
-        if (x == -1) {
-            x = assignId;
-            assignMap[x] = a;
-            assignId++;
-        }
-        if (y == -1) {
-            y = assignId;
-            assignMap[y] = b;
-            assignId++;
-        }
-        merge(x, y);
+
+        printf("%d\n", ans);
     }
-    for (int i = 1; i <= 50000; ++i) {
-        rootId[find(i)]++;
-    }
-    int max = 0;
-    for (int i = 1; i <= 50000; ++i) {
-        if (rootId[i] > max) {
-            max = rootId[i];
-        }
-    }
-    cout << max << endl;
+
     return 0;
 }
-
-

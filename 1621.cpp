@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 set <pair<int, int>> pos, pq;
-
 bool check(int x, int y) {
     for (auto i: pos) {
         if (i.first == x || i.second == y) { return false; }
@@ -11,10 +9,8 @@ bool check(int x, int y) {
     }
     return true;
 }
-
 int ans = 0;
 bool first = true;
-
 void dfs(int x, int y) {
     pos.insert({x, y});
     if (x == 8) {
@@ -32,7 +28,6 @@ void dfs(int x, int y) {
     }
     pos.erase({x, y});
 }
-
 int main() {
     for (int i = 1; i <= 8; ++i) {
         if (check(1, i)) {
@@ -45,4 +40,3 @@ int main() {
     }
     return 0;
 }
-

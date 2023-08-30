@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 int main() {
     freopen("stone.in", "r", stdin);
     freopen("stone.out", "w", stdout);
@@ -35,4 +33,3 @@ int main() {
     cout << minn << endl;
     return 0;
 }
-

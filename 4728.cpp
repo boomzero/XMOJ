@@ -1,63 +1,105 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
+#include <algorithm>
+#include <string.h>
+#include <math.h>
 using namespace std;
 typedef long long ll;
-const ll N = 50005;
-ll Belong[N], BlockSize, n, a[N], LazyTag[N];
-vector<ll> Blocks[N];
-void Update(ll Location)
+const int N = 5e4 + 10;
+inline int read()
 {
-    Blocks[Location].clear();
-    for (ll i = (Location - 1) * BlockSize + 1; i <= min(Location * BlockSize, n); i++)
-        Blocks[Location].push_back(a[i]);
-    sort(Blocks[Location].begin(), Blocks[Location].end());
+	int x = 0, f = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-')
+			f = -1;
+		ch = getchar();
+	}
+	while (ch >= '0' && ch <= '9')
+	{
+		x = x * 10 + ch - 48;
+		ch = getchar();
+	}
+	return x * f;
 }
-void Add(ll l, ll r, ll v)
-{
-    for (ll i = l; i <= min(Belong[l] * BlockSize, r); i++)
-        a[i] += v;
-    Update(Belong[l]);
-    if (Belong[l] == Belong[r])
-        return;
-    for (ll i = (Belong[r] - 1) * BlockSize + 1; i <= r; i++)
-        a[i] += v;
-    Update(Belong[r]);
-    for (ll i = Belong[l] + 1; i <= Belong[r] - 1; i++)
-        LazyTag[i] += v;
+int n, len;
+ll a[N], b[N], id[N];
+ll t[N]; // for sort
+void SORT(int x)
+{ // x-th
+	int st = 1 + (x - 1) * len, ed = min(x * len, n);
+	//	printf("id:%d st:%d ed:%d\n",x,st,ed);
+	for (int i = st; i <= ed; i++)
+		t[i] = a[i];
+	sort(t + st, t + ed + 1);
 }
-ll Query(ll l, ll r, ll k, ll Answer = 0)
+void init()
 {
-    for (ll i = l; i <= min(Belong[l] * BlockSize, r); i++)
-        if (a[i] + LazyTag[Belong[l]] < k)
-            Answer++;
-    if (Belong[l] == Belong[r])
-        return Answer;
-    for (ll i = (Belong[r] - 1) * BlockSize + 1; i <= r; i++)
-        if (a[i] + LazyTag[Belong[r]] < k)
-            Answer++;
-    for (ll i = Belong[l] + 1; i <= Belong[r] - 1; i++)
-        Answer += lower_bound(Blocks[i].begin(), Blocks[i].end(), k - LazyTag[i]) - Blocks[i].begin();
-    return Answer;
+	len = sqrt(n);
+	for (int i = 1; i <= n; i++)
+		id[i] = (i - 1) / len + 1;
+	for (int i = 1; i <= (n - 1) / len + 1; i++)
+		SORT(i);
 }
-signed main()
+void add(int l, int r, int x)
 {
-    scanf("%lld", &n);
-    BlockSize = sqrt(n * 1.0);
-    for (ll i = 1; i <= n; i++)
-    {
-        scanf("%lld", &a[i]);
-        Belong[i] = (i - 1) / BlockSize + 1;
-        Blocks[Belong[i]].push_back(a[i]);
-    }
-    for (ll i = 1; i <= Belong[n]; i++)
-        sort(Blocks[i].begin(), Blocks[i].end());
-    for (ll i = 1; i <= n; i++)
-    {
-        ll op, l, r, v;
-        scanf("%lld%lld%lld%lld", &op, &l, &r, &v);
-        if (op == 0)
-            Add(l, r, v);
-        else if (op == 1)
-            printf("%lld\n", Query(l, r, v * v));
-    }
-    return 0;
+	int sid = id[l], eid = id[r];
+	if (sid == eid)
+	{
+		for (int i = l; i <= r; i++)
+			a[i] += x;
+		SORT(sid);
+		return;
+	}
+	for (int i = l; id[i] == sid; i++)
+		a[i] += x;
+	SORT(sid);
+	for (int i = sid + 1; i < eid; i++)
+		b[i] += x;
+	for (int i = r; id[i] == eid; i--)
+		a[i] += x;
+	SORT(eid);
+}
+int query(int l, int r, int c)
+{ //<c^2
+	int sid = id[l], eid = id[r], cnt = 0;
+	if (sid == eid)
+	{
+		for (int i = l; i <= r; i++)
+		{
+			if (a[i] + b[id[i]] < c * c)
+				cnt++;
+		}
+		return cnt;
+	}
+	for (int i = l; id[i] == sid; i++)
+		if (a[i] + b[id[i]] < c * c)
+			cnt++;
+	for (int i = sid + 1; i < eid; i++)
+	{
+		int st = 1 + (i - 1) * len, ed = min(i * len, n);
+		cnt += lower_bound(t + st, t + ed + 1, c * c - b[i]) - t - st;
+	}
+	for (int i = r; id[i] == eid; i--)
+		if (a[i] + b[id[i]] < c * c)
+			cnt++;
+	return cnt;
+}
+int main()
+{
+	//	freopen("a1.in","r",stdin);
+	//	freopen("a1.out","w",stdout);
+	n = read();
+	for (int i = 1; i <= n; i++)
+		a[i] = read();
+	init();
+	for (int i = 1; i <= n; i++)
+	{
+		int opt = read(), l = read(), r = read(), c = read();
+		if (opt == 0)
+			add(l, r, c);
+		else
+			printf("%d\n", query(l, r, c));
+	}
+	return 0;
 }

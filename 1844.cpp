@@ -1,36 +1,194 @@
-/*
-这个假期，小明打算乘火车游览风光，沿途一共经过 $n$ 个城市。从第 $i$ 个城市设有第 $i$ 条铁路到达第 $i+1$ 个城市，这连成一条铁路链。小明乘坐的这班火车一共有 $k$ 个座位，从第 $1$ 个城市开到第 $n$ 个城市，但在买票时遇到了困难，因为火车上的部分座位被订掉了。有 $m$ 位乘客的订单可以用各自的 $(s,t,a)$ 来描述，表示从第 $s$ 个城市坐车到第 $t$ 个城市，订了这段中的第 $a$ 个座位（不保证乘客之间是否存在冲突，但这不会影响到小明）。
-小明沮丧地发现可能没有座位从头到尾都没人预订的，不过他马上意识到自己可以订不同的座位，只需要保证第 $i$ 条铁路中坐的座位是没人预订的。小明会一共乘坐 $q$ 次火车，从第 $l$ 到第 $r$ 个城市。你需要求出期间最少换几个座位（第 $i$ 和第 $i+1$ 条铁路中座位不同的个数），如果无法从 $l$ 抵达 $r$ 则输出 $-1$。
+#include <stdio.h>
 
-对于每个城市 $i$，记录 $a[i]$ 表示 $i$ 向后最远可以只用一种车票走到哪里。先将 $m$ 个订单离线，处理同个座位的预订区间（若有相交的区间则合并，可以扫描线处理区间），相邻两个区间之间的部分是可以使用这种车票的，用线段树（维护最大值）更新这段的 $a[i]$ 为右端点（即原来的下一个区间左端点）。由 $i$ 指向 $a[i]$ 即构成了森林（因为 $i \le a[i]$），求从 $l$ 到 $r$ 的路径长度时使用倍增即可。预处理 $O(n \log n)$，询问在线每次 $O(\log n)$。
-*/
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-const ll N = 200005;
-ll n, m, k, q, a[N];
-struct QUERY
+#include <string.h>
+
+#include <algorithm>
+
+#include <vector>
+
+#define fill(x, t) memset(x, t, sizeof(x))
+
+#define rep(i, st, ed) for (int i = st; i <= ed; ++i)
+
+#define drp(i, st, ed) for (int i = st; i >= ed; --i)
+
+#define fi first
+
+#define se second
+
+typedef std::pair<int, int> pair;
+
+const int N = 200005;
+
+std::vector<pair> vec[N];
+
+int max[N << 2], tag[N << 2];
+
+int fa[19][N];
+
+int read()
 {
-    ll l, r, Index, Answer;
-} Queries[N];
-int main()
+
+	int x = 0, v = 1;
+	char ch = getchar();
+
+	for (; ch < '0' || ch > '9'; v = (ch == '-') ? (-1) : (v), ch = getchar())
+		;
+
+	for (; ch <= '9' && ch >= '0'; x = x * 10 + ch - '0', ch = getchar())
+		;
+
+	return x * v;
+}
+
+void cmax(int &x, int y)
 {
-    scanf("%lld%lld%lld", &n, &m, &k);
-    for (ll i = 1; i <= m; i++)
-    {
-        ll s, t, a;
-        scanf("%lld%lld%lld", &s, &t, &a);
-    }
-    scanf("%lld", &q);
-    for (ll i = 1; i <= q; i++)
-    {
-        scanf("%lld%lld", &Queries[i].l, &Queries[i].r);
-        Queries[i].Index = i;
-    }
-    sort(Queries + 1, Queries + q + 1,
-         [](QUERY x, QUERY y)
-         {
-             return x.l < y.l;
-         });
-    return 0;
+
+	(y > x) ? (x = y) : (0);
+}
+
+void push_down(int now)
+{
+
+	if (!tag[now])
+		return;
+
+	int w = tag[now];
+	tag[now] = 0;
+
+	cmax(tag[now << 1], w);
+	cmax(tag[now << 1 | 1], w);
+
+	cmax(max[now << 1], w);
+	cmax(max[now << 1 | 1], w);
+}
+
+void modify(int now, int tl, int tr, int l, int r, int v)
+{
+
+	if (tl == l && tr == r)
+	{
+
+		cmax(tag[now], v);
+
+		cmax(max[now], v);
+
+		return;
+	}
+
+	push_down(now);
+
+	int mid = (tl + tr) >> 1;
+
+	if (r <= mid)
+		modify(now << 1, tl, mid, l, r, v);
+
+	else if (l > mid)
+		modify(now << 1 | 1, mid + 1, tr, l, r, v);
+
+	else
+	{
+
+		modify(now << 1, tl, mid, l, mid, v);
+
+		modify(now << 1 | 1, mid + 1, tr, mid + 1, r, v);
+	}
+
+	max[now] = std::max(max[now << 1], max[now << 1 | 1]);
+}
+
+int query(int now, int tl, int tr, int x)
+{
+
+	if (tl == tr)
+		return max[now];
+
+	int mid = (tl + tr) >> 1;
+
+	push_down(now);
+
+	if (x <= mid)
+		return query(now << 1, tl, mid, x);
+
+	return query(now << 1 | 1, mid + 1, tr, x);
+}
+
+int main(void)
+{
+
+	int n = read(), m = read(), k = read();
+
+	rep(i, 1, m)
+	{
+
+		int s = read(), t = read() - 1, a = read();
+
+		vec[a].push_back(pair(s, t));
+	}
+
+	rep(i, 1, k)
+	{
+
+		std::sort(vec[i].begin(), vec[i].end());
+
+		int L = 0, R = -1;
+
+		for (int j = 0; j < vec[i].size(); ++j)
+		{
+
+			if (vec[i][j].fi <= R + 1)
+			{
+
+				R = std::max(R, vec[i][j].se);
+
+				continue;
+			}
+
+			modify(1, 0, n, R + 1, vec[i][j].fi - 1, vec[i][j].fi);
+
+			L = vec[i][j].fi;
+			R = vec[i][j].se;
+		}
+
+		modify(1, 0, n, R + 1, n, n);
+	}
+
+	rep(i, 1, n - 1)
+	{
+
+		int tmp = query(1, 0, n, i);
+
+		if (!tmp)
+			tmp = n + 1;
+
+		fa[0][i] = tmp;
+	}
+
+	fa[0][n] = n;
+	fa[0][n + 1] = n + 1;
+
+	rep(j, 1, 18) drp(i, n + 1, 1)
+	{
+
+		fa[j][i] = fa[j - 1][fa[j - 1][i]];
+	}
+
+	for (int T = read(); T--;)
+	{
+
+		int x = read(), y = read(), ans = 0;
+
+		drp(i, 18, 0)(fa[i][x] < y) ? (x = fa[i][x], ans += (1 << i)) : 0;
+
+		x = fa[0][x];
+		ans++;
+
+		if (x == n + 1 || x < y)
+			puts("-1");
+
+		else
+			printf("%d\n", ans);
+	}
+
+	return 0;
 }

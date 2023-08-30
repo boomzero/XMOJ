@@ -1,78 +1,98 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 100005;
-struct PEOPLE
+
+const int MAXN = 100010;
+
+int cc, n, c[MAXN + 10], ans[MAXN + 10];
+
+int sum(int x)
+
 {
-    int e, s, id, ans;
-} People[N];
-int T, n, ans, c[N], MaxS;
-int LowBit(int x)
-{
-    return x & (-x);
+
+	int res = 0;
+
+	for (; x > 0; x -= x & (-x))
+		res += c[x];
+
+	return res;
 }
-void Add(int Index, int Value)
+
+void add(int x, int v)
 {
-    while (Index <= MaxS)
-    {
-        c[Index] += Value;
-        Index += LowBit(Index);
-    }
+
+	for (; x <= MAXN; x += x & (-x))
+
+		c[x] += v;
 }
-int Sum(int Index)
+
+struct People
 {
-    int ReturnValue = 0;
-    while (Index > 0)
-    {
-        ReturnValue += c[Index];
-        Index -= LowBit(Index);
-    }
-    return ReturnValue;
-}
+
+	int s, e, index;
+
+	bool operator<(const People &b) const
+	{
+
+		return e > b.e || (e == b.e && s < b.s);
+	}
+
+} p[MAXN];
+
 int main()
+
 {
-    scanf("%d", &T);
-    while (T--)
-    {
-        memset(c, 0, sizeof(c));
-        MaxS = 0;
-        scanf("%d", &n);
-        for (int i = 1; i <= n; i++)
-        {
-            scanf("%d%d", &People[i].s, &People[i].e);
-            People[i].s++;
-            People[i].e++;
-            MaxS = max(MaxS, People[i].s);
-            People[i].id = i;
-        }
-        sort(People + 1, People + n + 1,
-             [](PEOPLE a, PEOPLE b)
-             {
-                 if (a.e == b.e)
-                     return a.s < b.s;
-                 return a.e > b.e;
-             });
-        int SameCounter = 0;
-        for (int i = 1; i <= n; i++)
-        {
-            People[i].ans = Sum(People[i].s);
-            if ((People[i].s == People[i - 1].s) &&
-                (People[i].e == People[i - 1].e))
-            {
-                SameCounter++;
-                People[i].ans -= SameCounter;
-            }
-            else
-                SameCounter = 0;
-            Add(People[i].s, 1);
-        }
-        sort(People + 1, People + n + 1,
-             [](PEOPLE a, PEOPLE b)
-             {
-                 return a.id < b.id;
-             });
-        for (int i = 1; i <= n; i++)
-            printf("%d\n", People[i].ans);
-        printf("\n");
-    }
-    return 0;
+
+	// freopen("opt.txt","w",stdout);
+
+	scanf("%d", &cc);
+
+	for (int ca = 0; ca < cc; ++ca)
+	{
+
+		scanf("%d", &n);
+
+		for (int i = 0; i < n; i++)
+		{
+
+			scanf("%d%d", &p[i].s, &p[i].e);
+
+			++p[i].s;
+
+			p[i].index = i;
+		}
+
+		sort(p, p + n);
+
+		memset(ans, 0, sizeof(ans));
+
+		memset(c, 0, sizeof(c));
+
+		ans[p[0].index] = 0;
+
+		add(p[0].s, 1);
+
+		for (int i = 1; i < n; i++)
+		{
+
+			if (p[i].s == p[i - 1].s && p[i].e == p[i - 1].e)
+
+				ans[p[i].index] = ans[p[i - 1].index];
+
+			else
+
+				ans[p[i].index] = sum(p[i].s);
+
+			add(p[i].s, 1);
+		}
+
+		if (ca)
+			printf("\n");
+
+		for (int i = 0; i < n; i++)
+
+			printf("%d\n", ans[i]);
+	}
+
+	return 0;
 }

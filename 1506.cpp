@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 int main() {
     int n, v, c[600] = {0}, w[600] = {0};
     int f[20001] = {0};
@@ -18,4 +16,3 @@ int main() {
     cout << f[v] << endl;
     return 0;
 }
-

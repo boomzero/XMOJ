@@ -27,7 +27,6 @@ double F(int a, int b, int c, int d, int num)
     }
     return f[a][b][c][d][num];
 }
-
 int main()
 {
     scanf("%d%d%d", &n, &m, &k);

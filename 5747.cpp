@@ -1,51 +1,124 @@
-#include <bits/stdc++.h>
+#include <cmath>
+
+#include <cstdio>
+
+#include <cstring>
+
+#include <iostream>
+
+#include <algorithm>
+
+#define ll longlong
+
 using namespace std;
-typedef long long ll;
-typedef long double ld;
-const ll N = 1005;
-const ld INF = 0x3FFF'FFFF'FFFF'FFFF;
-bool Visited[N];
-ll n, m, x[N], y[N];
-ld Map[N][N], Distance[N];
-void Prim()
+
+struct Road
 {
-    fill(Distance + 1, Distance + n + 1, INF);
-    Distance[1] = 0;
-    for (ll i = 1; i < n; i++)
-    {
-        ll u = 0;
-        for (ll j = 1; j <= n; j++)
-            if (!Visited[j] && (u == 0 || Distance[j] < Distance[u]))
-                u = j;
-        Visited[u] = true;
-        for (ll j = 1; j <= n; j++)
-            if (!Visited[j])
-                Distance[j] = min(Distance[j], Map[u][j]);
-    }
+
+	int x, y;
+
+} a[2001];
+
+struct A
+{
+
+	int from, to;
+
+	double val;
+
+} e[1000001];
+
+int map[1001][1001];
+
+double calc(int x1, int x2)
+{
+
+	double ans = sqrt((double)(a[x1].x - a[x2].x) * (a[x1].x - a[x2].x) + (double)(a[x1].y - a[x2].y) * (a[x1].y - a[x2].y));
+
+	return ans;
 }
+
+int fa[1001];
+
+bool cmp(A a, A b)
+{
+
+	return a.val < b.val;
+}
+
+int find(int x)
+{
+
+	return x == fa[x] ? x : fa[x] = find(fa[x]);
+}
+
+int n, m, tot = 0;
+
+double ans = 0;
+
+int cnt = 0;
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-        for (ll j = 1; j <= n; j++)
-            Map[i][j] = INF;
-    for (ll i = 1; i <= n; i++)
-    {
-        scanf("%lld%lld", &x[i], &y[i]);
-        for (ll j = 1; j < i; j++)
-            Map[i][j] = Map[j][i] = sqrt(
-                (ld)(x[i] - x[j]) * (x[i] - x[j]) +
-                (ld)(y[i] - y[j]) * (y[i] - y[j]));
-    }
-    for (ll i = 1, u, v; i <= m; i++)
-    {
-        scanf("%lld%lld", &u, &v);
-        Map[u][v] = Map[v][u] = 0;
-    }
-    Prim();
-    ld Answer = 0;
-    for (ll i = 1; i <= n; i++)
-        Answer += Distance[i];
-    printf("%.2Lf\n", Answer);
-    return 0;
+
+	scanf("%d%d", &n, &m);
+
+	for (int i = 1, xx, yy; i <= n; i++)
+	{
+
+		scanf("%d%d", &xx, &yy);
+
+		a[i].x = xx;
+
+		a[i].y = yy;
+	}
+
+	for (int i = 1, x, y; i <= m; i++)
+	{
+
+		scanf("%d%d", &x, &y);
+
+		e[++tot].from = x;
+
+		e[tot].to = y;
+
+		e[tot].val = 0;
+
+		map[x][y] = 1;
+	}
+
+	for (int i = 1; i < n; i++)
+
+		for (int j = i + 1; j <= n; j++)
+		{
+
+			if (i == j || map[i][j] == 1)
+				continue;
+
+			e[++tot].from = i;
+
+			e[tot].to = j;
+
+			e[tot].val = calc(i, j);
+		}
+
+	sort(e + 1, e + 1 + tot, cmp);
+
+	for (int i = 1; i <= n; i++)
+		fa[i] = i;
+
+	for (int i = 1; i <= tot && cnt < n - 1; i++)
+	{
+
+		int u = find(e[i].from), v = find(e[i].to);
+
+		if (u == v)
+			continue;
+
+		ans += e[i].val, cnt++, fa[u] = v;
+	}
+
+	printf("%.2f", ans);
+
+	return 0;
 }

@@ -1,47 +1,80 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-const ll INF = 0x3FFF'FFFF;
-ll n, a[N], LazyTag[N], Belong[N], Left[N], Right[N];
-ll Block, BlockCount;
-void Add(ll l, ll r, ll c)
+
+const int mac = 5e4 + 10;
+
+inline void in(int &read)
 {
-    ll LeftBelong = Belong[l];
-    ll RightBelong = Belong[r];
-    for (ll i = l; i <= min(Right[LeftBelong], r); i++)
-        a[i] += c;
-    if (LeftBelong != RightBelong)
-        for (ll i = Left[RightBelong]; i <= r; i++)
-            a[i] += c;
-    for (ll i = LeftBelong + 1; i < RightBelong; i++)
-        LazyTag[i] += c;
+    int x = 0;
+    char ch = getchar();
+    while (ch < '0' || ch > '9')
+        ch = getchar();
+    while (ch >= '0' && ch <= '9')
+        x = (x << 3) + (x << 1) + ch - '0', ch = getchar();
+    read = x;
 }
+
+inline void out(int x)
+{
+    if (x >= 10)
+    {
+        out(x / 10);
+    }
+    putchar(x % 10 + '0');
+}
+
+int a[mac], L[mac], R[mac], id[mac], add[mac];
+
+void update(int l, int r, int c)
+{
+    int p = id[l], q = id[r];
+    if (p == q)
+        for (int i = l; i <= r; i++)
+            a[i] += c;
+    else
+    {
+        for (int i = p + 1; i <= q - 1; i++)
+            add[i] += c;
+        for (int i = l; i <= R[p]; i++)
+            a[i] += c;
+        for (int i = L[q]; i <= r; i++)
+            a[i] += c;
+    }
+}
+
 int main()
 {
-    scanf("%lld", &n);
-    Block = 0.5 * sqrt(n);
-    BlockCount = n / Block;
-    if (n % Block)
-        BlockCount++;
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    for (ll i = 1; i <= BlockCount; i++)
+    int n;
+    in(n);
+    for (int i = 1; i <= n; i++)
+        in(a[i]);
+    int t = sqrt(n);
+    for (int i = 1; i <= t; i++)
     {
-        Left[i] = (i - 1) * Block + 1;
-        Right[i] = i * Block;
+        L[i] = (i - 1) * t + 1;
+        R[i] = i * t;
     }
-    Right[BlockCount] = n;
-    for (ll i = 1; i <= n; i++)
-        Belong[i] = (i - 1) / Block + 1;
-    for (ll i = 1; i <= n; i++)
+    if (R[t] < n)
+        t++, L[t] = R[t - 1] + 1, R[t] = n;
+    for (int i = 1; i <= t; i++)
+        for (int j = L[i]; j <= R[i]; j++)
+            id[j] = i;
+    for (int i = 1; i <= n; i++)
     {
-        ll opt, l, r, c;
-        scanf("%lld%lld%lld%lld", &opt, &l, &r, &c);
-        if (opt == 0)
-            Add(l, r, c);
+        int opt, l, r, c;
+        in(opt);
+        in(l);
+        in(r);
+        in(c);
+        if (!opt)
+        {
+            update(l, r, c);
+        }
         else
-            printf("%d\n", a[r] + LazyTag[Belong[r]]);
+        {
+            out(a[r] + add[id[r]]);
+            putchar('\n');
+        }
     }
     return 0;
 }

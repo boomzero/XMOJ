@@ -1,49 +1,82 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 10005;
-const ll E = 200005;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-ll n, m, c[N], Father[N], Total, Answer = INF;
-struct EDGE
+
+const int maxn = 10010, maxe = 200010;
+
+int n, m, fa[maxn], c[maxn], tot, ans;
+
+struct edge
 {
-    ll u, v, w;
-} Edges[E];
-ll Find(ll x)
+    int x, y, w;
+} e[maxe];
+
+void read(int &k)
+
 {
-    return x == Father[x] ? x : Father[x] = Find(Father[x]);
+
+    k = 0;
+    int f = 1;
+    char c = getchar();
+
+    while (c < '0' || c > '9')
+        c == '-' && (f = -1), c = getchar();
+
+    while ('0' <= c && c <= '9')
+        k = k * 10 + c - '0', c = getchar();
+
+    k *= f;
 }
+
+bool cmp(const edge &a, const edge &b) { return a.w < b.w; }
+
+int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
+
 int main()
+
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-        Father[i] = i;
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &c[i]);
-    Answer = *min_element(c + 1, c + n + 1);
-    for (ll i = 1; i <= m; i++)
+
+    read(n);
+    read(m);
+    ans = 0x7f7f7f7f;
+
+    for (int i = 1; i <= n; i++)
     {
-        scanf("%lld%lld%lld", &Edges[i].u, &Edges[i].v, &Edges[i].w);
-        Edges[i].w = Edges[i].w * 2 + c[Edges[i].u] + c[Edges[i].v];
+
+        read(c[i]);
+
+        if (c[i] < ans)
+            ans = c[i];
+
+        fa[i] = i;
     }
-    sort(Edges + 1, Edges + m + 1,
-         [](EDGE a, EDGE b)
-         {
-             return a.w < b.w;
-         });
-    for (ll i = 1; i <= m; i++)
+
+    for (int i = 1; i <= m; i++)
     {
-        ll u = Find(Edges[i].u);
-        ll v = Find(Edges[i].v);
-        if (u != v)
-        {
-            Father[u] = v;
-            Answer += Edges[i].w;
-            Total++;
-        }
-        if (Total == n - 1)
+
+        read(e[i].x);
+        read(e[i].y);
+        read(e[i].w);
+
+        e[i].w = (e[i].w << 1) + c[e[i].x] + c[e[i].y];
+    }
+
+    sort(e + 1, e + 1 + m, cmp);
+
+    for (int i = 1, x, y; i <= m; i++)
+    {
+
+        x = find(e[i].x);
+        y = find(e[i].y);
+
+        if (x != y)
+            ans += e[i].w, tot++, fa[x] = y;
+
+        if (tot == n - 1)
             break;
     }
-    printf("%lld\n", Answer);
+
+    printf("%d\n", ans);
+
     return 0;
 }

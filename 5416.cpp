@@ -1,22 +1,52 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, a[N], f[N], Answer = 1;
+
+int a[100010], d[100010];
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    f[1] = a[1];
-    for (ll i = 2; i <= n; i++)
-        if (a[i] >= f[Answer])
-        {
-            Answer++;
-            f[Answer] = a[i];
-        }
+
+    int n;
+
+    scanf("%d", &n);
+
+    for (int i = 1; i <= n; i++)
+
+        scanf("%d", &a[i]);
+
+    if (n == 0)
+
+    {
+
+        printf("0\n");
+
+        return 0;
+    }
+
+    d[1] = a[1];
+
+    int len = 1;
+
+    for (int i = 2; i <= n; i++)
+
+    {
+
+        if (a[i] >= d[len])
+            d[++len] = a[i];
+
         else
-            *upper_bound(f + 1, f + Answer + 1, a[i]) = a[i];
-    printf("%lld\n", Answer);
+
+        {
+
+            int j = upper_bound(d + 1, d + len + 1, a[i]) - d;
+
+            d[j] = a[i];
+        }
+    }
+
+    printf("%d", len);
+
     return 0;
 }

@@ -1,26 +1,32 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+#include <iostream>
+#include <string>
+#define MAXN 400000
 using namespace std;
-typedef unsigned long long ull;
-const ull N = 400005;
-const ull P = 256;
-char s[N];
-ull h[N], p[N];
+
+const unsigned MOD = 1e7 + 9;
+unsigned hs[MAXN + 5], mul[MAXN + 5];
+
 int main()
 {
-    while (scanf("%s", s + 1) != EOF)
+    ios::sync_with_stdio(0);
+    mul[0] = 1;
+    for (int i = 1; i <= MAXN; ++i)
+        mul[i] = mul[i - 1] * MOD;
+    string s;
+    int n;
+    while (cin >> s)
     {
-        p[0] = 1;
-        h[0] = 0;
-        ull sLength = strlen(s + 1);
-        for (ull i = 1; i <= sLength; ++i)
+        n = s.size();
+        s = ' ' + s;
+        for (int i = 1; i <= n; ++i)
+            hs[i] = hs[i - 1] * MOD + (unsigned)s[i];
+        for (int i = 1; i <= n; ++i)
         {
-            p[i] = p[i - 1] * P;
-            h[i] = h[i - 1] * P + s[i];
+            if (hs[i] == hs[n] - hs[n - i] * mul[i])
+                cout << i << " ";
         }
-        for (ull i = 1; i <= sLength; ++i)
-            if (h[i] == h[sLength] - h[sLength - i] * p[i])
-                printf("%lld ", i);
-        printf("\n");
+        cout << "\n";
     }
     return 0;
 }

@@ -1,51 +1,73 @@
 #include <bits/stdc++.h>
+
+#define int long long
+
 using namespace std;
-typedef long long ll;
-const ll N = 505;
-const ll MOD = 1000000007;
-ll n, k, f[N][N][6];
+
+const int N = 510, mod = 1e9 + 7;
+
+int n, k, dp[6][N][N];
+
 char s[N];
-int main()
+
+bool pipei(int l, int r)
 {
-    freopen("bracket.in", "r", stdin);
-    freopen("bracket.out", "w", stdout);
-    scanf("%lld%lld%s", &n, &k, s + 1);
-    for (ll i = 1; i <= n; i++)
-        f[i][i - 1][0] = 1;
-    for (ll Length = 1; Length <= n; Length++)
+
+  return (s[l] == '(' || s[l] == '?') & (s[r] == ')' || s[r] == '?');
+}
+
+signed main()
+{
+
+  freopen("bracket.in", "r", stdin);
+
+  freopen("bracket.out", "w", stdout);
+
+  ios::sync_with_stdio(false);
+
+  cin.tie(0);
+
+  cout.tie(0);
+
+  cin >> n >> k >> s + 1;
+
+  for (int i = 1; i <= n; i++)
+    dp[0][i][i - 1] = 1;
+
+  for (int len = 1; len <= n; len++)
+  {
+
+    for (int l = 1; l + len - 1 <= n; l++)
     {
-        for (ll LeftBound = 1; LeftBound <= n - Length + 1; LeftBound++)
+
+      int r = l + len - 1;
+
+      if (len <= k)
+        dp[0][l][r] = dp[0][l][r - 1] && (s[r] == '*' || s[r] == '?');
+
+      if (len >= 2)
+      {
+
+        dp[1][l][r] = pipei(l, r) * (dp[2][l + 1][r - 1] + dp[3][l + 1][r - 1] + dp[4][l + 1][r - 1] + dp[0][l + 1][r - 1]) % mod;
+
+        for (int i = l; i < r; i++)
         {
-            ll RightBound = LeftBound + Length - 1;
-            if (Length <= k)
-                if ((f[LeftBound][RightBound - 1][0] != 0) && (s[RightBound] == '*' || s[RightBound] == '?'))
-                    f[LeftBound][RightBound][0] = f[LeftBound][RightBound - 1][0];
-            if (Length >= 2)
-            {
-                if ((s[LeftBound] == '(' || s[LeftBound] == '?') && (s[RightBound] == ')' || s[RightBound] == '?'))
-                    f[LeftBound][RightBound][1] = (f[LeftBound + 1][RightBound - 1][0] + f[LeftBound + 1][RightBound - 1][2] +
-                                                   f[LeftBound + 1][RightBound - 1][3] + f[LeftBound + 1][RightBound - 1][4]) %
-                                                  MOD;
-                for (ll i = LeftBound; i <= RightBound - 1; i++)
-                {
-                    f[LeftBound][RightBound][2] = (f[LeftBound][RightBound][2] +
-                                                   f[LeftBound][i][3] * f[i + 1][RightBound][0]) %
-                                                  MOD;
-                    f[LeftBound][RightBound][3] = (f[LeftBound][RightBound][3] +
-                                                   (f[LeftBound][i][2] + f[LeftBound][i][3]) * f[i + 1][RightBound][1]) %
-                                                  MOD;
-                    f[LeftBound][RightBound][4] = (f[LeftBound][RightBound][4] +
-                                                   (f[LeftBound][i][4] + f[LeftBound][i][5]) * f[i + 1][RightBound][1]) %
-                                                  MOD;
-                    f[LeftBound][RightBound][5] = (f[LeftBound][RightBound][5] +
-                                                   f[LeftBound][i][4] * f[i + 1][RightBound][0]) %
-                                                  MOD;
-                }
-            }
-            f[LeftBound][RightBound][5] = (f[LeftBound][RightBound][5] + f[LeftBound][RightBound][0]) % MOD;
-            f[LeftBound][RightBound][3] = (f[LeftBound][RightBound][3] + f[LeftBound][RightBound][1]) % MOD;
+
+          (dp[2][l][r] += dp[3][l][i] * dp[0][i + 1][r]) %= mod;
+
+          (dp[3][l][r] += (dp[2][l][i] + dp[3][l][i]) * dp[1][i + 1][r]) %= mod;
+
+          (dp[4][l][r] += (dp[5][l][i] + dp[4][l][i]) * dp[1][i + 1][r]) %= mod;
+
+          (dp[5][l][r] += dp[4][l][i] * dp[0][i + 1][r]) %= mod;
         }
+      }
+
+      (dp[5][l][r] += dp[0][l][r]) %= mod;
+
+      (dp[3][l][r] += dp[1][l][r]) %= mod;
     }
-    printf("%lld\n", f[1][n][3]);
-    return 0;
+  }
+
+  cout << dp[3][1][n];
 }

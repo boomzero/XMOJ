@@ -1,67 +1,125 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-const ll N = 105;
-const ll dx[4] = {-1, 0, 0, 1};
-const ll dy[4] = {0, -1, 1, 0};
-ll n, TurnRecord[N][N][4], Answer = INF;
-pair<ll, ll> Start, End;
-bool Map[N][N];
-void BFS()
+
+int n, m[110][110][2], sx, sy, ex, ey, dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0}, vis[110][110][2], ans;
+
+char c;
+
+struct K
 {
-    queue<tuple<ll, ll, ll>> Queue;
-    for (ll i = 1; i <= n; i++)
-        for (ll j = 1; j <= n; j++)
-            for (ll k = 0; k < 4; k++)
-                TurnRecord[i][j][k] = INF;
-    for (ll i = 0; i < 4; i++)
-    {
-        Queue.push({Start.first, Start.second, i});
-        TurnRecord[Start.first][Start.second][i] = 0;
-    }
-    while (!Queue.empty())
-    {
-        auto [x, y, Direction] = Queue.front();
-        Queue.pop();
-        for (ll i = 0; i < 4; i++)
-        {
-            ll nx = x + dx[i];
-            ll ny = y + dy[i];
-            ll Turns = TurnRecord[x][y][Direction];
-            if (nx < 1 || nx > n || ny < 1 || ny > n || !Map[nx][ny])
-                continue;
-            if (Direction != i)
-                Turns++;
-            if (TurnRecord[nx][ny][i] > Turns)
-            {
-                TurnRecord[nx][ny][i] = Turns;
-                Queue.push({nx, ny, i});
-            }
-        }
-    }
+
+	int x, y, dir, val;
+};
+
+void g(K res, int &a, int &b, int &c, int &d)
+{
+
+	a = res.x;
+
+	b = res.y;
+
+	c = res.dir;
+
+	d = res.val;
 }
+
+int bfs(K ss)
+{
+
+	deque<K> q;
+
+	int x, y, dir, val;
+
+	q.push_back(ss);
+
+	while (q.size())
+	{
+
+		g(q.front(), x, y, dir, val);
+
+		//		cout<<x<<" "<<y<<" "<<dir<<" "<<val<<endl;
+
+		if (x == ex && y == ey)
+
+			return val;
+
+		q.pop_front();
+
+		for (int i = 0; i < 2; i++)
+		{
+
+			if (!vis[x + dx[dir + i * 2]][y + dy[dir + i * 2]][dir])
+			{
+
+				vis[x + dx[dir + i * 2]][y + dy[dir + i * 2]][dir] = 1;
+
+				q.push_front((K){x + dx[dir + i * 2], y + dy[dir + i * 2], dir, val});
+			}
+
+			if (!vis[x][y][dir ^ 1])
+			{
+
+				vis[x][y][dir ^ 1] = 1;
+
+				q.push_back((K){x, y, dir ^ 1, val + 1});
+			}
+		}
+	}
+}
+
 int main()
 {
-    freopen("maze.in", "r", stdin);
-    freopen("maze.out", "w", stdout);
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-    {
-        char Buffer[N] = {0};
-        scanf("%s", Buffer + 1);
-        for (ll j = 1; j <= n; j++)
-        {
-            Map[i][j] = (Buffer[j] != 'x');
-            if (Buffer[j] == 'A')
-                Start = {i, j};
-            else if (Buffer[j] == 'B')
-                End = {i, j};
-        }
-    }
-    BFS();
-    for (ll i = 0; i < 4; i++)
-        Answer = min(Answer, TurnRecord[End.first][End.second][i]);
-    printf("%lld\n", (Answer == INF ? -1 : Answer));
-    return 0;
+
+	freopen("maze.in", "r", stdin);
+
+	freopen("maze.out", "w", stdout);
+
+	cin >> n;
+
+	memset(m, 0x3f, sizeof(m));
+
+	for (int i = 1; i <= n; i++)
+
+		for (int j = 1; j <= n; j++)
+		{
+
+			cin >> c;
+
+			if (c != 'x')
+			{
+
+				m[i][j][0] = 0;
+
+				m[i][j][1] = 0;
+
+				if (c == 'A')
+				{
+
+					sx = i;
+
+					sy = j;
+				}
+
+				if (c == 'B')
+				{
+
+					ex = i;
+
+					ey = j;
+				}
+			}
+		}
+
+	memcpy(vis, m, sizeof(m));
+
+	ans = bfs((K){sx, sy, 0, 0});
+
+	memcpy(vis, m, sizeof(m));
+
+	//	cout<<"\n\n\n\n\n\n\n\n";
+
+	ans = min(ans, bfs((K){sx, sy, 1, 0}));
+
+	cout << ans;
 }

@@ -1,24 +1,37 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, a[N], f[N], Answer = 1;
+
+const int MAX = 100010;
+
+int n, a[MAX], f[MAX], len;
+
 int main()
+
 {
+
     freopen("lis.in", "r", stdin);
+
     freopen("lis.out", "w", stdout);
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    f[1] = a[1];
-    for (ll i = 2; i <= n; i++)
-        if (a[i] > f[Answer])
-        {
-            Answer++;
-            f[Answer] = a[i];
-        }
-        else
-            *lower_bound(f + 1, f + Answer + 1, a[i]) = a[i];
-    printf("%lld\n", Answer);
-    return 0;
+
+    cin >> n;
+
+    for (int i = 0; i < n; ++i)
+        cin >> a[i];
+
+    len = 1;
+
+    f[0] = a[0];
+
+    for (int i = 1; i < n; ++i)
+    {
+
+        int pos = lower_bound(f, f + len, a[i]) - f;
+
+        f[pos] = a[i];
+
+        len = max(len, pos + 1);
+    }
+
+    cout << len;
 }

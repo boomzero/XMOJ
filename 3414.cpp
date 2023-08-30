@@ -1,35 +1,40 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <algorithm>
+
+#include <cmath>
+
 using namespace std;
-typedef long long ll;
-const int MAXN = 60005;
-int n, fa[MAXN], hd[MAXN], sons[MAXN], to[MAXN * 2], nxt[MAXN * 2], tot;
-void link(int father, int son)
-{
-    ++tot;
-    to[tot] = son;
-    nxt[tot] = hd[father];
-    hd[father] = tot;
-}
-void dfs(int x, int f)
-{
-    sons[f]++;
-    for (int i = hd[x]; i; i = nxt[i])
-        if (to[i] != f)
-            dfs(to[i], x);
-}
+
+int n, x, y, i;
+
 int main()
+
 {
-    scanf("%d", &n);
-    for (int i = 1; i < n; ++i)
-    {
-        int x, y;
-        scanf("%d%d", &x, &y);
-        link(x, y);
-        link(y, x);
-    }
-    dfs(1, 0);
-    for (int i = 1; i <= n; ++i)
-        printf("%d ", sons[i]);
-    printf("\n");
-    return 0;
+
+	scanf("%d", &n);
+
+	int r[n + 1] = {0};
+
+	for (i = 1; i < n; i++)
+
+	{
+
+		scanf("%d%d", &x, &y);
+
+		r[x]++;
+
+		r[y]++;
+	}
+
+	r[1] = r[1] + 1;
+
+	for (i = 1; i <= n; i++)
+
+	{
+
+		// r[i]--;
+
+		printf("%d ", r[i] - 1);
+	}
 }

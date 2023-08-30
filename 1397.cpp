@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 vector<int> p;
 int main() {
@@ -27,4 +26,3 @@ int main() {
     cout << ans << endl;
     return 0;
 }
-

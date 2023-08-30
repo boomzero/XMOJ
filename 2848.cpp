@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-
 typedef long long ll;
 using namespace std;
 bool vis[1005][1005] = {{false}};
@@ -11,7 +10,6 @@ bool vh = false;///valley false, hill true
 bool val(int r, int c) {
     return r >= 0 && r < n && c >= 0 && c < n;
 }
-
 void dfs(int r, int c) {
     vis[r][c] = true;
     for (int i = -1; i <= 1; ++i) {
@@ -50,7 +48,6 @@ void dfs(int r, int c) {
         }
     }
 }
-
 int main() {
     cin >> n;
     for (int i = 0; i < n; ++i) {

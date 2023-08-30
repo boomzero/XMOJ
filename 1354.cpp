@@ -1,93 +1,145 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, q, init_val[N], val[N << 2], lazy_tag[N << 2];
-void push_up(ll rt)
+#include <stdio.h>
+
+#include <string.h>
+
+struct node
+
 {
-    val[rt] = val[rt * 2] + val[rt * 2 + 1];
-}
-void push_down(ll rt, ll l, ll r)
+
+	int l, r;
+
+	int sum;
+
+} a[400010];
+
+void Bulid(int n, int l, int r)
+
 {
-    ll mid = (l + r) / 2;
-    lazy_tag[rt * 2] = lazy_tag[rt * 2] + lazy_tag[rt];
-    val[rt * 2] = val[rt * 2] + lazy_tag[rt] * (mid - l + 1);
-    lazy_tag[rt * 2 + 1] = lazy_tag[rt * 2 + 1] + lazy_tag[rt];
-    val[rt * 2 + 1] = val[rt * 2 + 1] + lazy_tag[rt] * (r - mid);
-    lazy_tag[rt] = 0;
+
+	a[n].l = l;
+
+	a[n].r = r;
+
+	a[n].sum = 0;
+
+	if (l == r)
+
+		return;
+
+	Bulid(2 * n, l, (l + r) / 2);
+
+	Bulid(2 * n + 1, (l + r) / 2 + 1, r);
 }
-void build(ll rt, ll l, ll r)
+
+void Insert(int n, int v, int num)
+
 {
-    lazy_tag[rt] = 0;
-    if (l == r)
-    {
-        val[rt] = init_val[l];
-        return;
-    }
-    ll mid = (l + r) / 2;
-    build(rt * 2, l, mid);
-    build(rt * 2 + 1, mid + 1, r);
-    push_up(rt);
+
+	a[n].sum += num;
+
+	if (a[n].l == a[n].r)
+
+		return;
+
+	if (v <= (a[n].l + a[n].r) / 2)
+
+		Insert(n * 2, v, num);
+
+	else
+
+		Insert(n * 2 + 1, v, num);
 }
-void update(ll nl, ll nr, ll l, ll r, ll rt, ll k)
+
+void Change(int n, int v, int num)
+
 {
-    if (nl <= l && r <= nr)
-    {
-        val[rt] += k * (r - l + 1);
-        lazy_tag[rt] += k;
-        return;
-    }
-    push_down(rt, l, r);
-    ll mid = (l + r) >> 1;
-    if (nl <= mid)
-        update(nl, nr, l, mid, rt * 2, k);
-    if (nr > mid)
-        update(nl, nr, mid + 1, r, rt * 2 + 1, k);
-    push_up(rt);
+
+	if (v == a[n].l && v == a[n].r)
+
+	{
+
+		a[n].sum += num;
+
+		return;
+	}
+
+	else
+
+		if (v <= (a[n].l + a[n].r) / 2)
+
+		Change(n * 2, v, num);
+
+	else
+
+		Change(n * 2 + 1, v, num);
+
+	a[n].sum = a[n * 2].sum + a[n * 2 + 1].sum;
 }
-void update_one(ll pos, ll l, ll r, ll rt, ll k)
+
+int Sum(int n, int l, int r)
+
 {
-    if (l == r)
-    {
-        val[rt] += k;
-        return;
-    }
-    push_down(rt, l, r);
-    ll mid = (l + r) >> 1;
-    if (pos <= mid)
-        update_one(pos, l, mid, rt * 2, k);
-    else
-        update_one(pos, mid + 1, r, rt * 2 + 1, k);
-    push_up(rt);
+
+	if (l == a[n].l && r == a[n].r)
+
+		return a[n].sum;
+
+	if (r <= (a[n].l + a[n].r) / 2)
+
+		return Sum(n * 2, l, r);
+
+	else
+
+		if (l > (a[n].l + a[n].r) / 2)
+
+		return Sum(n * 2 + 1, l, r);
+
+	else
+
+		return Sum(n * 2, l, (a[n].l + a[n].r) / 2) + Sum(n * 2 + 1, (a[n].l + a[n].r) / 2 + 1, r);
 }
-ll query(ll qx, ll qy, ll l, ll r, ll rt)
-{
-    if (qx <= l && r <= qy)
-        return val[rt];
-    ll mid = (l + r) / 2;
-    push_down(rt, l, r);
-    ll res = 0;
-    if (qx <= mid)
-        res += query(qx, qy, l, mid, rt * 2);
-    if (qy > mid)
-        res += query(qx, qy, mid + 1, r, rt * 2 + 1);
-    return res;
-}
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &init_val[i]);
-    scanf("%lld", &q);
-    build(1, 1, n);
-    while (q-- > 0)
-    {
-        ll op, a, b;
-        scanf("%lld%lld%lld", &op, &a, &b);
-        if (op == 1)
-            update_one(a, 1, n, 1, b);
-        else
-            printf("%lld\n", query(a, b, 1, n, 1));
-    }
-    return 0;
+
+	int i, j, n, m, Q, L, R;
+
+	scanf("%d", &n);
+
+	Bulid(1, 1, n);
+
+	for (i = 1; i <= n; i++)
+
+	{
+
+		scanf("%d", &m);
+
+		Insert(1, i, m);
+	}
+
+	scanf("%d", &m);
+
+	while (m--)
+
+	{
+
+		scanf("%d %d %d", &Q, &L, &R);
+
+		if (Q == 1)
+
+		{
+
+			Change(1, L, R);
+		}
+
+		else if (Q == 2)
+
+		{
+
+			printf("%d\n", Sum(1, L, R));
+		}
+	}
+
+	return 0;
 }

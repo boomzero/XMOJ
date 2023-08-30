@@ -1,33 +1,70 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <algorithm>
+
+#include <cmath>
+
 using namespace std;
-typedef long long ll;
-const ll N = 305;
-ll n, m, f[N][N];
-vector<ll> to[N];
-ll dfs(ll u)
+
+int tot, head[400], nxt[400], ver[400], dp[400][400], n, m, s[400];
+
+void addedge(int u, int v)
 {
-    ll CurrentSize = 1;
-    for (ll i = 0; i < to[u].size(); i++)
-    {
-        ll v = to[u][i];
-        ll Size = dfs(v);
-        for (ll i = min(CurrentSize, m + 1); i > 0; i--)
-            for (ll j = 1; j <= Size && i + j <= m + 1; j++)
-                f[u][i + j] = max(f[u][i + j], f[u][i] + f[v][j]);
-        CurrentSize += Size;
-    }
-    return CurrentSize;
+
+	ver[++tot] = v;
+
+	nxt[tot] = head[u];
+
+	head[u] = tot;
 }
+
+void dfs(int u)
+{
+
+	dp[u][0] = 0;
+
+	for (int i = 1; i < m; i++)
+		dp[u][i] = s[u];
+
+	for (int i = head[u]; i; i = nxt[i])
+	{
+
+		int v = ver[i];
+
+		dfs(v);
+
+		for (int j = m; j >= 1; j--)
+		{
+
+			for (int k = j - 1; k >= 0; k--)
+			{
+
+				dp[u][j] = max(dp[u][j], dp[v][k] + dp[u][j - k]);
+			}
+		}
+	}
+}
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-    {
-        ll k;
-        scanf("%lld%lld", &k, &f[i][1]);
-        to[k].push_back(i);
-    }
-    dfs(0);
-    printf("%lld\n", f[0][m + 1]);
-    return 0;
+
+	cin >> n >> m;
+
+	int u;
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		cin >> u >> s[i];
+
+		addedge(u, i);
+	}
+
+	m++;
+
+	dfs(0);
+
+	cout << dp[0][m];
+
+	return 0;
 }

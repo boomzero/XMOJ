@@ -1,30 +1,61 @@
 #include <bits/stdc++.h>
+
+#define ll long long
+
 using namespace std;
-typedef long long ll;
-const ll MOD = 9999973;
-const ll N = 105;
-ll n, m, ans, dp[N][N][N];
+
+ll dp[110][110][110], ans;
+
+int n, m;
+
+inline ll change(ll x)
+{
+
+	return ((x * (x - 1) % 9999973) / 2) % 9999973;
+}
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    dp[0][0][0] = 1;
-    for (ll i = 1; i <= n; i++)
-        for (ll j = 0; j <= m; j++)
-            for (ll k = 0; k + j <= m && k <= 2 * i; k++)
-            {
-                dp[i][j][k] += dp[i - 1][j][k];
-                if (k >= 1)
-                    dp[i][j][k] = (dp[i][j][k] + dp[i - 1][j + 1][k - 1] * (j + 1) + dp[i - 1][j][k - 1] * j % MOD * (m - j + 1 - k)) % MOD;
-                if (k >= 2)
-                    dp[i][j][k] = (dp[i][j][k] + dp[i - 1][j + 2][k - 2] * (j + 1) * (j + 2) / 2) % MOD;
-                if (j >= 1)
-                    dp[i][j][k] = (dp[i][j][k] + dp[i - 1][j - 1][k] * (m - j - k + 1)) % MOD;
-                if (j >= 2)
-                    dp[i][j][k] = (dp[i][j][k] + dp[i - 1][j - 2][k] * (m - k - j + 1) * (m - k - j + 2) / 2) % MOD;
-            }
-    for (ll i = 0; i <= m; i++)
-        for (ll j = 0; i + j <= m && (i + j) <= 2 * n; j++)
-            ans = (ans + dp[n][i][j]) % MOD;
-    printf("%lld\n", ans);
-    return 0;
+
+	scanf("%d%d", &n, &m);
+
+	dp[0][0][0] = 1;
+
+	for (int i = 0; i < n; i++)
+
+		for (int j = 0; j <= m; j++)
+
+			for (int k = 0; j + k <= m; k++)
+			{
+
+				dp[i + 1][j][k] = (dp[i + 1][j][k] + dp[i][j][k]) % 9999973;
+
+				if (j >= 1 && (m - j - k >= 1))
+
+					dp[i + 1][j][k + 1] = (dp[i + 1][j][k + 1] + (j * (m - j - k) % 9999973) * dp[i][j][k] % 9999973) % 9999973;
+
+				if (j >= 2)
+
+					dp[i + 1][j - 2][k + 2] = (dp[i + 1][j - 2][k + 2] + change(j) * dp[i][j][k] % 9999973) % 9999973;
+
+				if (j >= 1)
+
+					dp[i + 1][j - 1][k + 1] = (dp[i + 1][j - 1][k + 1] + j * dp[i][j][k] % 9999973) % 9999973;
+
+				if (m - j - k >= 1)
+
+					dp[i + 1][j + 1][k] = (dp[i + 1][j + 1][k] + (m - j - k) * dp[i][j][k] % 9999973) % 9999973;
+
+				if (m - j - k >= 2)
+
+					dp[i + 1][j + 2][k] = (dp[i + 1][j + 2][k] + change(m - j - k) * dp[i][j][k] % 9999973) % 9999973;
+			}
+
+	for (int j = 0; j <= m; j++)
+
+		for (int k = 0; j + k <= m; k++)
+
+			ans = (ans + dp[n][j][k]) % 9999973;
+
+	printf("%lld", ans);
 }

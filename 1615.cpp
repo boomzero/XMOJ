@@ -1,82 +1,177 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+
+#include <cstring>
+
 using namespace std;
-typedef long long ll;
-const ll N = 102;
-ll n, m, k, xMap[N], yMap[N];
-bool Visited[N], Map[N][N];
-ll DFS(ll u, bool f)
+
+#define N 210
+
+struct Edge
 {
-    for (ll v = 0; v < m; v++)
-        if (Map[u][v] && !Visited[v])
-        {
-            Visited[v] = true;
-            if (yMap[v] == -1 || DFS(yMap[v], f))
-            {
-                if (f)
-                {
-                    xMap[u] = v;
-                    yMap[v] = u;
-                }
-                return 1;
-            }
-        }
-    return 0;
-}
-ll Hungary1()
+
+	int to;
+
+	bool in;
+
+	int next;
+
+} edge[N * N];
+
+int head[N];
+
+int Enct;
+
+bool visited[N * N];
+
+int link[N];
+
+void init()
+
 {
-    ll Answer = 0;
-    for (ll u = 0; u < n; u++)
-        if (xMap[u] == -1)
-        {
-            memset(Visited, 0, sizeof(Visited));
-            if (DFS(u, 1))
-                Answer++;
-        }
-    return Answer;
+
+	memset(head, -1, sizeof(head));
+
+	Enct = 0;
 }
-bool Hungary2()
+
+void add(int from, int to)
+
 {
-    for (ll u = 0; u < n; u++)
-        if (xMap[u] == -1)
-        {
-            memset(Visited, 0, sizeof(Visited));
-            if (DFS(u, 0))
-                return 1;
-        }
-    return 0;
+
+	edge[Enct].to = to;
+
+	edge[Enct].next = head[from];
+
+	edge[Enct].in = true;
+
+	head[from] = Enct++;
+
+	edge[Enct].to = from;
+
+	edge[Enct].in = true;
+
+	edge[Enct].next = head[to];
+
+	head[to] = Enct++;
 }
+
+bool find(int u)
+
+{
+
+	for (int i = head[u]; i != -1; i = edge[i].next)
+
+	{
+
+		if (edge[i].in == false)
+			continue;
+
+		int v = edge[i].to;
+
+		if (visited[v])
+			continue;
+
+		visited[v] = true;
+
+		if (link[v] == -1 || find(link[v]))
+
+		{
+
+			link[v] = u;
+
+			// printf("%d ",link[v]);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int k;
+
+int n;
+
+int solve()
+
+{
+
+	memset(link, -1, sizeof(link));
+
+	int res = 0;
+
+	for (int i = 1; i <= n; i++)
+
+	{
+
+		memset(visited, 0, sizeof(visited));
+
+		visited[i] = true;
+
+		if (find(i))
+		{
+			res++;
+
+			// printf("%d ",link[i]);
+
+			// puts("");
+		}
+	}
+
+	return res;
+}
+
 int main()
+
 {
-    ll T = 0;
-    while (scanf("%lld%lld%lld", &n, &m, &k) != EOF)
-    {
-        T++;
-        memset(Map, 0, sizeof(Map));
-        memset(xMap, -1, sizeof(xMap));
-        memset(yMap, -1, sizeof(yMap));
-        for (ll i = 0; i < k; i++)
-        {
-            ll x, y;
-            scanf("%lld%lld", &x, &y);
-            Map[x - 1][y - 1] = 1;
-        }
-        ll Answer1 = 0;
-        ll Answer2 = Hungary1();
-        for (ll x = 0; x < n; x++)
-        {
-            ll y = xMap[x];
-            if (y != -1)
-            {
-                Map[x][y] = 0;
-                xMap[x] = yMap[y] = -1;
-                if (!Hungary2())
-                    Answer1++;
-                xMap[x] = y;
-                yMap[y] = x;
-                Map[x][y] = 1;
-            }
-        }
-        printf("Board %lld have %lld important blanks for %lld chessmen.\n", T, Answer1, Answer2);
-    }
-    return 0;
+
+	int m;
+
+	int c = 0;
+
+	while (~scanf("%d%d%d", &n, &m, &k))
+
+	{
+
+		c++;
+
+		init();
+
+		for (int i = 0; i < k; i++)
+
+		{
+
+			int x, y;
+
+			scanf("%d%d", &x, &y);
+
+			add(x, y + n);
+		}
+
+		int sum = solve();
+
+		int ans = 0;
+
+		for (int i = 0; i < k; i++)
+
+		{
+
+			edge[i << 1 | 1].in = false;
+
+			edge[i << 1].in = false;
+
+			int tm = solve();
+
+			if (tm != sum)
+				ans++;
+
+			edge[i << 1 | 1].in = true;
+
+			edge[i << 1].in = true;
+		}
+
+		printf("Board %d have %d important blanks for %d chessmen.\n", c, ans, sum);
+	}
+
+	return 0;
 }

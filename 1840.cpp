@@ -1,51 +1,107 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <algorithm>
+
+#include <cstdio>
+
+#include <cstring>
+
+#include <queue>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1000005;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-ll n, a[10], Answer, Distance[N];
-bool Visited[N];
-queue<ll> Queue;
-void Dijkstra()
+
+#define N 1000005
+
+unsigned long long n, x[10], ans;
+
+void read(unsigned long long &x)
 {
-    fill(Distance, Distance + N, INF);
-    Queue.push(0);
-    Visited[0] = true;
-    Distance[0] = 0;
-    while (!Queue.empty())
-    {
-        ll u = Queue.front();
-        Queue.pop();
-        Visited[u] = 0;
-        for (ll i = 2; i <= n; i++)
-        {
-            ll v = (u + a[i] % a[1]) % a[1];
-            if (Distance[v] > Distance[u] + a[i])
-            {
-                Distance[v] = Distance[u] + a[i];
-                if (!Visited[v])
-                {
-                    Visited[v] = 1;
-                    Queue.push(v);
-                }
-            }
-        }
-    }
+
+	char ch;
+	x = 0;
+
+	while (ch = getchar(), ch < '0' || ch > '9')
+		;
+	x = ch - 48;
+
+	while (ch = getchar(), ch >= '0' && ch <= '9')
+		x = 10 * x + ch - 48;
 }
+
+queue<unsigned long long> q;
+
+unsigned long long dis[N];
+
+bool vis[N];
+
+inline void spfa()
+{
+
+	memset(dis, 0x6f, sizeof(dis));
+
+	q.push(0);
+
+	dis[0] = 0;
+
+	while (!q.empty())
+	{
+
+		unsigned long long u = q.front();
+
+		q.pop();
+
+		vis[u] = 0;
+
+		for (unsigned long long i = 2; i <= n; ++i)
+		{
+
+			unsigned long long v = (u + x[i] % x[1]) % x[1];
+
+			if (dis[v] > dis[u] + x[i])
+			{
+
+				dis[v] = dis[u] + x[i];
+
+				if (!vis[v])
+				{
+
+					vis[v] = 1;
+
+					q.push(v);
+				}
+			}
+		}
+	}
+}
+
+// qp = q.push (doge
+
 int main()
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    if (n == 2)
-    {
-        printf("%lld\n", a[1] * a[2] - a[1] - a[2]);
-        return 0;
-    }
-    Dijkstra();
-    Answer = -1;
-    for (ll i = 1; i < a[1]; i++)
-        Answer = max(Answer, Distance[i]);
-    printf("%lld\n", Answer - a[1]);
-    return 0;
+
+	read(n);
+
+	for (unsigned long long i = 1; i <= n; ++i)
+
+		read(x[i]);
+
+	if (n == 2)
+
+		printf("%lld", x[1] * x[2] - x[1] - x[2]);
+
+	else
+	{
+
+		spfa();
+
+		for (unsigned long long i = 1; i < x[1]; ++i)
+
+			ans = max(ans, dis[i]);
+
+		printf("%lld", ans - x[1]);
+	}
+
+	return 0;
 }
+
+// 我猜有人会以为这是一道数学题（但是那n=2的肯定是数学题）

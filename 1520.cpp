@@ -1,20 +1,47 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-long long v, tw, n, c[200] = {0}, w[200] = {0}, t[200] = {0}, dp[2000][2000] = {{0}};
 
-int main() {
-    cin >> v >> tw >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> c[i] >> w[i] >> t[i];
-    }
-    for (int i = 1; i <= n; ++i) {
-        for (int j = v; j >= c[i]; --j) {
-            for (int k = tw; k >= w[i]; --k) {
-                dp[j][k] = max(dp[j][k], dp[j - c[i]][k - w[i]] + t[i]);
-            }
-        }
-    }
-    cout << dp[v][tw] << endl;
-    return 0;
+int n, v, u /*承重*/;
+
+const int N = 110, V = 1010, U = 1010;
+
+int c[N] /*体积*/, d[N] /*重量*/, w[N] /*价值*/;
+
+int f[V][U];
+
+void zeroOnePack(int f[V][U], int c, int d, int w)
+{
+
+	for (int i = v; i >= c; i--)
+	{
+
+		for (int j = u; j >= d; j--)
+		{
+
+			f[i][j] = max(f[i][j], f[i - c][j - d] + w);
+		}
+	}
+}
+
+int main()
+{
+
+	cin >> v >> u >> n;
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		cin >> c[i] >> d[i] >> w[i];
+	}
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		zeroOnePack(f, c[i], d[i], w[i]);
+	}
+
+	cout << f[v][u];
+
+	return 0;
 }

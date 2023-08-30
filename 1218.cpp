@@ -1,76 +1,113 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-const ll N = 25;
-ll Visited[N], lev[N], d[N], c[N][N], Target[N][N], Answer = INF, Temp, CurrentAnswer, Count, n, m, p;
-void DFS(ll Number, ll Node)
+
+const int Max = 5000;
+
+const int inf = 1e9;
+
+int n, m, ans = 1e9, tot;
+
+int dis[20][20], f[20][Max];
+
+int p[Max], num[Max], pos[Max], sum[Max], condition[Max];
+
+inline int get_int()
+
 {
-    for (ll i = Number; i <= Count; i++)
-    {
-        if (CurrentAnswer + Temp * lev[Visited[i]] >= Answer)
-            return;
-        for (ll j = Node; j <= d[Visited[i]]; j++)
-            if (!lev[Target[Visited[i]][j]])
-            {
-                Count++;
-                Visited[Count] = Target[Visited[i]][j];
-                Temp -= c[Visited[Count]][Target[Visited[Count]][1]];
-                CurrentAnswer += c[Visited[i]][Visited[Count]] * lev[Visited[i]];
-                lev[Visited[Count]] = lev[Visited[i]] + 1;
-                DFS(i, j + 1);
-                CurrentAnswer -= c[Visited[i]][Visited[Count]] * lev[Visited[i]];
-                lev[Visited[Count]] = 0;
-                Temp += c[Visited[Count]][Target[Visited[Count]][1]];
-                Count--;
-            }
-        Node = 1;
-    }
-    if (Count == n)
-    {
-        if (CurrentAnswer < Answer)
-            Answer = CurrentAnswer;
-        return;
-    }
+
+	int x = 0, f = 1;
+
+	char c;
+
+	for (c = getchar(); (!isdigit(c)) && (c != '-'); c = getchar())
+		;
+
+	if (c == '-')
+	{
+		f = -1;
+		c = getchar();
+	}
+
+	for (; isdigit(c); c = getchar())
+		x = (x << 3) + (x << 1) + c - '0';
+
+	return x * f;
 }
+
+inline int mn(int x, int y) { return x < y ? x : y; }
+
 int main()
+
 {
-    ll u, v, w;
-    scanf("%lld%lld", &n, &m);
-    fill(c[0], c[0] + N * N, INF);
-    for (ll i = 1; i <= m; i++)
-    {
-        scanf("%lld%lld%lld", &u, &v, &w);
-        if (c[u][v] < w)
-            continue;
-        if (c[u][v] == INF)
-        {
-            Target[u][++d[u]] = v;
-            Target[v][++d[v]] = u;
-        }
-        c[u][v] = c[v][u] = w;
-    }
-    for (ll i = 1; i <= n; i++)
-    {
-        p = i;
-        sort(Target[i] + 1, Target[i] + 1 + d[i],
-             [](ll a, ll b)
-             {
-                 return c[p][a] < c[p][b];
-             });
-        Temp += c[i][Target[i][1]];
-    }
-    for (ll i = 1; i <= n; i++)
-    {
-        CurrentAnswer = 0;
-        Count = 1;
-        Visited[1] = i;
-        Temp -= c[i][Target[i][1]];
-        lev[i] = 1;
-        DFS(1, 1);
-        lev[i] = 0;
-        Temp += c[i][Target[i][1]];
-    }
-    printf("%lld\n", Answer);
-    return 0;
+
+	n = get_int(), m = get_int();
+
+	memset(f, 0x3f, sizeof(f));
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			dis[i][j] = 10000000;
+
+	for (int i = 1; i <= m; i++)
+
+	{
+
+		int x = get_int() - 1, y = get_int() - 1, z = get_int();
+
+		dis[x][y] = dis[y][x] = mn(z, dis[x][y]);
+	}
+
+	for (int i = 0; i < n; i++)
+		pos[1 << i] = i, f[0][1 << i] = 0;
+
+	for (int i = 0; i < n; i++)
+
+		for (int j = 0; j < (1 << n); j++)
+
+		{
+
+			tot = 0;
+
+			for (int to = 0; to < n; to++)
+
+			{
+
+				if ((1 << to) & j)
+					continue;
+
+				p[tot] = 1 << to;
+
+				num[tot] = 10000000;
+
+				for (int k = j; k; k -= k & (-k))
+
+				{
+
+					int from = pos[k & (-k)];
+
+					num[tot] = mn(num[tot], dis[from][to] * (i + 1));
+				}
+
+				tot++;
+			}
+
+			for (int k = 1; k < (1 << tot); k++)
+
+			{
+
+				condition[k] = condition[k - (k & (-k))] | p[pos[k & (-k)]];
+
+				sum[k] = sum[k - (k & (-k))] + num[pos[k & (-k)]];
+
+				f[i + 1][j | condition[k]] = mn(f[i + 1][j | condition[k]], f[i][j] + sum[k]);
+			}
+		}
+
+	for (int i = 0; i <= n; i++)
+		ans = mn(ans, f[i][(1 << n) - 1]);
+
+	cout << ans << "\n";
+
+	return 0;
 }

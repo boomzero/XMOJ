@@ -1,84 +1,192 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+
+#define ll long long
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, q, init_val[N], val[N << 2], lazy_tag[N << 2];
-void push_up(ll rt)
+
+struct TREE
 {
-    val[rt] = val[rt * 2] + val[rt * 2 + 1];
-}
-void push_down(ll rt, ll l, ll r)
+
+	int l, r;
+
+	ll sum, lazy;
+
+} tree[400005];
+
+int n, m, b, c, d, a[100005];
+
+inline int read()
+
 {
-    ll mid = (l + r) / 2;
-    lazy_tag[rt * 2] = lazy_tag[rt * 2] + lazy_tag[rt];
-    val[rt * 2] = val[rt * 2] + lazy_tag[rt] * (mid - l + 1);
-    lazy_tag[rt * 2 + 1] = lazy_tag[rt * 2 + 1] + lazy_tag[rt];
-    val[rt * 2 + 1] = val[rt * 2 + 1] + lazy_tag[rt] * (r - mid);
-    lazy_tag[rt] = 0;
+
+	ll f = 1, x = 0;
+
+	char ch = getchar();
+
+	if (ch == '-')
+
+	{
+
+		f = -1;
+
+		ch = getchar();
+	}
+
+	while ((ch < '0') || (ch > '9'))
+		ch = getchar();
+
+	while ((ch >= '0') && (ch <= '9'))
+
+	{
+
+		x = x * 10 + ch - 48;
+
+		ch = getchar();
+	}
+
+	return f * x;
 }
-void build(ll rt, ll l, ll r)
+
+inline void build(int root, int l, int r)
+
 {
-    lazy_tag[rt] = 0;
-    if (l == r)
-    {
-        val[rt] = init_val[l];
-        return;
-    }
-    ll mid = (l + r) / 2;
-    build(rt * 2, l, mid);
-    build(rt * 2 + 1, mid + 1, r);
-    push_up(rt);
+
+	tree[root].l = l;
+
+	tree[root].r = r;
+
+	if (l == r)
+
+	{
+
+		tree[root].sum = a[l];
+
+		return;
+	}
+
+	int mid = (l + r) / 2;
+
+	build(root * 2, l, mid);
+
+	build(root * 2 + 1, mid + 1, r);
+
+	tree[root].sum = tree[root * 2].sum + tree[root * 2 + 1].sum;
 }
-void update(ll nl, ll nr, ll l, ll r, ll rt, ll k)
+
+inline void js(int root, int l, int r, int d)
+
 {
-    if (nl <= l && r <= nr)
-    {
-        val[rt] += k * (r - l + 1);
-        lazy_tag[rt] += k;
-        return;
-    }
-    push_down(rt, l, r);
-    ll mid = (l + r) >> 1;
-    if (nl <= mid)
-        update(nl, nr, l, mid, rt * 2, k);
-    if (nr > mid)
-        update(nl, nr, mid + 1, r, rt * 2 + 1, k);
-    push_up(rt);
+
+	tree[root].lazy += d;
+
+	tree[root].sum += d * (r - l + 1);
 }
-ll query(ll qx, ll qy, ll l, ll r, ll rt)
+
+inline void push_down(int root, int l, int r)
+
 {
-    if (qx <= l && r <= qy)
-        return val[rt];
-    ll mid = (l + r) / 2;
-    push_down(rt, l, r);
-    ll res = 0;
-    if (qx <= mid)
-        res += query(qx, qy, l, mid, rt * 2);
-    if (qy > mid)
-        res += query(qx, qy, mid + 1, r, rt * 2 + 1);
-    return res;
+
+	int mid = (l + r) / 2;
+
+	js(root * 2, l, mid, tree[root].lazy);
+
+	js(root * 2 + 1, mid + 1, r, tree[root].lazy);
+
+	tree[root].lazy = 0;
 }
+
+inline void change(int root, int l, int r)
+
+{
+
+	int nl = tree[root].l, nr = tree[root].r;
+
+	int mid = (nl + nr) / 2;
+
+	if ((l <= nl) && (nr <= r))
+
+	{
+
+		tree[root].sum += d * (nr - nl + 1);
+
+		tree[root].lazy += d;
+
+		return;
+	}
+
+	push_down(root, nl, nr);
+
+	if (l <= mid)
+		change(root * 2, l, r);
+
+	if (r > mid)
+		change(root * 2 + 1, l, r);
+
+	tree[root].sum = tree[root * 2].sum + tree[root * 2 + 1].sum;
+}
+
+inline ll find(int root, int l, int r)
+
+{
+
+	int nl = tree[root].l, nr = tree[root].r;
+
+	int mid = (nl + nr) / 2;
+
+	ll s = 0;
+
+	if ((l <= nl) && (nr <= r))
+		return tree[root].sum;
+
+	push_down(root, nl, nr);
+
+	if (l <= mid)
+		s += find(root * 2, l, r);
+
+	if (r > mid)
+		s += find(root * 2 + 1, l, r);
+
+	return s;
+}
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &init_val[i]);
-    scanf("%lld", &q);
-    build(1, 1, n);
-    while (q-- > 0)
-    {
-        ll op, a, b, x;
-        scanf("%lld", &op);
-        if (op == 1)
-        {
-            scanf("%lld%lld%lld", &a, &b, &x);
-            update(a, b, 1, n, 1, x);
-        }
-        else
-        {
-            scanf("%lld", &a);
-            printf("%lld\n", query(a, a, 1, n, 1));
-        }
-    }
-    return 0;
+
+	n = read();
+
+	for (int i = 1; i <= n; i++)
+		a[i] = read();
+
+	build(1, 1, n);
+
+	m = read();
+
+	for (int i = 1; i <= m; i++)
+
+	{
+
+		int x;
+
+		x = read();
+
+		if (x == 1)
+
+		{
+
+			b = read(), c = read(), d = read();
+
+			change(1, b, c);
+		}
+		else
+
+		{
+
+			b = read();
+
+			printf("%lld\n", find(1, b, b));
+		}
+	}
+
+	return 0;
 }

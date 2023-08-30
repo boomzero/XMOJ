@@ -1,47 +1,75 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstdio>
+
 using namespace std;
-typedef long long ll;
-const ll N = 105;
-struct EDGE
+
+struct Tree
 {
-    ll to, Next;
-} Edges[N * 2];
-ll n, m, EdgeCount, b[N][N], f[N][N], Head[N];
-bool Visited[N];
-void AddEdge(ll u, ll v)
+
+	int to, next;
+
+} a[220];
+
+int n, m, x, y, z, t, p[200], b[220][220], f[220][220], head[220];
+
+inline void dp(int d)
 {
-    EdgeCount++;
-    Edges[EdgeCount].to = v;
-    Edges[EdgeCount].Next = Head[u];
-    Head[u] = EdgeCount;
+
+	p[d] = 1;
+
+	for (int i = head[d]; i; i = a[i].next)
+
+	{
+
+		if (p[a[i].to] == 1)
+
+			continue;
+
+		dp(a[i].to);
+
+		for (int j = m; j > 0; j--)
+
+			for (int k = j - 1; k >= 0; k--)
+
+				f[d][j] = max(f[d][j], f[a[i].to][k] + f[d][j - k - 1] + b[d][a[i].to]);
+	}
 }
-void F(ll u)
+
+inline void add(int x, int y)
+
 {
-    Visited[u] = true;
-    for (ll i = Head[u]; i; i = Edges[i].Next)
-    {
-        ll v = Edges[i].to;
-        if (Visited[v])
-            continue;
-        F(v);
-        for (ll j = m; j > 0; j--)
-            for (ll k = j - 1; k >= 0; k--)
-                f[u][j] = max(f[u][j],
-                              f[v][k] + f[u][j - k - 1] + b[u][v]);
-    }
+
+	a[++t].to = y;
+
+	a[t].next = head[x];
+
+	head[x] = t;
 }
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i < n; i++)
-    {
-        ll x, y, z;
-        scanf("%lld%lld%lld", &x, &y, &z);
-        b[x][y] = b[y][x] = z;
-        AddEdge(x, y);
-        AddEdge(y, x);
-    }
-    F(1);
-    printf("%lld\n", f[1][m]);
-    return 0;
+
+	cin.tie(0), cout.tie(0);
+
+	scanf("%d%d", &n, &m);
+
+	for (int i = 1; i < n; i++)
+
+	{
+
+		scanf("%d%d%d", &x, &y, &z);
+
+		b[x][y] = b[y][x] = z;
+
+		add(x, y);
+
+		add(y, x);
+	}
+
+	dp(1);
+
+	cout << f[1][m];
+
+	return 0;
 }

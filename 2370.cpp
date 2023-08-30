@@ -1,64 +1,78 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <vector>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1505;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-struct EDGE
+
+vector<int> son[1510];
+
+int cost[1510], f[1510][10], tree[1510];
+
+inline void dp(int x)
 {
-    ll to, Next;
-} Edges[2 * N];
-ll EdgeCount, n, k[N], Head[N], f[N][3];
-bool Visit[N];
-void add(ll x, ll y)
-{
-    Edges[++EdgeCount].to = y;
-    Edges[EdgeCount].Next = Head[x];
-    Head[x] = EdgeCount;
+
+	f[x][2] = cost[x];
+
+	int res = 0x3f3f3f3f;
+
+	for (int i = 0; i < (int)son[x].size(); i++)
+	{
+
+		int y = son[x][i];
+
+		dp(y);
+
+		f[x][0] += min(f[y][1], f[y][2]);
+
+		f[x][1] += min(f[y][1], f[y][2]);
+
+		f[x][2] += min(f[y][0], min(f[y][1], f[y][2]));
+
+		res = min(res, f[y][2] - min(f[y][1], f[y][2]));
+	}
+
+	f[x][1] += res;
+
+	if (f[x][1] == 0)
+		f[x][1] = 0x3f3f3f3f;
 }
-void F(ll u)
-{
-    for (ll i = Head[u]; i; i = Edges[i].Next)
-    {
-        F(Edges[i].to);
-        f[u][2] += f[Edges[i].to][1];
-        f[u][0] += min(f[Edges[i].to][0], min(f[Edges[i].to][1], f[Edges[i].to][2]));
-    }
-    f[u][0] += k[u];
-    ll Temp[N] = {0};
-    memset(Temp, 0, sizeof(Temp));
-    ll Temp2 = 0;
-    for (ll i = Head[u]; i; i = Edges[i].Next)
-    {
-        Temp[Edges[i].to] = min(f[Edges[i].to][0], f[Edges[i].to][1]);
-        Temp2 += Temp[Edges[i].to];
-    }
-    f[u][1] = INF;
-    for (ll i = Head[u]; i; i = Edges[i].Next)
-        if (Temp2 - Temp[Edges[i].to] + f[Edges[i].to][0] < f[u][1])
-            f[u][1] = Temp2 - Temp[Edges[i].to] + f[Edges[i].to][0];
-}
+
 int main()
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-    {
-        ll x, m;
-        scanf("%lld", &x);
-        scanf("%lld%lld", &k[x], &m);
-        for (ll j = 1; j <= m; j++)
-        {
-            ll y;
-            scanf("%lld", &y);
-            add(x, y);
-            Visit[y] = true;
-        }
-    }
-    for (ll i = 1; i <= n; i++)
-        if (!Visit[i])
-        {
-            F(i);
-            printf("%lld\n", min(f[i][0], f[i][1]));
-            break;
-        }
-    return 0;
+
+	int n;
+
+	scanf("%d", &n);
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		int x, m, y;
+
+		scanf("%d", &x);
+
+		scanf("%d%d", &cost[x], &m);
+
+		while (m--)
+		{
+
+			scanf("%d", &y);
+
+			son[x].push_back(y);
+
+			tree[y] = 1;
+		}
+	}
+
+	int root = 1;
+
+	while (tree[root] == 1)
+
+		root++;
+
+	dp(root);
+
+	printf("%d", min(f[root][1], f[root][2]));
+
+	return 0;
 }

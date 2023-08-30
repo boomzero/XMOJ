@@ -1,9 +1,7 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 int l, n, m;
 int d[50005] = {0};
-
 bool check(int x) {
     int i = 0, t = 0, fl = 1;
     while (i <= n) {
@@ -18,7 +16,6 @@ bool check(int x) {
     }
     return t <= m;
 }
-
 int main() {
     cin >> l >> n >> m;
     for (int i = 1; i <= n; ++i) {

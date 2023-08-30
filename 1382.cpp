@@ -1,60 +1,117 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const int N = 50005;
-ll T, n, c[N];
-int LowBit(int x)
+
+int n;
+
+int t, a[50010], c[50010];
+
+char s[10];
+
+int lowbit(int x)
 {
-    return x & (-x);
+
+	return x & (-x);
 }
-void Add(int x, int d)
+
+void add(int x, int d)
 {
-    while (x <= n)
-    {
-        c[x] += d;
-        x += LowBit(x);
-    }
+
+	while (x <= n)
+	{
+
+		c[x] += d;
+
+		x += lowbit(x);
+	}
 }
-int Sum(int x)
+
+void del(int x, int d)
 {
-    int v = 0;
-    while (x > 0)
-    {
-        v += c[x];
-        x -= LowBit(x);
-    }
-    return v;
+
+	while (x <= n)
+	{
+
+		c[x] -= d;
+
+		x -= lowbit(x);
+	}
 }
+
+int sum(int x)
+{
+
+	int v = 0;
+
+	while (x > 0)
+	{
+
+		v += c[x];
+
+		x -= lowbit(x);
+	}
+
+	return v;
+}
+
 int main()
 {
-    scanf("%lld", &T);
-    for (ll t = 1; t <= T; t++)
-    {
-        printf("Case %lld:\n", t);
-        memset(c, 0, sizeof(c));
-        scanf("%lld", &n);
-        for (int i = 1; i <= n; i++)
-        {
-            ll a = 0;
-            scanf("%lld", &a);
-            Add(i, a);
-        }
-        char Operation[6];
-        memset(Operation, 0, sizeof(char) * 6);
-        while (1)
-        {
-            int i = 0, j = 0;
-            scanf("%s", Operation);
-            if (strcmp(Operation, "End") == 0)
-                break;
-            scanf("%d%d", &i, &j);
-            if (strcmp(Operation, "Add") == 0)
-                Add(i, j);
-            else if (strcmp(Operation, "Sub") == 0)
-                Add(i, -j);
-            else if (strcmp(Operation, "Query") == 0)
-                printf("%d\n", Sum(j) - Sum(i - 1));
-        }
-    }
-    return 0;
+
+	scanf("%d", &t);
+
+	for (int i = 1; i <= t; i++)
+	{
+
+		printf("Case %d:\n", i);
+
+		scanf("%d", &n);
+
+		for (int i = 1; i <= n; i++)
+		{
+
+			scanf("%d", &a[i]);
+		}
+
+		memset(c, 0, sizeof(c));
+
+		for (int i = 1; i <= n; i++)
+
+			add(i, a[i]);
+
+		scanf("%s", s);
+
+		while (true)
+		{
+
+			if (s[0] == 'E')
+
+				break;
+
+			int i, j;
+
+			scanf("%d%d", &i, &j);
+
+			if (s[0] == 'A')
+			{
+
+				add(i, j);
+			}
+
+			else if (s[0] == 'S')
+			{
+
+				add(i, -j);
+			}
+
+			else
+			{
+
+				printf("%d\n", sum(j) - sum(i - 1));
+			}
+
+			scanf("%s", s);
+		}
+	}
+
+	return 0;
 }

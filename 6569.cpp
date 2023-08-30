@@ -1,67 +1,169 @@
-#include <iostream>
-#include <cstring>
 #include <cstdio>
-#include <algorithm>
-using namespace std;
-const int N = 205;
-const int M = 5;
-bool dp[N][N][M];
-bool CanTransfer[M][M][M];
-int q[M], Length = 0;
-char TransferredString[N];
-int CharToInt(char i)
+
+#include <cstring>
+
+#define MAX 205
+
+int fir[70];
+
+int sec[70];
+
+int equ[70];
+
+bool dp[MAX][MAX][4];
+
+char st[MAX];
+
+int getnum(char a)
 {
-    if (i == 'W')
-        return 1;
-    if (i == 'I')
-        return 2;
-    if (i == 'N')
-        return 3;
-    if (i == 'G')
-        return 4;
+
+	if (a == 'W')
+
+		return 0;
+
+	if (a == 'I')
+
+		return 1;
+
+	if (a == 'N')
+
+		return 2;
+
+	return 3;
 }
+
+int total;
+
 int main()
 {
-    for (int i = 1; i <= 4; i++)
-        scanf("%d", &q[i]);
-    for (int i = 1; i <= 4; i++)
-        for (int j = 1; j <= q[i]; j++)
-        {
-            char Temp[5];
-            scanf("%s", &Temp);
-            CanTransfer[i][CharToInt(Temp[0])][CharToInt(Temp[1])] = true;
-        }
 
-    scanf("%s", TransferredString);
-    Length = strlen(TransferredString);
-    for (int i = 0; i < Length; i++)
-        dp[i][i][CharToInt(TransferredString[i])] = true;
+	char a, b;
 
-    for (int CurrentLength = 1; CurrentLength < Length; CurrentLength++)
-        for (int Left = 0; Left < Length - CurrentLength; Left++)
-        {
-            int Right = Left + CurrentLength;
-            for (int Middle = Left; Middle < Right; Middle++)
-                for (int ChangeFrom = 1; ChangeFrom <= 4; ChangeFrom++)
-                    for (int ChangeTo1 = 1; ChangeTo1 <= 4; ChangeTo1++)
-                        for (int ChangeTo2 = 1; ChangeTo2 <= 4; ChangeTo2++)
-                            if (CanTransfer[ChangeFrom][ChangeTo1][ChangeTo2] &&
-                                dp[Left][Middle][ChangeTo1] &&
-                                dp[Middle + 1][Right][ChangeTo2])
-                                dp[Left][Right][ChangeFrom] = true;
-        }
-    if (dp[0][Length - 1][1])
-        printf("W");
-    if (dp[0][Length - 1][2])
-        printf("I");
-    if (dp[0][Length - 1][3])
-        printf("N");
-    if (dp[0][Length - 1][4])
-        printf("G");
-    if (dp[0][Length - 1][1] == false &&
-        dp[0][Length - 1][2] == false &&
-        dp[0][Length - 1][3] == false &&
-        dp[0][Length - 1][4] == false)
-        printf("The name is wrong!");
-    return 0;
+	int numW, numI, numN, numG;
+
+	scanf("%d%d%d%d", &numW, &numI, &numN, &numG);
+
+	for (int i = 0; i < numW; i++)
+	{
+
+		scanf(" %c %c", &a, &b);
+
+		fir[total] = getnum(a);
+
+		sec[total] = getnum(b);
+
+		equ[total] = 0;
+
+		total++;
+	}
+
+	for (int i = 0; i < numI; i++)
+	{
+
+		scanf(" %c %c", &a, &b);
+
+		fir[total] = getnum(a);
+
+		sec[total] = getnum(b);
+
+		equ[total] = 1;
+
+		total++;
+	}
+
+	for (int i = 0; i < numN; i++)
+	{
+
+		scanf(" %c %c", &a, &b);
+
+		fir[total] = getnum(a);
+
+		sec[total] = getnum(b);
+
+		equ[total] = 2;
+
+		total++;
+	}
+
+	for (int i = 0; i < numG; i++)
+	{
+
+		scanf(" %c %c", &a, &b);
+
+		fir[total] = getnum(a);
+
+		sec[total] = getnum(b);
+
+		equ[total] = 3;
+
+		total++;
+	}
+
+	scanf("%s", st);
+
+	for (int i = 0; i < strlen(st); i++)
+	{
+
+		dp[i][i][getnum(st[i])] = 1;
+	}
+
+	for (int len = 1; len < strlen(st); len++)
+	{
+
+		for (int i = 0; i + len < strlen(st); i++)
+		{
+
+			int j = i + len;
+
+			for (int k = i; k <= j; k++)
+			{
+
+				for (int l = 0; l < total; l++)
+				{
+
+					dp[i][j][equ[l]] |= dp[i][k][fir[l]] && dp[k + 1][j][sec[l]];
+				}
+			}
+		}
+	}
+
+	bool f = 1;
+
+	if (dp[0][strlen(st) - 1][0])
+	{
+
+		f = 0;
+
+		printf("W");
+	}
+
+	if (dp[0][strlen(st) - 1][1])
+	{
+
+		f = 0;
+
+		printf("I");
+	}
+
+	if (dp[0][strlen(st) - 1][2])
+	{
+
+		f = 0;
+
+		printf("N");
+	}
+
+	if (dp[0][strlen(st) - 1][3])
+	{
+
+		f = 0;
+
+		printf("G");
+	}
+
+	if (f)
+	{
+
+		printf("The name is wrong!");
+	}
 }

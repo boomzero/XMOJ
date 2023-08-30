@@ -1,66 +1,108 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 200005;
-struct
+
+#define ll long long
+
+#define lson x << 1
+
+#define rson x << 1 | 1
+
+#define rson x << 1 | 1
+
+const int MAXN = 2e5 + 10;
+
+int n, tot, X[MAXN];
+
+ll ans;
+
+struct L
 {
-    ll l, r, h;
-    ll d;
-} line[N];
-ll n, cnt[N << 2], len[N << 2], X[N];
-void push_up(ll l, ll r, ll rt)
+
+	int l, r, h, mark;
+
+	bool operator<(const L &x) const
+	{
+
+		return h < x.h;
+	}
+
+} line[MAXN];
+
+int sum[MAXN << 2], len[MAXN << 2];
+
+void pushup(int x, int l, int r)
 {
-    if (cnt[rt])
-        len[rt] = X[r + 1] - X[l];
-    else if (l == r)
-        len[rt] = 0;
-    else
-        len[rt] = len[rt << 1] + len[rt << 1 | 1];
+
+	if (sum[x])
+		len[x] = X[r + 1] - X[l];
+
+	else if (l == r)
+		len[x] = 0;
+
+	else
+		len[x] = len[x << 1] + len[x << 1 | 1];
 }
-void update(ll L, ll R, ll v, ll l, ll r, ll rt)
+
+void update(int x, int l, int r, int L, int R, int c)
 {
-    if (L <= l && r <= R)
-    {
-        cnt[rt] += v;
-        push_up(l, r, rt);
-        return;
-    }
-    ll mid = l + r >> 1;
-    if (L <= mid)
-        update(L, R, v, l, mid, rt << 1);
-    if (R > mid)
-        update(L, R, v, mid + 1, r, rt << 1 | 1);
-    push_up(l, r, rt);
+
+	if (X[r + 1] <= L || R <= X[l])
+		return;
+
+	if (L <= X[l] && X[r + 1] <= R)
+	{
+
+		sum[x] += c;
+
+		pushup(x, l, r);
+
+		return;
+	}
+
+	int mid = (l + r) >> 1;
+
+	update(lson, l, mid, L, R, c);
+
+	update(rson, mid + 1, r, L, R, c);
+
+	pushup(x, l, r);
 }
+
 int main()
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; ++i)
-    {
-        double x1, y1, x2, y2;
-        scanf("%lf%lf%lf%lf", &x1, &y1, &x2, &y2);
-        line[i] = {x1, x2, y1, 1};
-        line[i + n] = {x1, x2, y2, -1};
-        X[i] = x1;
-        X[i + n] = x2;
-    }
-    n <<= 1;
-    sort(line + 1, line + 1 + n,
-         [](const auto &line, const auto &b)
-         {
-             return line.h < b.h;
-         });
-    sort(X + 1, X + 1 + n);
-    ll mid = unique(X + 1, X + 1 + n) - X - 1;
-    ll ans = 0;
-    for (ll i = 1; i < n; ++i)
-    {
-        ll l = lower_bound(X + 1, X + 1 + mid, line[i].l) - X;
-        ll r = lower_bound(X + 1, X + 1 + mid, line[i].r) - X;
-        if (l < r)
-            update(l, r - 1, line[i].d, 1, mid, 1);
-        ans += 1ll * len[1] * (line[i + 1].h - line[i].h);
-    }
-    printf("%lld\n", ans);
-    return 0;
+
+	scanf("%d", &n);
+
+	for (int i = 1, x1, y1, x2, y2; i <= n; i++)
+	{
+
+		scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+
+		X[2 * i - 1] = x1, X[2 * i] = x2;
+
+		line[2 * i - 1] = (L){x1, x2, y1, 1};
+
+		line[2 * i] = (L){x1, x2, y2, -1};
+	}
+
+	n <<= 1;
+
+	sort(line + 1, line + n + 1);
+
+	sort(X + 1, X + n + 1);
+
+	tot = unique(X + 1, X + n + 1) - X - 1;
+
+	for (int i = 1; i < n; i++)
+	{
+
+		update(1, 1, tot - 1, line[i].l, line[i].r, line[i].mark);
+
+		ans += (ll)1 * len[1] * (line[i + 1].h - line[i].h);
+	}
+
+	printf("%lld", ans);
+
+	return 0;
 }

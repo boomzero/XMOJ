@@ -2,11 +2,20 @@
 
 using namespace std;
 
-int main() {
-    int n;
-    cin >> n;
-    int a;
-    cin >> a;
-    cout << n * n - a << endl;
-    return 0;
+int n, a;
+
+int main()
+{
+
+	ios::sync_with_stdio(false);
+
+	cin.tie(0);
+
+	cout.tie(0);
+
+	scanf("%d%d", &n, &a);
+
+	long long ans = n * n - a;
+
+	printf("%lld", ans);
 }

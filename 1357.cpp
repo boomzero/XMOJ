@@ -1,76 +1,133 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 200005;
-ll n, q, val[N << 2], lazy_tag[N << 2];
-void push_up(ll rt)
+
+const int INF = 0x3f3f3f3f;
+
+const int MAXN = 100010 /*数字表示数字的最大值*/;
+
+int n, q, val[MAXN << 2] /*结果存储*/, lazy[MAXN << 2], init_val[MAXN] /*init_val是最初的数值*/;
+
+void push_up(int rt)
 {
-    val[rt] = val[rt * 2] + val[rt * 2 + 1];
+
+	val[rt] = val[rt * 2] + val[rt * 2 + 1]; // 求和
 }
-void push_down(ll rt, ll l, ll r)
+
+void push_down(int rt, int l, int r)
 {
-    if (lazy_tag[rt] != -1)
-    {
-        ll mid = (l + r) / 2;
-        lazy_tag[rt * 2] = lazy_tag[rt];
-        val[rt * 2] = lazy_tag[rt] * (mid - l + 1);
-        lazy_tag[rt * 2 + 1] = lazy_tag[rt];
-        val[rt * 2 + 1] = lazy_tag[rt] * (r - mid);
-        lazy_tag[rt] = -1;
-    }
+
+	if (lazy[rt] != -1)
+	{
+
+		lazy[rt * 2] = lazy[rt];
+
+		lazy[rt * 2 + 1] = lazy[rt];
+
+		val[rt * 2] = lazy[rt] * ((l + r) / 2 - l + 1); // val[rt*2]+=lazy[rt]*((l+r)/2-l+1);
+
+		val[rt * 2 + 1] = lazy[rt] * (r - (l + r) / 2); // val[rt*2+1]+=lazy[rt]*（r-(l+r)/2);
+
+		//		cout<<lazy[rt]<<" "<<l<<" "<<r<<endl;
+
+		lazy[rt] = -1;
+	}
 }
-void build(ll rt, ll l, ll r)
+
+void build(int rt, int l, int r)
+{ /*l，r分别表示管理的左端点和右端点*/
+
+	/*全局调用build(1,1,n)*/
+
+	if (l == r)
+		val[rt] = 1;
+
+	else
+	{
+
+		int mid = (l + r) / 2;
+
+		build(rt * 2, l, mid);
+
+		build(rt * 2 + 1, mid + 1, r);
+
+		push_up(rt);
+	}
+
+} // 构建
+
+int query(int rt, int l, int r, int ql, int qr)
 {
-    lazy_tag[rt] = -1;
-    if (l == r)
-    {
-        val[rt] = 1;
-        return;
-    }
-    ll mid = (l + r) / 2;
-    build(rt * 2, l, mid);
-    build(rt * 2 + 1, mid + 1, r);
-    push_up(rt);
-}
-void update(ll nl, ll nr, ll l, ll r, ll rt, ll k)
+
+	if (ql > r || qr < l)
+		return 0; // 求和返回0
+
+	if (ql <= l && qr >= r)
+		return val[rt];
+
+	push_down(rt, l, r);
+
+	int mid = (l + r) / 2;
+
+	return query(rt * 2, l, mid, ql, qr) + query(rt * 2 + 1, mid + 1, r, ql, qr); // 求和
+
+} // 调用求答案（自行更改return内容）
+
+void update(int rt, int l, int r, int ul, int ur, int c)
 {
-    if (nl <= l && r <= nr)
-    {
-        val[rt] = k * (r - l + 1);
-        lazy_tag[rt] = k;
-        return;
-    }
-    push_down(rt, l, r);
-    ll mid = (l + r) >> 1;
-    if (nl <= mid)
-        update(nl, nr, l, mid, rt * 2, k);
-    if (nr > mid)
-        update(nl, nr, mid + 1, r, rt * 2 + 1, k);
-    push_up(rt);
-}
-ll query(ll qx, ll qy, ll l, ll r, ll rt)
-{
-    if (qx <= l && r <= qy)
-        return val[rt];
-    ll mid = (l + r) / 2;
-    push_down(rt, l, r);
-    ll res = 0;
-    if (qx <= mid)
-        res += query(qx, qy, l, mid, rt * 2);
-    if (qy > mid)
-        res += query(qx, qy, mid + 1, r, rt * 2 + 1);
-    return res;
-}
+
+	if (ul > r || ur < l)
+		return;
+
+	if (ul <= l && ur >= r)
+	{
+
+		val[rt] = c * (r - l + 1); // val[rt]+=add*(r-l+1)//求和
+
+		lazy[rt] = c;
+
+		return;
+	}
+
+	push_down(rt, l, r);
+
+	int mid = (l + r) / 2;
+
+	update(rt * 2, l, mid, ul, ur, c);
+
+	update(rt * 2 + 1, mid + 1, r, ul, ur, c);
+
+	push_up(rt);
+
+} // 区间更新
+
 int main()
 {
-    scanf("%lld%lld", &n, &q);
-    build(1, 1, n);
-    while (q-- > 0)
-    {
-        ll a, b, c;
-        scanf("%lld%lld%lld", &a, &b, &c);
-        update(a, b, 1, n, 1, (c == 2 ? 0 : 1));
-    }
-    printf("%lld\n", query(1, n, 1, n, 1));
-    return 0;
+
+	//	freopen("test.in","r",stdin);
+
+	//	freopen("test.out","w",stdout);
+
+	memset(lazy, -1, sizeof lazy);
+
+	cin >> n >> q;
+
+	build(1, 1, n);
+
+	while (q--)
+	{
+
+		int a, b, c;
+
+		cin >> a >> b >> c;
+
+		if (c == 2)
+			c = 0;
+
+		update(1, 1, n, a, b, c);
+	}
+
+	cout << query(1, 1, n, 1, n);
+
+	return 0;
 }

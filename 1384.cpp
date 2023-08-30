@@ -1,55 +1,90 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 5005;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-ll T, n, a[2 * N], aCopy[N], Temp[N], Counter;
-void MergeSort(ll *ArrayToSort, ll LeftBound, ll RightBound)
+
+int c[5006], a[5006], n;
+
+int lowbit(int i)
 {
-    if (LeftBound == RightBound)
-        return;
-    ll MiddleBound = (LeftBound + RightBound) / 2;
-    MergeSort(ArrayToSort, LeftBound, MiddleBound);
-    MergeSort(ArrayToSort, MiddleBound + 1, RightBound);
-    ll LeftArrayPointer = LeftBound;
-    ll RightArrayPointer = MiddleBound + 1;
-    ll TempSize = 0;
-    while (LeftArrayPointer <= MiddleBound && RightArrayPointer <= RightBound)
-        if (ArrayToSort[LeftArrayPointer] <= ArrayToSort[RightArrayPointer])
-            Temp[TempSize++] = ArrayToSort[LeftArrayPointer++];
-        else
-        {
-            Temp[TempSize++] = ArrayToSort[RightArrayPointer++];
-            Counter += MiddleBound - LeftArrayPointer + 1;
-        }
-    while (LeftArrayPointer <= MiddleBound)
-        Temp[TempSize++] = ArrayToSort[LeftArrayPointer++];
-    while (RightArrayPointer <= RightBound)
-        Temp[TempSize++] = ArrayToSort[RightArrayPointer++];
-    for (ll i = LeftBound; i <= RightBound; i++)
-        ArrayToSort[i] = Temp[i - LeftBound];
+
+	return i & (-i);
 }
+
+void add(int k, int v)
+{
+
+	while (k <= n)
+
+	{
+
+		c[k] = c[k] + v;
+
+		k = k + lowbit(k);
+	}
+}
+
+int sum(int k)
+{
+
+	int res = 0;
+
+	while (k)
+	{
+
+		res = res + c[k];
+
+		k = k - lowbit(k);
+	}
+
+	return res;
+}
+
 int main()
 {
-    scanf("%lld", &T);
-    while (T--)
-    {
-        scanf("%lld", &n);
-        for (ll i = 0; i < n; i++)
-        {
-            scanf("%lld", &a[i]);
-            a[i + n] = a[i];
-            aCopy[i] = a[i];
-        }
-        Counter = 0;
-        MergeSort(aCopy, 0, n - 1);
-        ll ans = Counter;
-        for (ll i = 1; i < n; i++)
-        {
-            Counter += n - 1 - 2 * a[i - 1];
-            ans = min(ans, Counter);
-        }
-        printf("%lld\n", ans);
-    }
-    return 0;
+
+	int ans, t;
+
+	cin >> t;
+
+	while (t--)
+	{
+
+		cin >> n;
+
+		memset(c, 0, sizeof(c));
+
+		for (int i = 0; i < n; i++)
+
+			scanf("%d", &a[i]);
+
+		int re = 0;
+
+		for (int i = 0; i < n; i++)
+		{
+
+			re = re + sum(n - a[i]);
+
+			add(n - a[i], 1);
+		}
+
+		int tp = re;
+
+		ans = re;
+
+		for (int i = 0; i < n - 1; i++)
+		{
+
+			add(n - a[i], -1);
+
+			tp = tp + sum(n - a[i]) - a[i];
+
+			add(n - a[i], 1);
+
+			ans = min(tp, ans);
+		}
+
+		cout << ans << '\n';
+	}
+
+	return 0;
 }

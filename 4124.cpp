@@ -1,47 +1,47 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
 using namespace std;
-typedef long long ll;
-const ll N = 505;
-const ll M = 55;
-ll n, m, a[N][M], b[N][M];
-const map<char, int> Map = {
-    {'A', 0},
-    {'C', 1},
-    {'G', 2},
-    {'T', 3}};
-unordered_set<ll> Set;
+int n, m, ans;
+char s[55];
+int map[1010][55], tmp[5][5][5];
+int work(char c)
+{
+    if (c == 'A')
+        return 1;
+    if (c == 'T')
+        return 2;
+    if (c == 'G')
+        return 3;
+    if (c == 'C')
+        return 4;
+}
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 0; i < n; i++)
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= 2 * n; i++)
     {
-        char Buffer[M];
-        scanf("%s", Buffer);
-        for (ll j = 0; j < m; j++)
-            a[i][j] = Map.at(Buffer[j]);
+        scanf("%s", s);
+        for (int j = 0; j < m; j++)
+            map[i][j + 1] = work(s[j]);
     }
-    for (ll i = 0; i < n; i++)
-    {
-        char Buffer[M];
-        scanf("%s", Buffer);
-        for (ll j = 0; j < m; j++)
-            b[i][j] = Map.at(Buffer[j]);
-    }
-    ll Answer = 0;
-    for (ll x = 0; x < m; x++)
-        for (ll y = x + 1; y < m; y++)
-            for (ll z = y + 1; z < m; z++)
+    for (int i = 1; i <= m - 2; i++)
+        for (int j = i + 1; j <= m - 1; j++)
+            for (int k = j + 1; k <= m; k++)
             {
-                Set.clear();
-                for (ll i = 0; i < n; i++)
-                    Set.insert(a[i][x] * 16 + a[i][y] * 4 + a[i][z]);
-                bool Flag = true;
-                for (ll i = 0; i < n && Flag; i++)
-                    if (Set.count(b[i][x] * 16 + b[i][y] * 4 + b[i][z]))
-                        Flag = false;
-                if (Flag)
-                    Answer++;
+                bool flag = 0;
+                memset(tmp, 0, sizeof(tmp));
+                for (int l = 1; l <= n; l++)
+                    tmp[map[l][i]][map[l][j]][map[l][k]] = 1;
+                for (int l = n + 1; l <= 2 * n; l++)
+                    if (tmp[map[l][i]][map[l][j]][map[l][k]])
+                    {
+                        flag = 1;
+                        break;
+                    }
+                if (!flag)
+                    ans++;
             }
-    printf("%lld\n", Answer);
-    return 0;
+    cout << ans;
 }

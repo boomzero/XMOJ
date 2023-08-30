@@ -1,28 +1,54 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-ll tLength, sLength, Answer;
-string t, s;
-map<char, ll> tMap, sMap;
+
+int n, m, ans;
+
+char t[3000030], s[3030];
+
+int o[70], vis[70], now[70];
+
+inline int f(char c)
+{
+
+	if (c - 'A' > 25)
+		return c - 'A' - 6;
+
+	return c - 'A';
+}
+
 int main()
 {
-    scanf("%lld%lld", &tLength, &sLength);
-    cin >> t >> s;
-    for (ll i = 0; i < tLength; i++)
-        tMap[t[i]]++;
-    for (ll i = 0; i < tLength; i++)
-        sMap[s[i]]++;
-    for (ll i = tLength; i < sLength; i++)
-    {
-        if (tMap == sMap)
-            Answer++;
-        sMap[s[i]]++;
-        sMap[s[i - tLength]]--;
-        if (sMap[s[i - tLength]] == 0)
-            sMap.erase(s[i - tLength]);
-    }
-    if (tMap == sMap)
-        Answer++;
-    printf("%lld\n", Answer);
-    return 0;
+
+	scanf("%d%d", &n, &m);
+
+	scanf("%s%s", s + 1, t + 1);
+
+	for (int i = 1; i <= n; i++)
+
+		o[f(s[i])]++, now[f(t[i])]++;
+
+	for (int i = n + 1; i <= m + 1; i++)
+	{
+
+		ans++;
+
+		for (int j = 0; j <= 51; j++)
+
+			if (now[j] != o[j])
+			{
+
+				ans--;
+
+				break;
+			}
+
+		if (i != m + 1)
+
+			now[f(t[i])]++, now[f(t[i - n])]--;
+	}
+
+	printf("%d", ans);
+
+	return 0;
 }

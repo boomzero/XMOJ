@@ -1,36 +1,71 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 100005;
-int t, n, Answer, a[N];
-bool Visited[N];
+
+const int N = 1e5 + 10, M = 25100;
+
+int a[N];
+
+bool vis[M];
+
 int main()
 {
+
     freopen("money.in", "r", stdin);
+
     freopen("money.out", "w", stdout);
-    scanf("%d", &t);
-    while (t--)
+
+    int T;
+
+    cin >> T;
+
+    while (T--)
     {
-        Answer = 1;
-        memset(Visited, 0, sizeof(Visited));
-        scanf("%d", &n);
-        for (int i = 1; i <= n; i++)
-            scanf("%d", &a[i]);
-        sort(a + 1, a + 1 + n);
-        for (int i = 1; i * a[1] <= a[n]; i++)
-            Visited[i * a[1]] = 1;
-        for (int i = 2; i <= n; i++)
+
+        memset(vis, false, sizeof(vis));
+
+        int maxn = 0, ans = 0;
+
+        int n;
+
+        cin >> n;
+
+        for (int i = 1; i <= n; ++i)
         {
-            if (Visited[a[i]])
-                continue;
-            Answer++;
-            Visited[a[i]] = 1;
-            for (int j = a[i] + 1; j <= a[n]; j++)
+
+            cin >> a[i];
+
+            maxn = max(maxn, a[i]);
+        }
+
+        sort(a + 1, a + n + 1);
+
+        for (int i = 1; i <= n; ++i)
+        {
+
+            if (vis[a[i]])
             {
-                if (!Visited[j] && Visited[j - a[i]])
-                    Visited[j] = 1;
+
+                continue;
+            }
+
+            vis[a[i]] = true;
+
+            ++ans;
+
+            for (int j = a[i]; j <= maxn; ++j)
+            {
+
+                if (vis[j - a[i]])
+                {
+
+                    vis[j] = true;
+                }
             }
         }
-        printf("%d\n", Answer);
+
+        cout << ans << endl;
     }
+
     return 0;
 }

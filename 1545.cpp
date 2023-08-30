@@ -1,25 +1,49 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int f[1500][1500] = {{0}};
 
-int main() {
-    int l1, l2;
-    string a, b;
-    cin >> a;
-    b = a;
-    reverse(b.begin(), b.end());
-    l1 = a.length(), l2 = b.length();
-    for (int i = 1; i <= l1; ++i) {
-        for (int j = 1; j <= l2; ++j) {
-            if (a[i - 1] == b[j - 1]) {
-                f[i][j] = f[i - 1][j - 1] + 1;
-            } else {
-                f[i][j] = max(f[i][j - 1], f[i - 1][j]);
-            }
-        }
-    }
-    cout << l1 - f[l1][l2] << endl;
-    return 0;
+char s1[1005], s2[1005];
+
+int len, lcs, dp[1005][1005];
+
+int LCS(int i, int j)
+
+{
+
+    if (i < 0 || j < 0)
+        return 0;
+
+    if (dp[i][j] >= 0)
+        return dp[i][j];
+
+    if (s1[i] == s2[j])
+
+        dp[i][j] = LCS(i - 1, j - 1) + 1;
+
+    else
+
+        dp[i][j] = max(LCS(i - 1, j), LCS(i, j - 1));
+
+    return dp[i][j];
 }
 
+int main()
+
+{
+
+    cin >> s1;
+
+    len = strlen(s1);
+
+    for (int i = 0; i < len; ++i)
+
+        s2[i] = s1[len - 1 - i];
+
+    memset(dp, -1, sizeof(dp));
+
+    lcs = LCS(len - 1, len - 1);
+
+    cout << len - lcs;
+
+    return 0;
+}

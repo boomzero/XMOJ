@@ -1,41 +1,56 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int n, m, x, y;
-char grid[1005][1005] = {{0}};
-bool vis[1005][1005] = {{false}};
-int dx[] = {0, 0, 1, -1}, dy[] = {1, -1, 0, 0}, ans = 0;
 
-void dfs(int cx, int cy) {
-    vis[cx][cy] = true;
-    if (!vis[cx - 1][cy]) ans++;
-    else ans--;
-    if (!vis[cx][cy - 1]) ans++;
-    else ans--;
-    if (!vis[cx + 1][cy]) ans++;
-    else ans--;
-    if (!vis[cx][cy + 1] ) ans++;
-    else ans--;
-    for (int i: dx) {
-        for (int j: dy) {
-            if (!vis[cx + i][cy + j] && grid[cx + i][cy + j] == 'X') dfs(cx + i, cy + j);
+int n, m, x, y, a[1010][1010], ans = 0, vis[1010][1010];
+
+void dfs(int x, int y)
+
+{
+
+    for (int x2 = x - 1; x2 <= x + 1; ++x2)
+
+        for (int y2 = y - 1; y2 <= y + 1; ++y2)
+        {
+
+            if (a[x2][y2] == 1 && !vis[x2][y2])
+            {
+
+                vis[x2][y2] = 1;
+
+                dfs(x2, y2);
+            }
+            else if (abs(x2 - x) + abs(y2 - y) == 1 && a[x2][y2] == 0)
+            {
+
+                ++ans;
+            }
         }
-    }
 }
 
-int main() {
-    cin >> n >> m >> x >> y;
-    memset(grid, '.', sizeof(grid));
-    for (int i = 1; i <= n; ++i) {
-        string in;
-        cin >> in;
-        int p = 0;
-        for (char j: in) {
-            p++;
-            grid[i][p] = j;
-        }
+int main()
+
+{
+
+    scanf("%d%d%d%d", &n, &m, &x, &y);
+
+    char str[1010];
+
+    for (int i = 1; i <= n; ++i)
+    {
+
+        scanf("%s", str);
+
+        for (int j = 1; j <= m; ++j)
+
+            a[i][j] = (str[j - 1] == 'X');
     }
+
+    vis[x][y] = 1;
+
     dfs(x, y);
-    cout << ans << endl;
+
+    printf("%d\n", ans);
+
     return 0;
 }

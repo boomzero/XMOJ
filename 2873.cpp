@@ -28,11 +28,9 @@ int main()
             YearIndex[y] = i;
             YearList.push_back(y);
         }
-
         for (ll j = 1; (1 << j) <= n; j++)
             for (ll i = 1; i + (1 << j) - 1 <= n; i++)
                 f[i][j] = max(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
-
         ll m;
         scanf("%lld", &m);
         while (m--)

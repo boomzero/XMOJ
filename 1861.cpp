@@ -1,22 +1,43 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-map<string, int> c;
 
-int main() {
-    int n;
-    cin >> n;
-    for (int i = 0; i < n; ++i) {
-        string t;
-        cin >> t;
-        if (!c.count(t)) c[t] = 0;
-        c[t]++;
-    }
-    int sum = 0;
-    for (auto const &i: c) {
-        if (i.second % 2 != 0) sum++;
-        sum += i.second / 2;
-    }
-    cout << sum << endl;
-    return 0;
+int n, ans, ans_old;
+
+string str;
+
+map<string, int> mp;
+
+map<string, int>::iterator iter;
+
+int main()
+{
+
+	cin >> n;
+
+	for (int i = 0; i < n; i++)
+	{
+
+		cin >> str;
+
+		mp[str] += 1;
+	}
+
+	for (iter = mp.begin(); iter != mp.end(); ++iter)
+	{
+
+		//		ans_old=ans;
+
+		if (iter->second % 2 == 0)
+			ans += iter->second / 2;
+
+		else
+			ans += (iter->second) / 2 + 1;
+
+		//		cout<<iter->first.c_str()<<" "<<iter->second<<" "<<ans-ans_old<<endl;
+	}
+
+	cout << ans;
+
+	return 0;
 }

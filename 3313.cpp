@@ -1,38 +1,44 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-typedef unsigned long long ull;
-priority_queue<unsigned long long, vector<ull>, greater<>> un;
 
-unsigned long long pow(int a, int b) {
-    unsigned long long ans = 1;
-    for (unsigned long long i = 0; i < b; ++i) {
-        ans *= a;
-    }
-    return ans;
-}
+long long n;
 
-int main() {
-    int n;
+long long x = 0;
+
+priority_queue<long long, vector<long long>, greater<long long>> que;
+
+int main()
+
+{
+
     cin >> n;
-    un.push(1);
-    int i = 0;
-    while (true) {
-        ull prev;
-        prev = un.top();
-        i++;
-        if (i == n) {
-            cout << prev << endl;
-            break;
+
+    que.push(1);
+
+    for (long long i = 1; i <= n; ++i)
+    {
+
+        while (x == que.top())
+        {
+
+            que.pop();
         }
-        while (!un.empty() && prev == un.top()) {
-            un.pop();
-        }
-        un.push(prev * 2);
-        un.push(prev * 3);
-        un.push(prev * 5);
-        un.push(prev * 7);
+
+        x = que.top();
+
+        que.pop();
+
+        que.push(x * 2);
+
+        que.push(x * 3);
+
+        que.push(x * 5);
+
+        que.push(x * 7);
     }
+
+    cout << x;
+
     return 0;
 }
-

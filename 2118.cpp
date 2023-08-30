@@ -1,57 +1,113 @@
-#include <bits/stdc++.h>
+#include <cmath>
+
+#include <queue>
+
+#include <cstdio>
+
+#include <cstring>
+
+#include <iostream>
+
+#include <algorithm>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll t, n, m, In[N];
-vector<ll> To[N], Order;
-bool TopoSort()
+
+inline int read()
 {
-    priority_queue<ll> Queue;
-    for (ll i = 1; i <= n; i++)
-        if (In[i] == 0)
-            Queue.push(i);
-    ll Counter = 0;
-    while (!Queue.empty())
-    {
-        ll u = Queue.top();
-        Order.push_back(u);
-        Counter++;
-        Queue.pop();
-        for (size_t i = 0; i < To[u].size(); i++)
-        {
-            ll v = To[u][i];
-            In[v]--;
-            if (In[v] == 0)
-                Queue.push(v);
-        }
-    }
-    return Counter == n;
+
+    int res = 0;
+    bool bo = 0;
+    char c;
+
+    while (((c = getchar()) < '0' || c > '9') && c != '-')
+        ;
+
+    if (c == '-')
+        bo = 1;
+    else
+        res = c - 48;
+
+    while ((c = getchar()) >= '0' && c <= '9')
+
+        res = (res << 3) + (res << 1) + (c - 48);
+
+    return bo ? ~res + 1 : res;
 }
+
+const int N = 3e5 + 5;
+
+priority_queue<int> Hea;
+
+int n, m, ecnt, nxt[N], adj[N], go[N], cnt[N], ans[N];
+
+void add_edge(int u, int v)
+{
+
+    nxt[++ecnt] = adj[u];
+    adj[u] = ecnt;
+    go[ecnt] = v;
+    cnt[v]++;
+}
+
+void work()
+{
+
+    int i, x, y, tot = 0;
+    ecnt = 0;
+    memset(adj, 0, sizeof(adj));
+
+    memset(cnt, 0, sizeof(cnt));
+    n = read();
+    m = read();
+    bool flag = 0;
+
+    for (i = 1; i <= m; i++)
+    {
+
+        x = read();
+        y = read();
+
+        add_edge(y, x);
+        if (x == y)
+            flag = 1;
+    }
+
+    if (flag)
+        return (void)puts("Impossible!");
+
+    for (i = 1; i <= n; i++)
+        if (!cnt[i])
+            Hea.push(i);
+
+    while (!Hea.empty())
+    {
+
+        int u = Hea.top();
+        Hea.pop();
+        ans[++tot] = u;
+
+        for (int e = adj[u], v; e; e = nxt[e])
+
+            if (!(--cnt[v = go[e]]))
+                Hea.push(v);
+    }
+
+    if (tot < n)
+        return (void)puts("Impossible!");
+
+    for (i = n; i; i--)
+        printf("%d ", ans[i]);
+
+    printf("\n");
+}
+
 int main()
 {
-    scanf("%lld", &t);
-    while (t-- > 0)
-    {
-        Order.clear();
-        for (ll j = 1; j <= n; j++)
-            To[j].clear();
-        memset(In, 0, sizeof(In));
-        scanf("%lld%lld", &n, &m);
-        for (ll j = 0; j < m; j++)
-        {
-            ll a, b;
-            scanf("%lld%lld", &a, &b);
-            In[a]++;
-            To[b].push_back(a);
-        }
-        if (TopoSort())
-        {
-            for (ll j = Order.size() - 1; j >= 0; j--)
-                printf("%lld ", Order[j]);
-            printf("\n");
-        }
-        else
-            printf("Impossible!\n");
-    }
+
+    int T = read();
+
+    while (T--)
+        work();
+
     return 0;
 }

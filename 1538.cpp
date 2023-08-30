@@ -2,41 +2,72 @@
 
 using namespace std;
 
-int main() {
-    int c;
-    cin >> c;
-    deque<int> q;
-    for (int i = 0; i < c; ++i) {
-        string cmd;
-        cin >> cmd;
-        if (cmd == "PUSH") {
-            int x;
-            cin >> x;
-            q.push_back(x);
-        } else if (cmd == "POP-BACK") {
-            if (q.empty()) {
+int n, val;
+
+string str;
+
+deque<int> q;
+
+int main()
+
+{
+
+    cin >> n;
+
+    for (int i = 1; i <= n; ++i)
+    {
+
+        cin >> str;
+
+        if (str == "PUSH")
+        {
+
+            cin >> val;
+
+            q.push_back(val);
+        }
+
+        else
+        {
+
+            if (q.empty())
                 cout << "error" << endl;
-            } else {
-                cout << q.back() << endl;
-                q.pop_back();
-            }
-        } else {
-            if (q.empty()) {
-                cout << "error" << endl;
-            } else {
+
+            else if (str == "POP")
+            {
+
                 cout << q.front() << endl;
+
                 q.pop_front();
             }
+
+            else
+            {
+
+                cout << q.back() << endl;
+
+                q.pop_back();
+            }
         }
     }
-    if (q.empty()) cout << "empty" << endl;
-    else {
-        while (!q.empty()) {
+
+    if (q.empty())
+
+        cout << "empty" << endl;
+
+    else
+    {
+
+        while (!q.empty())
+        {
+
             cout << q.front() << " ";
+
             q.pop_front();
         }
+
         cout << endl;
     }
+
     return 0;
 }
-

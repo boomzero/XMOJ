@@ -1,49 +1,97 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 typedef long long ll;
-const ll N = 100005;
-ll n, m, MCount, Min, PeopleCount;
-struct
+
+const int maxn = 2e5 + 100;
+
+string s;
+
+ll n, m, minn[maxn], p[maxn], num[maxn];
+
+template <typename T>
+void read(T &a)
 {
-    string Sex;
-    ll Count;
-} Input[N];
+
+	a = 0;
+	int f = 1;
+	char ch = getchar();
+
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-')
+			f = -1;
+		ch = getchar();
+	}
+
+	do
+	{
+		a = a * 10 + ch - '0';
+		ch = getchar();
+	} while ('0' <= ch && ch <= '9');
+
+	a *= f;
+}
+
 int main()
 {
-    // freopen("queue.in", "r", stdin);
-    // freopen("queue.out", "w", stdout);
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 0; i < m; i++)
-    {
-        char c[200005];
-        scanf("%s%lld", c, &Input[i].Count);
-        Input[i].Sex = c;
-        for (size_t j = 0; j < Input[i].Sex.length(); j++)
-        {
-            if (Input[i].Sex[j] == 'M')
-                MCount += Input[i].Count;
-            PeopleCount += Input[i].Count;
-        }
-    }
-    if (MCount * 2 > PeopleCount)
-    {
-        printf("-1\n");
-        return 0;
-    }
-    ll Temp = 0;
-    for (ll i = m - 1; i >= 0; i--)
-    {
-        for (ll j = Input[i].Sex.length() - 1; j >= 0; j--)
-        {
-            if (Input[i].Sex[j] == 'M')
-            {
-                Temp -= Input[i].Count;
-                Min = min(Min, Temp);
-            }
-            else
-                Temp += Input[i].Count;
-        }
-    }
-    printf("%lld\n", -Min - 1);
-    return 0;
+
+	freopen("queue.in", "r", stdin);
+
+	freopen("queue.out", "w", stdout);
+
+	read(n), read(m);
+
+	ll tot = 0;
+
+	for (int i = 1; i <= m; i++)
+	{
+
+		cin >> s;
+
+		read(num[i]);
+
+		int l = s.size();
+
+		for (int j = l - 1; j >= 0; j--)
+		{
+
+			p[i] += (s[j] == 'F' ? 1 : -1);
+
+			minn[i] = min(minn[i], p[i]);
+		}
+
+		tot += p[i] * num[i];
+	}
+
+	if (tot < 0)
+	{
+
+		puts("-1");
+
+		return 0;
+	}
+
+	ll ans = 0;
+
+	tot = 0;
+
+	for (int i = m; i > 0; i--)
+	{
+
+		if (p[i] > 0)
+
+			ans = min(ans, tot + minn[i]);
+
+		else
+
+			ans = min(ans, tot + (num[i] - 1) * p[i] + minn[i]);
+
+		tot += p[i] * num[i];
+	}
+
+	printf("%lld\n", max(0ll, -ans - 1));
+
+	return 0;
 }

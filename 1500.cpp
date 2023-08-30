@@ -1,71 +1,114 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 2005;
-ll n, DFN[N], Low[N], Counter, Parent[N], AP[N];
-vector<ll> To[N];
-void Tarjan(ll u)
+
+const int N = 200010, M = 2e6 + 5;
+
+struct E
 {
-    ll Children = 0;
-    Low[u] = DFN[u] = ++Counter;
-    for (ll i = 0; i < To[u].size(); i++)
-    {
-        ll v = To[u][i];
-        if (!DFN[v])
-        {
-            Children++;
-            Parent[v] = u;
-            Tarjan(v);
-            Low[u] = min(Low[u], Low[v]);
-            if (!Parent[u] && Children > 1)
-                AP[u] = true;
-            else if (Parent[u] && Low[v] >= DFN[u])
-                AP[u] = true;
-        }
-        else if (v != Parent[u])
-            Low[u] = min(Low[u], DFN[v]);
-    }
+
+	int to, next;
+
+} e[M];
+
+int n, u, v, len, root, h[N], num, dfn[N], low[N];
+
+char c;
+
+bool cut[N];
+
+void add(int u, int v)
+{
+
+	e[++len].to = v;
+
+	e[len].next = h[u];
+
+	h[u] = len;
 }
+
+void tarjan(int u)
+{
+
+	dfn[u] = low[u] = ++num;
+
+	int cnt = 0;
+
+	for (int j = h[u]; j; j = e[j].next)
+	{
+
+		int v = e[j].to;
+
+		if (!dfn[v])
+		{
+
+			tarjan(v);
+
+			low[u] = min(low[u], low[v]);
+
+			if (low[v] >= dfn[u])
+			{
+
+				cnt++;
+
+				if (u != root || cnt > 1)
+
+					cut[u] = true;
+			}
+		}
+
+		else
+
+			low[u] = min(low[u], dfn[v]);
+	}
+}
+
 int main()
 {
-    while (true)
-    {
-        scanf("%lld", &n);
-        if (n == 0)
-            break;
-        for (ll i = 0; i < N; i++)
-            To[i].clear();
-        memset(DFN, 0, sizeof(DFN));
-        memset(Low, 0, sizeof(Low));
-        memset(Parent, 0, sizeof(Parent));
-        memset(AP, 0, sizeof(AP));
-        Counter = 0;
-        while (true)
-        {
-            ll Index;
-            scanf("%lld", &Index);
-            if (Index == 0)
-                break;
-            while (1)
-            {
-                ll v;
-                char c;
-                scanf("%lld", &v);
-                scanf("%c", &c);
-                To[Index].push_back(v);
-                To[v].push_back(Index);
-                if (c == '\n')
-                    break;
-            }
-        }
-        for (ll i = 1; i <= n; i++)
-            if (!DFN[i])
-                Tarjan(i);
-        ll APCount = 0;
-        for (ll i = 1; i <= n; i++)
-            if (AP[i])
-                APCount++;
-        printf("%lld\n", APCount);
-    }
-    return 0;
+
+	while (~scanf("%d", &n) && n)
+	{
+
+		memset(h, 0, sizeof(h));
+
+		memset(dfn, 0, sizeof(dfn));
+
+		memset(cut, false, sizeof(cut));
+
+		len = 0, num = 0;
+
+		while (~scanf("%d", &u) && u)
+		{
+
+			while (~scanf("%c", &c) && c != '\n')
+			{
+
+				scanf("%d", &v);
+
+				add(u, v);
+
+				add(v, u);
+			}
+		}
+
+		for (root = 1; root <= n; root++)
+		{
+
+			if (!dfn[root])
+
+				tarjan(root);
+		}
+
+		int ans = 0;
+
+		for (int i = 1; i <= n; i++)
+
+			if (cut[i])
+
+				ans++;
+
+		printf("%d\n", ans);
+	}
+
+	return 0;
 }

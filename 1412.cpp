@@ -2,24 +2,40 @@
 
 using namespace std;
 
-int main() {
-    int n;
+int n, avg, p[101], ans;
+
+int main()
+
+{
+
     cin >> n;
-    int a[200] = {0};
-    long long sum = 0;
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        sum += a[i];
+
+    for (int i = 0; i < n; ++i)
+    {
+
+        cin >> p[i];
+
+        avg += p[i];
     }
-    int tg = sum / n;
-    int ans = 0;
-    for (int i = 1; i <= n; i++) {
-        if (a[i] != tg) {
-            ans++;
-            a[i + 1] += (a[i] - tg);
+
+    avg /= n;
+
+    for (int i = 0; i < n; ++i)
+        p[i] -= avg;
+
+    for (int i = 0; i < n; ++i)
+    {
+
+        if (p[i] != 0)
+        {
+
+            p[i + 1] += p[i];
+
+            ++ans;
         }
     }
+
     cout << ans << endl;
+
     return 0;
 }
-

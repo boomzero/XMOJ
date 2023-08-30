@@ -1,90 +1,83 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+#include <cmath>
+#define ll long long
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-ll n, Head[N], EdgeCount, Distances[N], Answer = INF;
-bool Visited[N];
-struct EDGE
+const int maxn = 1e5;
+char S[maxn + 8];
+int n, tot, cnt;
+ll ans;
+int pre[maxn + 8], now[maxn + 8], son[maxn + 8];
+int fa[maxn + 8], siz[maxn + 8], len[maxn + 8];
+ll dep[maxn + 8], f[maxn + 8];
+namespace IO
 {
-    ll v, w, Next;
-} Edge[N * 2];
-void AddEdge(ll u, ll v, ll w)
-{
-    EdgeCount++;
-    Edge[EdgeCount].v = v;
-    Edge[EdgeCount].w = w;
-    Edge[EdgeCount].Next = Head[u];
-    Head[u] = EdgeCount;
+	inline int read()
+	{
+		int x = 0, f = 1;
+		char ch = getchar();
+		for (; ch < '0' || ch > '9'; ch = getchar())
+			if (ch == '-')
+				f = -1;
+		for (; ch >= '0' && ch <= '9'; ch = getchar())
+			x = x * 10 + ch - '0';
+		return x * f;
+	}
 }
-void Dijkstra(ll Start)
+using namespace IO;
+namespace tree
 {
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> Queue;
-    Distances[Start] = 0;
-    Queue.push({0, Start});
-    while (!Queue.empty())
-    {
-        ll u = Queue.top().second;
-        ll w = Queue.top().first;
-        Queue.pop();
-        if (Visited[u])
-            continue;
-        Visited[u] = true;
-        for (ll i = Head[u]; i; i = Edge[i].Next)
-        {
-            ll v = Edge[i].v;
-            ll w = Edge[i].w;
-            if (Distances[v] > Distances[u] + w)
-            {
-                Distances[v] = Distances[u] + w;
-                Queue.push({Distances[v], v});
-            }
-        }
-    }
+	inline void add(int u, int v)
+	{
+		pre[++tot] = now[u];
+		now[u] = tot;
+		son[tot] = v;
+	}
+	inline void build(int x)
+	{
+		for (int p = now[x]; p; p = pre[p])
+		{
+			int child = son[p];
+			fa[child] = x;
+			build(child);
+			dep[x] += dep[child] + len[x] * siz[child];
+			siz[x] += siz[child];
+		}
+		if (!siz[x])
+			siz[x] = 1, dep[x] = len[x] - 1, cnt++;
+	}
+	inline void solve(int x)
+	{
+		ans = min(ans, f[x]);
+		for (int p = now[x]; p; p = pre[p])
+		{
+			int child = son[p];
+			if (!dep[child])
+				continue;
+			f[child] = f[x] - siz[child] * len[child] + 3 * (cnt - siz[child]);
+			solve(child);
+		}
+	}
 }
-vector<ll> Children[N];
-ll NameLength[N];
+using namespace tree;
 int main()
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-    {
-        ll m;
-        char s[20] = {0};
-        scanf("%s%lld", s, &m);
-        NameLength[i] = strlen(s);
-        if (m == 0)
-            continue;
-        for (ll j = 1; j <= m; j++)
-        {
-            ll v;
-            scanf("%lld", &v);
-            Children[i].push_back(v);
-        }
-    }
-    for (ll i = 1; i <= n; i++)
-        for (auto j : Children[i])
-        {
-            if (Children[j].size() != 0)
-            {
-                AddEdge(j, i, 3);
-                AddEdge(i, j, NameLength[j] + 1);
-            }
-            else
-                AddEdge(i, j, NameLength[j]);
-        }
-    for (ll i = 1; i <= n; i++)
-        if (Children[i].size() != 0)
-        {
-            fill(Distances + 1, Distances + n + 1, INF);
-            fill(Visited + 1, Visited + n + 1, false);
-            Dijkstra(i);
-            ll CurrentAnswer = 0;
-            for (ll j = 1; j <= n; j++)
-                if (Children[j].size() == 0)
-                    CurrentAnswer += Distances[j];
-            Answer = min(Answer, CurrentAnswer);
-        }
-    printf("%lld\n", Answer);
-    return 0;
+	n = read();
+	for (int i = 1; i <= n; i++)
+	{
+		scanf("%s", S);
+		len[i] = strlen(S) + 1;
+		int p = read();
+		for (int j = 1; j <= p; j++)
+		{
+			int v = read();
+			add(i, v);
+		}
+	}
+	build(1);
+	ans = f[1] = dep[1] - len[1] * cnt;
+	solve(1);
+	printf("%lld", ans);
+	return 0;
 }

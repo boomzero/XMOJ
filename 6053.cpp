@@ -1,70 +1,189 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstdio>
+
+#include <algorithm>
+
+#include <cstring>
+
 using namespace std;
-typedef long long ll;
-const ll N = 400005;
-ll n, m, k, EdgeCount, Father[N], Answer[N], c[N], Head[N];
-bool Dead[N];
-struct
+
+bool visit[400010] = {false}, pop[400010] = {false}; // pop: whether or not to be deleted
+
+int n, m, k, t, num = 0, ans[200010] = {0}, fa[400010] = {0};
+
+int cnt = 0, nxt[400010] = {0}, point[400010] = {0}, edge[400010] = {0};
+
+int del[400010] = {0}; // points that need to be deleted
+
+void add(int u, int v)
 {
-    ll x, y, Next;
-} Edges[N];
-ll Find(ll x)
-{
-    return (x == Father[x] ? x : Father[x] = Find(Father[x]));
+
+	cnt++;
+	nxt[cnt] = point[u];
+	point[u] = cnt;
+	edge[cnt] = v;
 }
-void AddEdge(ll x, ll y)
+
+int find(int x)
 {
-    EdgeCount++;
-    Edges[EdgeCount].x = x;
-    Edges[EdgeCount].y = y;
-    Edges[EdgeCount].Next = Head[x];
-    Head[x] = EdgeCount;
+
+	if (x == fa[x])
+
+		return x;
+
+	fa[x] = find(fa[x]);
+
+	return fa[x];
 }
+
+void merge(int x)
+{
+
+	int f1 = find(x);
+
+	int y = point[x];
+
+	while (y != 0)
+	{
+
+		int f2 = find(edge[y]);
+
+		if (visit[edge[y]] == true)
+
+			if (f1 != f2)
+			{
+
+				fa[f2] = f1;
+
+				num--;
+			}
+
+		y = nxt[y];
+	}
+}
+
+namespace IO
+{
+
+	template <typename T>
+	void read(T &a)
+	{
+
+		a = 0;
+		int f = 1;
+		char ch = getchar();
+
+		while (ch < '0' || ch > '9')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+
+		do
+		{
+			a = a * 10 + ch - '0';
+			ch = getchar();
+		} while ('0' <= ch && ch <= '9');
+
+		a *= f;
+	}
+
+	template <typename T>
+	void write(T x)
+	{
+
+		if (!x)
+			putchar('0');
+
+		char f[200];
+
+		int tmp = x > 0 ? x : -x;
+
+		if (x < 0)
+			putchar('-');
+
+		int cnt = 0;
+
+		while (tmp > 0)
+		{
+
+			f[cnt++] = tmp % 10 + '0';
+
+			tmp /= 10;
+		}
+
+		while (cnt > 0)
+			putchar(f[--cnt]);
+	}
+
+}
+
 int main()
+
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-        Father[i] = i;
-    for (ll i = 1; i <= m; i++)
-    {
-        ll x, y;
-        scanf("%lld%lld", &x, &y);
-        AddEdge(x, y);
-        AddEdge(y, x);
-    }
-    scanf("%lld", &k);
-    for (ll i = 1; i <= k; i++)
-    {
-        scanf("%lld", &c[i]);
-        Dead[c[i]] = true;
-    }
-    Answer[k + 1] = n - k;
-    for (ll i = 1; i <= EdgeCount; i++)
-    {
-        ll x = Find(Edges[i].x);
-        ll y = Find(Edges[i].y);
-        if (x != y && !Dead[Edges[i].x] && !Dead[Edges[i].y])
-        {
-            Father[x] = y;
-            Answer[k + 1]--;
-        }
-    }
-    for (ll i = k; i > 0; i--)
-    {
-        Answer[i] = Answer[i + 1] + 1;
-        Dead[c[i]] = false;
-        for (ll j = Head[c[i]]; j; j = Edges[j].Next)
-        {
-            ll x = Find(Edges[j].x);
-            ll y = Find(Edges[j].y);
-            if (x != y && !Dead[Edges[j].x] && !Dead[Edges[j].y])
-            {
-                Father[x] = y;
-                Answer[i]--;
-            }
-        }
-    }
-    for (ll i = 1; i <= k + 1; i++)
-        printf("%lld\n", Answer[i]);
-    return 0;
+
+	IO::read(n), IO::read(m);
+
+	for (int i = 0; i <= n - 1; i++)
+
+		fa[i] = i;
+
+	for (int i = 1; i <= m; i++)
+	{
+
+		int x, y;
+
+		IO::read(x), IO::read(y);
+
+		add(x, y);
+
+		add(y, x);
+	}
+
+	IO::read(t);
+
+	for (int i = 1; i <= t; i++)
+	{
+
+		IO::read(k);
+
+		del[i] = k;
+		pop[k] = true;
+	}
+
+	for (int i = 0; i <= n - 1; i++)
+	{
+
+		if (pop[i] == false)
+		{
+
+			num++;
+
+			merge(i);
+
+			visit[i] = true;
+		}
+	}
+
+	ans[t + 1] = num;
+
+	for (int i = t; i >= 1; i--)
+	{
+
+		num++;
+
+		merge(del[i]);
+
+		visit[del[i]] = true;
+
+		ans[i] = num;
+	}
+
+	for (int i = 1; i <= t + 1; i++)
+
+		IO::write(ans[i]), printf("\n");
+
+	return 0;
 }

@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 int dp[2005] = {0};
-
 int main() {
     int v, n;
     cin >> v >> n;
@@ -24,5 +22,3 @@ int main() {
     cout << dp[v] << endl;
     return 0;
 }
-
-

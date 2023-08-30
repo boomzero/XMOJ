@@ -1,53 +1,59 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 200005;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-ll n, a[N], Answer;
-void Input()
-{
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-}
-void SolveBF()
-{
-    for (ll l = 1; l <= n; l++)
-        for (ll r = l; r <= n; r++)
-        {
-            ll Min = INF;
-            for (ll i = l; i <= r; i++)
-                Min = min(Min, a[i]);
-            Answer += Min;
-        }
-    cout << Answer << endl;
-}
-void SolveBetter()
-{
-    for (ll l = 1; l <= n; l++)
-    {
-        ll Min = INF;
-        for (ll r = l; r <= n; r++)
-        {
-            Min = min(Min, a[r]);
-            Answer += Min;
-        }
-    }
-    cout << Answer << endl;
-}
-void Solve()
-{
-    for (ll i = 1; i <= n; i++)
-    {
-    }
-}
+
+const int N = 2e5 + 10;
+
+int n, A[N], L[N], R[N];
+
+int Sta[N], Top;
+
 int main()
 {
-    freopen("d.in", "r", stdin);
-    freopen("d.out", "w", stdout);
-    Input();
-    // SolveBF();
-    SolveBetter();
-    // Solve();
-    return 0;
+
+	freopen("d.in", "r", stdin);
+
+	freopen("d.out", "w", stdout);
+
+	ios::sync_with_stdio(false);
+
+	scanf("%d", &n);
+
+	for (int i = 1; i <= n; ++i)
+
+		scanf("%d", &A[i]);
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		if ((!Top) || (A[Sta[Top]] < A[i]))
+
+			L[i] = Sta[Top];
+
+		else
+		{
+
+			while (Top && A[Sta[Top]] > A[i])
+
+				R[Sta[Top--]] = i;
+
+			L[i] = Sta[Top];
+		}
+
+		Sta[++Top] = i;
+	}
+
+	while (Top)
+
+		R[Sta[Top--]] = n + 1;
+
+	long long Ans = 0;
+
+	for (int i = 1; i <= n; ++i)
+
+		Ans += 1ll * A[i] * (i - L[i]) * (R[i] - i);
+
+	printf("%lld\n", Ans);
+
+	return 0;
 }

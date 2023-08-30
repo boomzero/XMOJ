@@ -75,7 +75,6 @@ int main()
         memset(Head, 0, sizeof(Head));
         memset(Next, 0, sizeof(Next));
         EdgeCount = 1;
-
         scanf("%lld", &n);
         Start = 2 * n + 1;
         End = 2 * n + 2;

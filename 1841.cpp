@@ -1,51 +1,120 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#include <cstdio>
+
+#include <cstring>
+
+#include <algorithm>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-const ll LOG_N = 20;
-ll n, q, l[N], ST[N][LOG_N];
-void Build()
+
+int n, q, sum[100005 << 2], x1, x2, y1, y2;
+
+namespace IO
 {
-    for (ll i = 1; i <= n; i++)
-        ST[i][0] = l[i];
-    for (ll j = 1; (1 << j) <= n; j++)
-        for (ll i = 1; i + (1 << j) - 1 <= n; i++)
-            ST[i][j] = min(ST[i][j - 1], ST[i + (1 << (j - 1))][j - 1]);
+
+	void read(int &x)
+	{
+
+		char ch;
+		x = 0;
+
+		while (ch = getchar(), ch < '0' || ch > '9')
+			;
+		x = ch - 48;
+
+		while (ch = getchar(), ch >= '0' && ch <= '9')
+
+			x = 10 * x + ch - 48;
+	}
+
 }
-ll Query(ll l, ll r)
+
+using namespace IO;
+
+namespace Segtree
 {
-    /*
-    if (r - l == 0)
-        return ::l[l];
-    if (r - l == 1)
-        return min(::l[l], ::l[r]);
-    ll k = ceil(log2((r - l + 1) / 2.0));
-    return min(ST[l][k], ST[r - (1 << k) + 1][k]);
-    */
-    ll k = log2(r - l + 1);
-    return min(ST[l][k], ST[r - (1 << k) + 1][k]);
+
+	void build(int rt, int l, int r)
+	{
+
+		if (l == r)
+		{
+
+			read(sum[rt]);
+
+			return;
+		}
+
+		int mid = l + r >> 1;
+
+		build(rt << 1, l, mid);
+
+		//	cout<<"build complete1"<<endl;
+
+		build(rt << 1 | 1, mid + 1, r);
+
+		//	cout<<"build complete2"<<endl;
+
+		sum[rt] = min(sum[rt << 1], sum[rt << 1 | 1]);
+	}
+
+	int query(int rt, int l, int r, int lq, int rq)
+	{
+
+		if (lq <= l && r <= rq)
+
+			return sum[rt];
+
+		int mid = l + r >> 1;
+
+		if (lq > mid)
+
+			return query(rt << 1 | 1, mid + 1, r, lq, rq);
+
+		else if (rq <= mid)
+
+			return query(rt << 1, l, mid, lq, rq);
+
+		else
+
+			return min(query(rt << 1, l, mid, lq, rq), query(rt << 1 | 1, mid + 1, r, lq, rq));
+	}
+
 }
+
+using namespace Segtree;
+
 int main()
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &l[i]);
-    Build();
-    scanf("%lld", &q);
-    for (ll i = 1; i <= q; i++)
-    {
-        ll x1, y1, x2, y2;
-        scanf("%lld%lld%lld%lld", &x1, &y1, &x2, &y2);
-        if (x1 > x2)
-        {
-            swap(x1, x2);
-            swap(y1, y2);
-        }
-        ll y = Query(x1, x2);
-        if (y < y1 && y < y2)
-            printf("%lld\n", abs(y1 - y) + abs(y2 - y) + x2 - x1);
-        else
-            printf("%lld\n", abs(y1 - y2) + x2 - x1);
-    }
-    return 0;
+
+	read(n);
+
+	build(1, 1, n);
+
+	read(q);
+
+	while (q--)
+	{
+
+		read(x1);
+
+		read(y1);
+
+		read(x2);
+
+		read(y2);
+
+		int num = query(1, 1, n, min(x1, x2), max(x1, x2));
+
+		if (y1 <= num && y2 <= num)
+
+			printf("%d\n", abs(x2 - x1) + abs(y2 - y1));
+
+		else
+
+			printf("%d\n", abs(y1 - num) + abs(y2 - num) + abs(x2 - x1));
+	}
+
+	return 0;
 }

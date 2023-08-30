@@ -1,77 +1,176 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 205;
-struct EDGE
+
+int st[220], top = 0, size = 0, head[220], du[220];
+
+int n, m, c[220], U[220], can[220], cnt = 0;
+
+struct edge
 {
-    ll to, Value, Next;
-} Edges[N * N];
-ll m, n, t, c[N], u[N], Head[N];
-bool InputLayer[N], OutputLayer[N], Visited[N];
-ll EdgeCounter = 0;
-void AddEdge(ll u, ll v, ll w)
+
+	int v, w, nxt;
+
+} e[10010];
+
+inline int read()
 {
-    EdgeCounter++;
-    Edges[EdgeCounter].to = v;
-    Edges[EdgeCounter].Value = w;
-    Edges[EdgeCounter].Next = Head[u];
-    Head[u] = EdgeCounter;
+
+	int x = 0, f = 1;
+
+	char c = getchar();
+
+	while (c < '0' || c > '9')
+	{
+
+		if (c == '-')
+			f = -1;
+
+		c = getchar();
+	}
+
+	while (c >= '0' && c <= '9')
+	{
+
+		x = (x << 3) + (x << 1) + c - '0';
+
+		c = getchar();
+	}
+
+	return x * f;
 }
-void TopoSort()
+
+inline void add(int u, int v, int w)
 {
-    queue<ll> q;
-    for (ll i = 1; i <= n; i++)
-        if (InputLayer[i])
-        {
-            q.push(i);
-            Visited[i] = true;
-        }
-    while (!q.empty())
-    {
-        ll h = q.front();
-        q.pop();
-        if (c[h] <= 0)
-            continue;
-        for (ll i = Head[h]; i; i = Edges[i].Next)
-        {
-            t = Edges[i].to;
-            c[t] += Edges[i].Value * c[h];
-            if (!Visited[t])
-            {
-                q.push(t);
-                Visited[t] = true;
-            }
-        }
-    }
+
+	e[++size].v = v;
+
+	e[size].w = w;
+
+	e[size].nxt = head[u];
+
+	head[u] = size;
 }
+
+inline void sortt_()
+{
+
+	int t = 0;
+
+	while (t < top)
+	{
+
+		int u = st[++t];
+
+		if (c[u] <= 0)
+		{
+
+			for (int i = head[u]; ~i; i = e[i].nxt)
+			{
+
+				int v = e[i].v;
+
+				--du[v];
+
+				if (!du[v])
+					st[++top] = v;
+			}
+
+			continue;
+		}
+
+		for (int i = head[u]; ~i; i = e[i].nxt)
+		{
+
+			int v = e[i].v, w = e[i].w;
+
+			c[v] += w * c[u];
+
+			--du[v];
+
+			if (!du[v])
+				st[++top] = v;
+		}
+	}
+
+	int pd = 0;
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		if (head[i] == -1)
+		{
+
+			if (c[i] != 0)
+			{
+
+				pd = 1;
+
+				break;
+			}
+		}
+	}
+
+	if (!pd)
+		printf("NULL");
+
+	else
+	{
+
+		for (int i = 1; i <= n; ++i)
+		{
+
+			if (head[i] == -1 && c[i] > 0)
+			{
+
+				printf("%d %d\n", i, c[i]);
+			}
+		}
+	}
+}
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-    {
-        scanf("%lld%lld", &c[i], &u[i]);
-        if (c[i] == 0)
-            c[i] -= u[i];
-        else
-            InputLayer[i] = true;
-    }
-    fill(OutputLayer + 1, OutputLayer + n + 1, true);
-    for (ll i = 1; i <= m; i++)
-    {
-        ll u, v, w;
-        scanf("%lld%lld%lld", &u, &v, &w);
-        AddEdge(u, v, w);
-        OutputLayer[u] = false;
-    }
-    TopoSort();
-    bool FoundAnswer = false;
-    for (ll i = 1; i <= n; i++)
-        if (OutputLayer[i] && c[i] > 0)
-        {
-            printf("%lld%lld\n", i, c[i]);
-            FoundAnswer = true;
-        }
-    if (!FoundAnswer)
-        printf("NULL\n");
-    return 0;
+
+	n = read();
+	m = read();
+
+	memset(head, -1, sizeof(head));
+
+	memset(du, 0, sizeof(du));
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		c[i] = read();
+		U[i] = read();
+	}
+
+	int x, y, z;
+
+	for (int i = 1; i <= m; ++i)
+	{
+
+		x = read();
+		y = read();
+		z = read();
+
+		add(x, y, z);
+
+		++du[y];
+	}
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		if (!du[i])
+			st[++top] = i;
+
+		else
+			c[i] -= U[i];
+	}
+
+	sortt_();
+
+	return 0;
 }

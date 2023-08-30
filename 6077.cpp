@@ -1,19 +1,21 @@
-#include <bits/stdc++.h>
-
+#include <iostream>
 using namespace std;
-int h, n;
-int wt[505], dp[45005];
 
-int main() {
-    cin >> h >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> wt[i];
-    }
-    for (int i = 1; i <= n; ++i) {
-        for (int j = h; j >= wt[i]; j--) {
-            dp[j] = max(dp[j], dp[j - wt[i]] + wt[i]);
-        }
-    }
-    cout << dp[h] << endl;
-    return 0;
+const int N = 510, M = 45010;
+
+int n, m;
+int v[N], f[M];
+
+int main()
+{
+	cin >> m >> n;
+	for (int i = 1; i <= n; i ++) cin >> v[i];
+	
+	for (int i = 1; i <= n; i ++)
+		for (int j = m; j >= v[i]; j --)
+			f[j] = max(f[j], f[j - v[i]] + v[i]);
+		
+	cout << f[m] << endl;
+	return 0;	
 }
+

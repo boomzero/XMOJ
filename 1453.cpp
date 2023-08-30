@@ -1,41 +1,76 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1005;
-ll t, n, m, Father[N];
-vector<ll> Table[N];
-ll Find(ll x)
+
+int t, m, n, fa[1010], sz[1010], ans;
+
+int find(int t)
 {
-    return Father[x] == x ? x : Father[x] = Find(Father[x]);
+
+	if (fa[t] == t)
+		return t;
+
+	return fa[t] = find(fa[t]);
 }
-void Union(ll x, ll y)
+
+void merge(int x, int y)
 {
-    ll fx = Find(x), fy = Find(y);
-    if (fx != fy)
-        Father[fx] = fy;
+
+	x = find(x);
+
+	y = find(y);
+
+	if (x != y)
+	{
+
+		fa[x] = y;
+
+		sz[y] += sz[x];
+
+		sz[x] = 0;
+	}
 }
+
 int main()
 {
-    scanf("%lld", &t);
-    while (t-- > 0)
-    {
-        scanf("%lld%lld", &n, &m);
-        for (ll i = 1; i <= n; i++)
-            Father[i] = i;
-        for (ll i = 1; i <= n; i++)
-            Table[i].clear();
-        for (ll i = 1; i <= m; i++)
-        {
-            ll u, v;
-            scanf("%lld%lld", &u, &v);
-            Union(u, v);
-        }
-        for (ll i = 1; i <= n; i++)
-            Table[Find(i)].push_back(i);
-        ll Answer = 0;
-        for (ll i = 1; i <= n; i++)
-            Answer += ceil(Table[i].size() / 10.0);
-        printf("%lld\n", Answer);
-    }
-    return 0;
+
+	cin >> t;
+
+	for (int i = 0; i < t; i++)
+	{
+
+		cin >> n >> m;
+
+		for (int i = 1; i <= n; i++)
+		{
+
+			fa[i] = i;
+		}
+
+		for (int i = 1; i <= n; i++)
+			sz[i] = 1;
+
+		ans = 0;
+
+		for (int i = 0; i < m; i++)
+		{
+
+			int x, y;
+
+			cin >> x >> y;
+
+			merge(x, y);
+		}
+
+		for (int i = 1; i <= n; i++)
+		{
+
+			if (sz[i] != 0)
+				ans += (sz[i] + 9) / 10;
+		}
+
+		cout << ans << endl;
+	}
+
+	return 0;
 }

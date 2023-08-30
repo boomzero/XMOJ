@@ -1,120 +1,151 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 100005;
-ll n, s, SegmentID[N], Answer;
-struct NOTE
+
+#define int long long
+
+#define N 210000
+
+int n, m, s, ans, b[N];
+
+char opt;
+
+struct S
 {
-    ll Day, ID, Delta;
+	int d, id, val;
 } a[N];
-struct SEGMENT
+
+bool cmp(S x, S y) { return x.d < y.d; }
+
+int init_val[N], val[N];
+
+void push_up(int rt)
 {
-    ll Value, Left, Right, Count;
-} Segments[N * 2];
-void Build(ll Index, ll Left, ll Right)
-{
-    Segments[Index].Value = s;
-    Segments[Index].Left = Left;
-    Segments[Index].Right = Right;
-    Segments[Index].Count = Right - Left + 1;
-    if (Left != Right)
-    {
-        ll Middle = (Left + Right) / 2;
-        Build(Index * 2, Left, Middle);
-        Build(Index * 2 + 1, Middle + 1, Right);
-    }
-    else
-        SegmentID[a[Left].ID] = Index;
+
+	val[rt] = max(val[rt * 2], val[rt * 2 + 1]);
 }
-void Modify(ll Index, ll Delta)
+
+void build(int rt, int l, int r)
 {
-    Segments[Index].Value += Delta;
-    while (Index > 1)
-    {
-        Index /= 2;
-        if (Segments[Index * 2].Value > Segments[Index * 2 + 1].Value)
-        {
-            Segments[Index].Value = Segments[Index * 2].Value;
-            Segments[Index].Count = Segments[Index * 2].Count;
-        }
-        else if (Segments[Index * 2].Value < Segments[Index * 2 + 1].Value)
-        {
-            Segments[Index].Value = Segments[Index * 2 + 1].Value;
-            Segments[Index].Count = Segments[Index * 2 + 1].Count;
-        }
-        else
-        {
-            Segments[Index].Value = Segments[Index * 2].Value;
-            Segments[Index].Count = Segments[Index * 2].Count + Segments[Index * 2 + 1].Count;
-        }
-        // cout << "Segments[" << Index << " /*" << Segments[Index].Left << "~" << Segments[Index].Right << "*/].Value = max(";
-        // cout << "Segments[" << (Index * 2) << " /*" << Segments[Index * 2].Left << "~" << Segments[Index * 2].Left << "*/].Value, ";
-        // cout << "Segments[" << (Index * 2 + 1) << " /*" << Segments[Index * 2 + 1].Left << "~" << Segments[Index * 2 + 1].Left << "*/].Value);" << endl;
-        // cout << "                          = max(" << Segments[Index * 2].Value << ", " << Segments[Index * 2 + 1].Value << ");" << endl;
-        // cout << "                          = " << max(Segments[Index * 2].Value, Segments[Index * 2 + 1].Value) << endl;
-    }
+
+	if (l == r)
+	{
+
+		val[rt] = init_val[l];
+
+		return;
+	}
+
+	int mid = (l + r) / 2;
+
+	build(rt * 2, l, mid);
+
+	build(rt * 2 + 1, mid + 1, r);
+
+	push_up(rt);
 }
-pair<ll, ll> Query()
+
+void update_one(int rt, int l, int r, int idx, int add)
 {
-    return {Segments[1].Value, Segments[1].Count};
+
+	if (l == r)
+	{
+
+		val[rt] += add;
+
+		return;
+	}
+
+	int mid = (l + r) / 2;
+
+	if (idx <= mid)
+		update_one(rt * 2, l, mid, idx, add);
+
+	else
+		update_one(rt * 2 + 1, mid + 1, r, idx, add);
+
+	push_up(rt);
 }
-int main()
+
+int query(int rt, int l, int r, int ql, int qr)
 {
-    scanf("%lld%lld", &n, &s);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld%lld%lld", &a[i].Day, &a[i].ID, &a[i].Delta);
-    sort(a + 1, a + n + 1,
-         [](NOTE a, NOTE b)
-         {
-             return a.Day < b.Day;
-         });
-    Build(1, 1, n);
-    // cout << "Max number: " << Query().first << "  Max count: " << Query().second << endl;
-    pair<ll, ll> LastData = Query();
-    for (ll i = 1; i <= n; i++)
-    {
-        ll Index = SegmentID[a[i].ID];
-        // cout << "SegmentID[" << a[i].ID << "] = " << Index << endl;
-        Modify(Index, a[i].Delta);
-        pair<ll, ll> Data = Query();
-        if (Data != LastData)
-        {
-            LastData = Data;
-            Answer++;
-        }
-        // cout << "Max number: " << Query().first << "  Max count: " << Query().second << endl;
-        // cout << endl;
-    }
-    printf("%lld\n", Answer);
-    return 0;
+
+	if (l > qr || r < ql)
+		return -1;
+
+	if (l >= ql && r <= qr)
+		return val[rt];
+
+	int mid = (l + r) / 2;
+
+	return max(query(rt * 2, l, mid, ql, qr), query(rt * 2 + 1, mid + 1, r, ql, qr));
 }
-/*
-4 10
-7 3 +3
-4 2 -1
-9 3 -1
-1 1 +2
 
-   |
-   |  Sort
-   V
+signed main()
+{
 
-4 10
-1 1 +2
-4 2 -1
-7 3 +3
-9 3 -1
+	cin >> n >> s;
 
-   |
-   |  Run
-   V
+	for (int i = 1; i <= n; ++i)
+	{
 
-    People
-   1   2   3
-S  10  10  10
-c  12  10  10
-o  12  9   10
-r  12  9   13
-e  12  9   12
+		cin >> a[i].d >> a[i].id;
 
-*/
+		cin >> opt;
+
+		cin >> a[i].val;
+
+		if (opt == '-')
+			a[i].val *= -1;
+
+		b[i] = a[i].id;
+	}
+
+	sort(a + 1, a + n + 1, cmp), sort(b + 1, b + n + 1);
+
+	int len = unique(b + 1, b + n + 1) - b - 1;
+
+	for (int i = 1; i <= n; ++i)
+	{
+
+		a[i].id = lower_bound(b + 1, b + len + 1, a[i].id) - b;
+
+		// cout<<a[i].d<<" "<<a[i].id<<" "<<a[i].val<<endl;
+	}
+
+	m = len + 1;
+	swap(m, n);
+
+	for (int i = 1; i <= n; ++i)
+		init_val[i] = s;
+
+	build(1, 1, n);
+
+	for (int i = 1; i <= m; ++i)
+	{
+
+		int maxn = query(1, 1, n, 1, n), x = query(1, 1, n, a[i].id, a[i].id);
+
+		update_one(1, 1, n, a[i].id, a[i].val);
+
+		int maxn2 = query(1, 1, n, 1, n), x2 = query(1, 1, n, a[i].id, a[i].id), maxnm = max(query(1, 1, n, 1, a[i].id - 1), query(1, 1, n, a[i].id + 1, n));
+
+		if (x == maxn && x2 != maxn2)
+			ans++;
+
+		if (x == maxn && x2 == maxn2 && maxnm == maxn)
+			ans++;
+
+		if (x == maxn && x2 == maxn2 && maxnm == maxn2)
+			ans++;
+
+		if (x != maxn && x2 == maxn2)
+			ans++;
+
+		//		update_one(1,1,n,a[i].id,a[i].val);
+
+		// cout<<i<<" "<<maxn<<" "<<x<<endl;
+	}
+
+	cout << ans;
+}

@@ -1,102 +1,166 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 55;
-const ll M = 2005;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-ll n, m, P[N], Cost[N], Limit[N], Temp[M], h[M], f[N][105][M], g[M];
-struct EDGE
+
+long long n, m;
+
+long long P[60], M[60], L[60], tmp[(long long)(2e3 + 15)], h[(long long)(2e3 + 15)];
+
+long long f[60][105][(long long)(2e3 + 15)], g[(long long)(2e3 + 15)];
+
+struct Edge
 {
-    ll u, v, w, next;
-} Edge[N * N];
-ll Counter = 1, Head[N], in[N];
-void AddEdge(ll u, ll v, ll w)
+
+	long long u, v, w, next;
+
+} e[60 * 60];
+
+long long pos = 1, head[60], in[60];
+
+void addEdge(long long u, long long v, long long w)
+
 {
-    Counter++;
-    Edge[Counter] = {u, v, w, Head[u]};
-    Head[u] = Counter;
-    in[v]++;
+
+	e[++pos] = {u, v, w, head[u]};
+
+	head[u] = pos;
+	++in[v];
 }
-void F(ll u)
+
+void DP(long long u)
+
 {
-    if (!Head[u])
-    {
-        Limit[u] = min(Limit[u], m / Cost[u]);
-        for (ll i = 0; i <= Limit[u]; i++)
-            for (ll j = i; j <= Limit[u]; j++)
-                f[u][i][j * Cost[u]] = (j - i) * P[u];
-        return;
-    }
-    Limit[u] = INF;
-    ll i = Head[u];
-    while (i)
-    {
-        ll v = Edge[i].v;
-        F(v);
-        Limit[u] = min(Limit[u], Limit[v] / Edge[i].w);
-        Cost[u] += Edge[i].w * Cost[v];
-        i = Edge[i].next;
-    }
-    Limit[u] = min(Limit[u], m / Cost[u]);
-    for (ll l = 0; l <= Limit[u]; l++)
-    {
-        for (ll i = 0; i <= m; i++)
-            g[i] = -INF;
-        g[0] = 0;
-        ll i = Head[u];
-        while (i)
-        {
-            memcpy(Temp, g, sizeof(g));
-            for (ll j = 0; j <= m; j++)
-                g[j] = -INF;
-            for (ll j = 0; j <= m; j++)
-                for (ll k = 0; Temp[j] >= 0 && j + k <= m; k++)
-                    g[j + k] = max(g[j + k], Temp[j] + f[Edge[i].v][l * Edge[i].w][k]);
-            i = Edge[i].next;
-        }
-        for (ll j = 0; j <= l; j++)
-            for (ll k = 0; k <= m; k++)
-                f[u][j][k] = max(f[u][j][k], g[k] + (l - j) * P[u]);
-    }
+
+	if (!head[u])
+	{
+
+		L[u] = min(L[u], m / M[u]);
+
+		for (long long i = 0; i <= L[u]; i++)
+
+			for (long long j = i; j <= L[u]; j++)
+
+				f[u][i][j * M[u]] = (j - i) * P[u];
+
+		return;
+	}
+
+	L[u] = 0x3f3f3f3f3f3f3f3f;
+
+	for (long long i = head[u]; i; i = e[i].next)
+
+	{
+
+		long long v = e[i].v;
+
+		DP(v);
+
+		L[u] = min(L[u], L[v] / e[i].w);
+
+		M[u] += e[i].w * M[v];
+	}
+
+	L[u] = min(L[u], m / M[u]);
+
+	for (long long l = 0; l <= L[u]; l++)
+
+	{
+
+		memset(g, 0xc0, sizeof(g));
+
+		g[0] = 0;
+
+		for (long long i = head[u]; i; i = e[i].next)
+
+		{
+
+			long long v = e[i].v, w = e[i].w;
+
+			for (long long j = 0; j <= m; j++)
+
+				tmp[j] = g[j], g[j] = -0x3f3f3f3f3f3f3f3f;
+
+			for (long long j = 0; j <= m; j++)
+
+				for (long long k = 0; tmp[j] >= 0 && j + k <= m; k++)
+
+					g[j + k] = max(g[j + k], tmp[j] + f[v][l * w][k]);
+		}
+
+		for (long long j = 0; j <= l; j++)
+
+			for (long long k = 0; k <= m; k++)
+
+				f[u][j][k] = max(f[u][j][k], g[k] + (l - j) * P[u]);
+	}
 }
+
 int main()
+
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= n; i++)
-    {
-        char Type = 0;
-        scanf("%lld %c", &P[i], &Type);
-        if (Type == 'A')
-        {
-            ll C = 0;
-            scanf("%lld", &C);
-            for (ll j = 1; j <= C; j++)
-            {
-                ll v = 0, w = 0;
-                scanf("%lld%lld", &v, &w);
-                AddEdge(i, v, w);
-            }
-        }
-        else
-            scanf("%lld%lld", &Cost[i], &Limit[i]);
-    }
-    for (ll i = 0; i < N; i++)
-        for (ll j = 0; j < 105; j++)
-            for (ll k = 0; k < M; k++)
-                f[i][j][k] = -INF;
-    for (ll u = 1; u <= n; u++)
-        if (!in[u])
-        {
-            F(u);
-            memcpy(Temp, h, sizeof(h));
-            memset(h, 0, sizeof(h));
-            for (ll i = 0; i <= m; i++)
-                for (ll j = i; j <= m; j++)
-                    h[j] = max(h[j], Temp[i] + f[u][0][j - i]);
-        }
-    ll Answer = -INF;
-    for (ll i = 0; i <= m; i++)
-        Answer = max(Answer, h[i]);
-    printf("%lld\n", Answer);
-    return 0;
+
+	ios::sync_with_stdio(0);
+
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> n >> m;
+
+	memset(f, 0xc0, sizeof(f));
+
+	for (long long i = 1, l; i <= n; i++)
+
+	{
+
+		char ch;
+
+		cin >> P[i] >> ch;
+
+		if (ch == 'A')
+
+		{
+
+			cin >> l;
+
+			for (long long j = 1, v, w; j <= l; j++)
+
+				cin >> v >> w, addEdge(i, v, w);
+		}
+
+		else
+
+			cin >> M[i] >> L[i];
+	}
+
+	for (long long u = 1; u <= n; u++)
+
+	{
+
+		if (!in[u])
+
+		{
+
+			DP(u);
+
+			for (long long i = 0; i <= m; i++)
+
+				tmp[i] = h[i], h[i] = 0;
+
+			for (long long i = 0; i <= m; i++)
+
+				for (long long j = 0; i + j <= m; j++)
+
+					h[i + j] = max(h[i + j], tmp[i] + f[u][0][j]);
+		}
+	}
+
+	long long res = -0x3f3f3f3f3f3f3f3f;
+
+	for (long long i = 0; i <= m; i++)
+
+		res = max(res, h[i]);
+
+	cout << res;
+
+	return 0;
 }

@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 int n, dp[5005] = {0}, a[5005] = {0};
-
 int main() {
     freopen("jump.in", "r", stdin);
     freopen("jump.out", "w", stdout);
@@ -22,5 +20,3 @@ int main() {
     cout << dp[n] << endl;
     return 0;
 }
-
-

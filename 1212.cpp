@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
-
 #define cc grid[get<1>(c)][get<2>(c)]
 using namespace std;
 int grid[1500][1500] = {{0}}, dist[1500][1500] = {{0}};
 int xm[] = {1, -1, 0, 0}, ym[] = {0, 0, 1, -1};
-
 int main() {
     freopen("chess.in", "r", stdin);
     freopen("chess.out", "w", stdout);
@@ -28,7 +26,6 @@ int main() {
         if (dist[get<1>(c)][get<2>(c)] < get<0>(c)) continue;
         if (cc == -1) {
             for (int i = 0; i < 4; i++) {
-
                 int cx = xm[i], cy = ym[i];
                 if (get<1>(c) + cx < 1 || get<1>(c) + cx > m || get<2>(c) + cy < 1 ||
                     get<2>(c) + cy > m)
@@ -76,4 +73,3 @@ int main() {
     cout << dist[m][m] << endl;
     return 0;
 }
-

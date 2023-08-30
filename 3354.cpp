@@ -1,72 +1,156 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+
+#include <cstring>
+
+#include <queue>
+
 using namespace std;
-typedef long long ll;
-const ll INF = 0x7FFF'FFFF;
-const ll N = 1005;
-ll Head[N], Next[N], To[N], Weight[N], Distance[N], VisitCount[N];
-bool Visited[N], HaveRing;
-ll n, p, s, d, f, EdgeCount;
-void AddEdge(ll u, ll v, ll w)
+
+struct Edge
 {
-    EdgeCount++;
-    To[EdgeCount] = v;
-    Weight[EdgeCount] = w;
-    Next[EdgeCount] = Head[u];
-    Head[u] = EdgeCount;
-}
-void SPFA()
+
+	int v, w, nex;
+
+} edge[610];
+
+int head[310], top = 0;
+
+int d, p, c, s, f, dis[310], in[310];
+
+bool vis[310];
+
+void add(int u, int v, int w)
+
 {
-    fill(Distance + 1, Distance + n + 1, -INF);
-    Distance[s] = d;
-    queue<ll> q;
-    q.push(s);
-    Visited[s] = true;
-    while (!q.empty())
-    {
-        ll v = q.front();
-        q.pop();
-        VisitCount[v]++;
-        Visited[v] = false;
-        for (ll p = Head[v]; p; p = Next[p])
-        {
-            ll u = To[p];
-            ll w = Weight[p];
-            if (Distance[u] < Distance[v] + w)
-            {
-                Distance[u] = Distance[v] + w;
-                if (!Visited[u])
-                {
-                    Visited[u] = true;
-                    if (VisitCount[u] == n)
-                    {
-                        HaveRing = 1;
-                        return;
-                    }
-                    q.push(u);
-                }
-            }
-        }
-    }
+
+	edge[++top].v = v;
+
+	edge[top].w = w;
+
+	edge[top].nex = head[u];
+
+	head[u] = top;
 }
+
+bool SPFA(int x)
+
+{
+
+	memset(in, 0, sizeof(in));
+
+	memset(vis, 0, sizeof(vis));
+
+	memset(dis, -1e9, sizeof(dis));
+
+	queue<int> q;
+
+	q.push(x);
+
+	dis[x] = d;
+
+	vis[x] = 1;
+
+	while (!q.empty())
+
+	{
+
+		int u = q.front();
+
+		q.pop();
+
+		vis[u] = 0;
+
+		in[u]++;
+
+		if (in[u] > c)
+			return 1;
+
+		for (int i = head[u]; i; i = edge[i].nex)
+
+		{
+
+			int v = edge[i].v;
+
+			if (dis[v] < dis[u] - edge[i].w + d)
+
+			{
+
+				dis[v] = dis[u] - edge[i].w + d;
+
+				if (!vis[v])
+
+				{
+
+					vis[v] = 1;
+
+					q.push(v);
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
 int main()
+
 {
-    scanf("%lld%lld%lld%lld%lld", &d, &p, &n, &f, &s);
-    for (ll i = 1; i <= p; i++)
-    {
-        ll x, y;
-        scanf("%lld%lld", &x, &y);
-        AddEdge(x, y, d);
-    }
-    for (ll i = 1; i <= f; i++)
-    {
-        ll x, y, z;
-        scanf("%lld%lld%lld", &x, &y, &z);
-        AddEdge(x, y, d - z);
-    }
-    SPFA();
-    if (HaveRing)
-        printf("-1\n");
-    else
-        printf("%lld\n", *max_element(Distance + 1, Distance + n + 1));
-    return 0;
+
+	int ans = 0;
+
+	scanf("%d%d%d%d%d", &d, &p, &c, &f, &s);
+
+	int u, v, w;
+
+	for (int i = 1; i <= p; i++)
+
+	{
+
+		scanf("%d%d", &u, &v);
+
+		add(u, v, 0);
+	}
+
+	for (int i = 1; i <= f; i++)
+
+	{
+
+		scanf("%d%d%d", &u, &v, &w);
+
+		add(u, v, w);
+	}
+
+	//	for(int i=1;i<=c;i++)
+
+	//	{
+
+	//		if(SPFA(i))
+
+	//		{
+
+	//			printf("-1");
+
+	//			return 0;
+
+	//		}
+
+	//		for(int j=1;j<=c;j++) ans=max(ans,dis[j]);
+
+	//	}
+
+	if (SPFA(s) == 1)
+
+	{
+
+		printf("-1");
+
+		return 0;
+	}
+
+	for (int j = 1; j <= c; j++)
+		ans = max(ans, dis[j]);
+
+	printf("%d", ans);
+
+	return 0;
 }

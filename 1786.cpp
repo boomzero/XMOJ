@@ -1,59 +1,94 @@
-#include <bits/stdc++.h>
-typedef long long ll;
-using namespace std;
-const ll N = 200005;
-const ll MOD = 1000000007;
-const ll MAGIC_NUMBER = 403219;
-ll HashTable1[N], HashTable2[N], Operator[N], a[N], n;
-map<ll, bool> Map;
-vector<ll> Record;
-ll get_hash1(ll x, ll y)
+#include <cstdio>
+
+typedef unsigned long long ull;
+
+ull n, m, i, jj, j2, k, max, nans;
+
+ull ans[200010], a[200010], hash[1000007];
+
+ull b[1000007], power[200010], ha1[200010], ha2[200010];
+
+inline ull ha(ull x)
 {
-    return (HashTable1[y] - HashTable1[x - 1] * Operator[y - x + 1] % MOD + MOD) % MOD;
+
+	ull y = x % 1000007;
+
+	if (b[y] == m && hash[y] != x)
+	{
+
+		y++;
+
+		if (y == n / m)
+
+			y = 0;
+	}
+
+	return y;
 }
-ll get_hash2(ll x, ll y)
-{
-    return (HashTable2[x] - HashTable2[y + 1] * Operator[y - x + 1] % MOD + MOD) % MOD;
-}
+
 int main()
+
 {
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld", &a[i]);
-    Operator[0] = 1;
-    for (ll i = 1; i <= n; i++)
-        Operator[i] = Operator[i - 1] * MAGIC_NUMBER % MOD;
-    for (ll i = 1; i <= n; i++)
-        HashTable1[i] = (HashTable1[i - 1] * MAGIC_NUMBER % MOD + (ll)a[i]) % MOD;
-    for (ll i = n; i >= 1; i--)
-        HashTable2[i] = (HashTable2[i + 1] * MAGIC_NUMBER % MOD + (ll)a[i]) % MOD;
-    ll Max = 0;
-    for (ll k = 1; k <= n; k++)
-    {
-        Map.clear();
-        ll Count = 0;
-        for (ll i = 1; i <= n; i += k)
-        {
-            if (i + k - 1 > n)
-                continue;
-            ll Hash = get_hash1(i, i + k - 1) * get_hash2(i, i + k - 1);
-            if (Map.count(Hash))
-                continue;
-            Map[Hash] = true;
-            Count++;
-        }
-        if (Count > Max)
-        {
-            Max = Count;
-            Record.clear();
-            Record.push_back(k);
-        }
-        else if (Count == Max)
-            Record.push_back(k);
-    }
-    printf("%lld%lld\n", Max, Record.size());
-    for (ll i = 0; i <= Record.size() - 1; i++)
-        printf("%lld ", Record[i]);
-    printf("\n");
-    return 0;
+
+	scanf("%lld", &n);
+
+	power[0] = 1;
+
+	for (m = 1; m <= n; m++)
+	{
+
+		scanf("%lld", &a[m]);
+
+		power[m] = power[m - 1] * 19260817, ha1[m] = ha1[m - 1] * 19260817 + a[m];
+	}
+
+	for (m = n; m; m--)
+
+		ha2[m] = ha2[m + 1] * 19260817 + a[m];
+
+	for (m = 1; m <= n; m++)
+	{
+
+		k = 0;
+
+		for (i = m + 1; i <= n + 1; i += m)
+		{
+
+			jj = ha(ha1[i - 1] - ha1[i - m - 1] * power[m]);
+
+			if (hash[jj] == ha1[i - 1] - ha1[i - m - 1] * power[m])
+
+				continue;
+
+			j2 = ha(ha2[i - m] - ha2[i] * power[m]);
+
+			if (hash[j2] == ha2[i - m] - ha2[i] * power[m])
+
+				continue;
+
+			b[jj] = b[j2] = m, hash[jj] = ha1[i - 1] - ha1[i - m - 1] * power[m];
+
+			hash[j2] = ha2[i - m] - ha2[i] * power[m], k++;
+		}
+
+		if (k > max)
+
+			max = k, nans = 1, ans[1] = m;
+
+		else if (k == max)
+
+			nans++, ans[nans] = m;
+	}
+
+	printf("%lld %lld\n", max, nans);
+
+	for (m = 1; m < nans; m++)
+	{
+
+		printf("%lld ", ans[m]);
+	}
+
+	printf("%lld", ans[m]);
+
+	return 0;
 }

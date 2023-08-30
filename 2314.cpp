@@ -1,28 +1,63 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-const ll N = 10005;
-const ll INF = 0x3FFF'FFFF'FFFF'FFFF;
-ll n, d, m, Answer, a[N], b[N], f[N][N];
+#include <cstdio>
+
+#include <cstring>
+
+#define max(a, b) (a > b ? a : b)
+
+int n, m, c, i, j, k, x, y, ans;
+
+int a[10005], b[10005], f[10005], q[10005];
+
 int main()
 {
-    scanf("%lld%lld%lld", &n, &d, &m);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld%lld", &a[i], &b[i]);
-    // for (ll i = 1; i <= n; i++)
-    //     for (ll j = 1; j <= m; j++)
-    //         f[i][j] = -INF;
-    memset(f, -0x3f, sizeof(f));
-    f[1][0] = a[1];
-    Answer = a[1];
-    for (ll i = 2; i <= n; i++)
-        for (ll j = 1; j <= m; j++)
-            for (ll l = 1; l < i; l++)
-                if (b[i] - b[l] <= d)
-                {
-                    f[i][j] = max(f[i][j], f[l][j - 1] + a[i]);
-                    Answer = max(Answer, f[i][j]);
-                }
-    printf("%lld\n", Answer);
-    return 0;
+
+	scanf("%d%d%d", &n, &m, &c);
+
+	for (int i = 1; i <= n; i++)
+	{
+
+		scanf("%d%d", &a[i], &b[i]);
+	}
+
+	f[1] = a[1];
+
+	for (k = 1; k <= c; k++)
+	{
+
+		x = 1, y = 0;
+
+		memset(q, 0, sizeof(q));
+
+		for (i = j = n; i > 0; i--)
+		{
+
+			while (j > 0 && b[j] + m >= b[i])
+			{
+
+				q[++y] = j--;
+
+				while (q[x] >= i)
+					x++;
+
+				while (x < y && f[q[y]] >= f[q[y - 1]])
+				{
+
+					q[y - 1] = q[y], y--;
+				}
+			}
+
+			while (q[x] >= i)
+				x++;
+
+			if (f[q[x]])
+				f[i] = f[q[x]] + a[i];
+		}
+	}
+
+	for (i = 1; i <= n; i++)
+		ans = max(ans, f[i]);
+
+	printf("%d", ans);
+
+	return 0;
 }

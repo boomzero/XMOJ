@@ -1,61 +1,145 @@
-#include <bits/stdc++.h>
+#include <cstdio>
+
+#include <cstring>
+
+#include <vector>
+
+#include <queue>
+
 using namespace std;
-const int N = 100005;
-int n, m, Answer, in[N], dp[N];
-bool Visited[N];
-vector<int> g[N];
-queue<int> Order;
-void init()
+
+int A[(int)1e5 + 10], B[(int)1e5 + 10];
+
+int r[(int)1e5 + 10], c[(int)1e5 + 10], tot[(int)1e5 + 10];
+
+queue<int> q;
+
+vector<int> vt[(int)1e5 + 10];
+
+inline void write(int x)
 {
-    cin >> n >> m;
-    for (int i = 0; i < m; i++)
-    {
-        int u, v;
-        cin >> u >> v;
-        g[u].push_back(v);
-        in[v]++;
-    }
+
+	if (!x)
+		putchar('0');
+
+	char f[200];
+
+	int tmp = x > 0 ? x : -x;
+
+	if (x < 0)
+		putchar('-');
+
+	int cnt = 0;
+
+	while (tmp > 0)
+	{
+
+		f[cnt++] = tmp % 10 + '0';
+
+		tmp /= 10;
+	}
+
+	while (cnt > 0)
+		putchar(f[--cnt]);
 }
-bool TopoSort()
+
+template <typename T>
+void read(T &a)
 {
-    queue<int> q;
-    int cnt = 0;
-    for (int i = 1; i <= n; i++)
-        if (in[i] == 0)
-            q.push(i);
-    while (!q.empty())
-    {
-        int k = q.front();
-        q.pop();
-        cnt++;
-        Order.push(k);
-        for (int i = 0; i < g[k].size(); i++)
-        {
-            in[g[k][i]]--;
-            if (in[g[k][i]] == 0)
-                q.push(g[k][i]);
-        }
-    }
-    return cnt == n;
+
+	a = 0;
+	int f = 1;
+	char ch = getchar();
+
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-')
+			f = -1;
+		ch = getchar();
+	}
+
+	do
+	{
+		a = a * 10 + ch - '0';
+		ch = getchar();
+	} while ('0' <= ch && ch <= '9');
+
+	a *= f;
 }
+
 int main()
+
 {
-    init();
-    TopoSort();
-    while (!Order.empty())
-    {
-        int k = Order.front();
-        Order.pop();
-        if (g[k].size() == 0)
-        {
-            Answer += dp[k];
-            continue;
-        }
-        if (dp[k] == 0)
-            dp[k] = 1;
-        for (auto i : g[k])
-            dp[i] += dp[k];
-    }
-    cout << Answer << endl;
-    return 0;
+
+	int n, m;
+
+	read(n), read(m);
+
+	memset(r, 0, sizeof(r));
+
+	memset(c, 0, sizeof(c));
+
+	memset(tot, 0, sizeof(tot));
+
+	for (int i = 1; i <= m; i++)
+
+	{
+
+		int x, y;
+
+		read(x), read(y);
+
+		vt[x].push_back(y);
+
+		r[y]++;
+		c[x]++;
+	}
+
+	for (int i = 1; i < n; i++)
+
+	{
+
+		if (c[i] && !r[i])
+
+		{
+
+			tot[i] = 1;
+
+			q.push(i);
+		}
+	}
+
+	while (!q.empty())
+
+	{
+
+		int k = q.front();
+
+		q.pop();
+
+		for (int i = 0; i < (int)vt[k].size(); i++)
+
+		{
+
+			int to = vt[k][i];
+
+			tot[to] += tot[k];
+
+			r[to]--;
+
+			if (!r[to])
+				q.push(to);
+		}
+	}
+
+	int ans = 0;
+
+	for (int i = 1; i <= n; i++)
+
+		if (!c[i])
+			ans += tot[i];
+
+	write(ans);
+
+	return 0;
 }

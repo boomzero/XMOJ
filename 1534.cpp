@@ -2,26 +2,47 @@
 
 using namespace std;
 
-int main() {
-    int n, a[10001] = {0}, cnt = 1, ca[10001] = {0}, v = 0;
+int n, a[1010];
+
+stack<int> sta;
+
+int main()
+
+{
+
     cin >> n;
-    stack<int> s;
-    for (int i = 1; i <= n; ++i) {
+
+    for (int i = 1; i <= n; ++i)
+
         cin >> a[i];
-    }
-    while (cnt <= n) {
-        if (!s.empty() && s.top() == a[cnt]) {
-            cnt++;
-            s.pop();
-        } else if (v <= n) {
-            s.push(++v);
-        } else {
-            cout << "Impossible" << endl;
-            return 0;
+
+    for (int i = 1, current = 1; i <= n; ++i)
+    {
+
+        while (current <= a[i])
+        {
+
+            sta.push(current++);
+        }
+
+        if (sta.top() == a[i])
+        {
+
+            int x = sta.top();
+
+            sta.pop();
+        }
+
+        else
+        {
+
+            cout << "Impossible";
+
+            return -1;
         }
     }
-    if (s.empty()) cout << "Possible" << endl;
-    else cout << "Impossible" << endl;
-    return 0;
-}
 
+    cout << "Possible";
+
+    return -1;
+}

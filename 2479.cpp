@@ -1,33 +1,52 @@
 #include <bits/stdc++.h>
 
-using namespace std;
-int n, arr[105] = {0};
+int n, a[100];
 
+void print()
 
-void dfs(int val, int pos, bool nn) {
-    arr[pos] = val;
-    if (val == 1 && !nn) {
-        for (int i = 1; i <= 2 * n; i++) {
-            cout << arr[i] << " ";
-        }
-        cout << endl;
-        exit(0);
-    }
-    if (nn) {
-        if (arr[pos + val + 1] == 0) dfs(val, pos + val + 1, false);
-    } else {
-        for (int i = 1; i <= 2 * n; ++i) {
-            if (arr[i] == 0 && arr[i + val] == 0 && i + val <= 2 * n) dfs(val - 1, i, true);
-        }
-    }
-    arr[pos] = 0;
+{
+
+    for (int i = 1; i < 2 * n; ++i)
+        printf("%d ", a[i]);
+
+    printf("%d\n", a[2 * n]);
 }
 
-int main() {
-    cin >> n;
-    for (int i = 1; i <= 2 * n; ++i) {
-        dfs(n, i, true);
+bool dfs(int d)
+
+{
+
+    if (d == 0)
+    {
+        print();
+        return true;
     }
+
+    for (int i = 1; i + d + 1 <= 2 * n; ++i)
+    {
+
+        if (!a[i] && !a[i + d + 1])
+        {
+
+            a[i] = a[i + d + 1] = d;
+
+            if (dfs(d - 1))
+                return true;
+
+            a[i] = a[i + d + 1] = 0;
+        }
+    }
+
+    return false;
+}
+
+int main()
+
+{
+
+    scanf("%d", &n);
+
+    dfs(n);
+
     return 0;
 }
-

@@ -1,79 +1,127 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 50005;
-ll n, m, Head[N], EdgeCount, StackTop, DFN[N], Low[N], Counter, Stack[N], SCC[N], SCCCount, Size[N], OutDegree[N];
-bool InStack[N];
-struct EDGE
+
+const int inn = 100001;
+
+struct node
 {
-    ll to, Next;
-} Edges[N];
-void AddEdge(ll u, ll v)
+
+	int x, y, next;
+
+} a[inn];
+
+int n, m, low[inn], dfn[inn], lis[inn], tt[inn], belong[inn], out[inn], w[inn];
+
+int ans, naa, tg;
+
+bool b[inn];
+
+void tarjan(int q)
+
 {
-    EdgeCount++;
-    Edges[EdgeCount].to = v;
-    Edges[EdgeCount].Next = Head[u];
-    Head[u] = EdgeCount;
+
+	int h;
+
+	low[q] = dfn[q] = ++naa;
+
+	tt[++ans] = q;
+	b[q] = true;
+
+	for (int t = lis[q]; t; t = a[t].next)
+	{
+
+		h = a[t].y;
+
+		if (!dfn[h])
+		{
+
+			tarjan(h);
+
+			low[q] = min(low[q], low[h]);
+		}
+		else if (b[h])
+			low[q] = min(dfn[h], low[q]);
+	}
+
+	if (dfn[q] == low[q])
+	{
+
+		tg++;
+
+		do
+		{
+
+			w[tg]++;
+
+			h = tt[ans];
+
+			ans--;
+
+			b[h] = false;
+
+			belong[h] = tg;
+
+		} while (q != h);
+	}
 }
-void Tarjan(ll u)
-{
-    Low[u] = DFN[u] = ++Counter;
-    Stack[++StackTop] = u;
-    InStack[u] = true;
-    for (ll i = Head[u]; i; i = Edges[i].Next)
-    {
-        ll v = Edges[i].to;
-        if (!DFN[v])
-        {
-            Tarjan(v);
-            Low[u] = min(Low[u], Low[v]);
-        }
-        else if (InStack[v])
-            Low[u] = min(Low[u], DFN[v]);
-    }
-    if (DFN[u] == Low[u])
-    {
-        SCCCount++;
-        while (Stack[StackTop] != u)
-        {
-            SCC[Stack[StackTop]] = SCCCount;
-            Size[SCCCount]++;
-            InStack[Stack[StackTop]] = false;
-            StackTop--;
-        }
-        SCC[Stack[StackTop]] = SCCCount;
-        Size[SCCCount]++;
-        InStack[Stack[StackTop]] = false;
-        StackTop--;
-    }
-}
+
 int main()
 {
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= m; i++)
-    {
-        ll u, v;
-        scanf("%lld%lld", &u, &v);
-        AddEdge(u, v);
-    }
-    for (ll i = 1; i <= n; i++)
-        if (!DFN[i])
-            Tarjan(i);
-    for (ll u = 1; u <= n; u++)
-        for (ll i = Head[u]; i; i = Edges[i].Next)
-        {
-            ll v = Edges[i].to;
-            if (SCC[u] != SCC[v])
-                OutDegree[SCC[u]]++;
-        }
-    ll OutZero = 0;
-    ll OutZeroIndex = 0;
-    for (ll i = 1; i <= SCCCount; i++)
-        if (OutDegree[i] == 0)
-        {
-            OutZero++;
-            OutZeroIndex = i;
-        }
-    printf("%lld\n", (OutZero == 1 ? Size[OutZeroIndex] : 0));
-    return 0;
+
+	scanf("%d%d", &n, &m);
+
+	int xx, yy;
+
+	for (int i = 1; i <= m; i++)
+	{
+
+		scanf("%d%d", &xx, &yy);
+
+		a[i].x = xx;
+
+		a[i].y = yy;
+
+		a[i].next = lis[xx];
+
+		lis[xx] = i;
+	}
+
+	for (int i = 1; i <= n; i++)
+
+		if (!dfn[i])
+
+			tarjan(i);
+
+	for (int i = 1; i <= m; i++)
+
+		if (belong[a[i].x] != belong[a[i].y])
+
+			out[belong[a[i].x]]++;
+
+	int ttt = 0, num = 0;
+
+	for (int i = 1; i <= tg; i++)
+	{
+
+		if (!out[i])
+		{
+
+			ttt = i;
+
+			num++;
+		}
+	}
+
+	if (num == 1)
+	{
+
+		printf("%d", w[ttt]);
+
+		return 0;
+	}
+
+	printf("0");
+
+	return 0;
 }

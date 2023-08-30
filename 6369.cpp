@@ -1,58 +1,134 @@
 #include <bits/stdc++.h>
 
-#define Yes cout<<"Yes"<<endl;
-#define No cout<<"No"<<endl;
-typedef long long ll;
 using namespace std;
-ll testSet[] = {2, 3,7,11};
 
-long long powMod(long long a, long long b, long long mode) {
-    long long sum = 1;
-    while (b) {
-        if (b & 1) {
-            sum = (sum * a) % mode;
-            b--;
-        }
-        b /= 2;
-        a = a * a % mode;
-    }
-    return sum;
+typedef long long int ll;
+
+ll mod_mul(ll a, ll b, ll mod)
+
+{
+
+	ll res = 0;
+
+	while (b)
+
+	{
+
+		if (b & 1)
+
+			res = (res + a) % mod;
+
+		a = (a + a) % mod;
+
+		b >>= 1;
+	}
+
+	return res;
 }
 
-int main() {
-    int t;
-    cin >> t;
-    for (int q = 0; q < t; ++q) {
-        ll n;
-        cin >> n;
-        if (n == 2) {
-            Yes
-            continue;
-        }
-        ll r = 0, d = n - 1;
-        while (d % 2 == 0) {
-            r++;
-            d /= 2;
-        }
-        bool passTest = false, pa = true;
-        for (ll a: testSet) {
-            ll i = 1;
-            passTest = false;
-            while (i <= r) {
-                if (powMod(a, d * (1 << i), n) == 1) {
-                    passTest = true;
-                    break;
-                }
-                i++;
-            }
-            if (!passTest) {
-                No
-                pa= false;
-                break;
-            }
-        }
-        if(pa) Yes
-    }
-    return 0;
+ll mod_pow(ll a, ll n, ll mod)
+
+{
+
+	ll res = 1;
+
+	while (n)
+
+	{
+
+		if (n & 1)
+
+			res = mod_mul(res, a, mod);
+
+		a = mod_mul(a, a, mod);
+
+		n >>= 1;
+	}
+
+	return res;
 }
 
+bool Miller_Rabin(ll n)
+
+{
+
+	if (n == 2)
+
+		return true;
+
+	if (n < 2 || !(n & 1))
+
+		return false;
+
+	ll m = n - 1, k = 0;
+
+	while (!(m & 1))
+
+	{
+
+		k++;
+
+		m >>= 1;
+	}
+
+	for (int i = 1; i <= 10; i++)
+
+	{
+
+		ll a = rand() % (n - 1) + 1;
+
+		ll x = mod_pow(a, m, n);
+
+		ll y;
+
+		for (int j = 1; j <= k; j++)
+
+		{
+
+			y = mod_mul(x, x, n);
+
+			if (y == 1 && x != 1 && x != n - 1)
+
+				return false;
+
+			x = y;
+		}
+
+		if (y != 1)
+
+			return false;
+	}
+
+	return true;
+}
+
+int main()
+
+{
+
+	ios::sync_with_stdio(false);
+
+	cin.tie(0), cout.tie(0);
+
+	ll n;
+
+	int t;
+
+	scanf("%d", &t);
+
+	for (int i = 0; i < t; i++)
+	{
+
+		scanf("%lld", &n);
+
+		bool right = Miller_Rabin(n);
+
+		if (right == true)
+			cout << "Yes";
+
+		else
+			cout << "No";
+
+		cout << endl;
+	}
+}

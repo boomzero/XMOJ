@@ -1,20 +1,41 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int n, a[1000] = {0};
 
-int main() {
+int n;
+
+bool cmp(string i, string j)
+
+{
+
+    return (i + j) > (j + i);
+}
+
+int main()
+
+{
+
     cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
+
+    vector<string> data;
+
+    string temp;
+
+    for (int i = 0; i < n; i++)
+
+    {
+
+        cin >> temp;
+
+        data.push_back(temp);
     }
-    sort(a + 1, a + 1 + n, [](int a, int b) {
-        string i = to_string(a), j = to_string(b);
-        return i + j > j + i;
-    });
-    for (int i = 1; i <= n; ++i) {
-        cout << a[i];
+
+    sort(data.begin(), data.end(), cmp);
+
+    for (int i = 0; i < n; i++)
+
+    {
+
+        cout << data[i];
     }
-    cout << endl;
-    return 0;
 }

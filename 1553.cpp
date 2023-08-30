@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 int main() {
     int n, val[400] = {0}, dp[400][400] = {0}, sum[400] = {0};
     cin >> n;
@@ -25,4 +23,3 @@ int main() {
     cout << dp[1][n] << endl;
     return 0;
 }
-

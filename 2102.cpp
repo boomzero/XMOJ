@@ -1,16 +1,38 @@
 #include <bits/stdc++.h>
-using namespace std;
-int main(){
-    freopen("title.in","r",stdin);
-    freopen("title.out","w",stdout);
-    string in;
-    getline(cin,in);
-    while (in.find(' ')!=string::npos){
-        in.erase(in.find(' '),1);
-    }
-    while (in.find('\n')!=string::npos){
-        in.erase(in.find('\n'),1);
-    }
-    cout<<in.length()<<endl;
-}
 
+using namespace std;
+
+char s[100];
+
+int ans, len;
+
+int main()
+{
+
+	freopen("title.in", "r", stdin);
+
+	freopen("title.out", "w", stdout);
+
+	fgets(s, 95, stdin);
+
+	strtok(s, "\r\n");
+
+	len = strlen(s);
+
+	for (int i = 0; i < len; i++)
+	{
+
+		if ('A' <= s[i] && s[i] <= 'Z')
+			ans++;
+
+		if ('a' <= s[i] && s[i] <= 'z')
+			ans++;
+
+		if ('0' <= s[i] && s[i] <= '9')
+			ans++;
+	}
+
+	cout << ans;
+
+	return 0;
+}
