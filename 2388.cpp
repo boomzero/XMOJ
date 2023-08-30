@@ -9,7 +9,6 @@ class BigNumber
 private:
     short Data[105] = {0};
     short Length = 0;
-
 public:
     BigNumber()
     {

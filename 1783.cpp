@@ -3,10 +3,8 @@
 #include <string>
 #define MAXN 400000
 using namespace std;
-
 const unsigned MOD = 1e7 + 9;
 unsigned hs[MAXN + 5], mul[MAXN + 5];
-
 int main()
 {
     ios::sync_with_stdio(0);

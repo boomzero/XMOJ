@@ -3,9 +3,7 @@
 #define MAXN 60000
 #define MAXM 120000
 using namespace std;
-
 int hd[MAXN + 5], nxt[MAXM + 5], to[MAXM + 1], cnt, siz[MAXN + 1], w[MAXN + 1], fa[MAXN + 1];
-
 void add(int u, int v)
 {
     to[++cnt] = v;
@@ -13,7 +11,6 @@ void add(int u, int v)
     hd[u] = cnt;
     return;
 }
-
 void dfs(int f, int x)
 {
     fa[x] = f;
@@ -40,7 +37,6 @@ void dfs(int f, int x)
     w[x] = p;
     return;
 }
-
 int main()
 {
     ios::sync_with_stdio(0);

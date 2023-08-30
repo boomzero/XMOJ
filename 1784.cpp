@@ -126,6 +126,5 @@ int main()
                 printf("%c", s1[i]);
         }
     }
-
     return 0;
 }

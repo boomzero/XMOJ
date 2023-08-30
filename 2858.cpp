@@ -1,19 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int N = 100000 + 5;
-
 int n, k, ecnt = 1, last[N], ans, len0 = 0, len1 = 0, dep[N], f[N], pre[N], fa[N], L, R;
-
 struct edge
 {
     int to, w, nex;
 } e[N * 2];
-
 void add(int x, int y, int z)
 {
     e[++ecnt].to = y, e[ecnt].w = z, e[ecnt].nex = last[x], last[x] = ecnt;
 }
-
 void dfs(int x, int las, int deep)
 {
     dep[x] = deep, fa[x] = las;
@@ -29,7 +25,6 @@ void dfs(int x, int las, int deep)
             f[x] = f[to] + e[i].w, pre[x] = pre[to];
     }
 }
-
 void tag(int x, int y)
 {
     if (dep[x] < dep[y])
@@ -54,7 +49,6 @@ void tag(int x, int y)
         x = fa[x], y = fa[y];
     }
 }
-
 void dfs2(int x)
 {
     for (int to, i = last[x]; i; i = e[i].nex)
@@ -69,7 +63,6 @@ void dfs2(int x)
             f[x] = f[to] + e[i].w;
     }
 }
-
 int main()
 {
     ios::sync_with_stdio(false);

@@ -5,7 +5,6 @@ using namespace std;
 #define N 100010
 #define mod 100007
 #define lowbit(x) ((x) & (-x))
-
 struct Point
 {
     int x, y;
@@ -16,7 +15,6 @@ struct Point
 } p[N];
 int n, m, k;
 int dp[N][15][2], bit[N][15][2];
-
 void add(int p, int a, int b, int v)
 {
     for (int i = p; i < N; i += lowbit(i))

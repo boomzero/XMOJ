@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 const int mac = 5e4 + 10;
-
 inline void in(int &read)
 {
     int x = 0;
@@ -13,7 +11,6 @@ inline void in(int &read)
         x = (x << 3) + (x << 1) + ch - '0', ch = getchar();
     read = x;
 }
-
 inline void out(int x)
 {
     if (x >= 10)
@@ -22,9 +19,7 @@ inline void out(int x)
     }
     putchar(x % 10 + '0');
 }
-
 int a[mac], L[mac], R[mac], id[mac], add[mac];
-
 void update(int l, int r, int c)
 {
     int p = id[l], q = id[r];
@@ -41,7 +36,6 @@ void update(int l, int r, int c)
             a[i] += c;
     }
 }
-
 int main()
 {
     int n;

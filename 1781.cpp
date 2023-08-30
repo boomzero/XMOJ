@@ -3,10 +3,8 @@
 #include <string>
 #define MAXN 1000000
 using namespace std;
-
 unsigned hs[MAXN + 5];
 const unsigned b = 97;
-
 int main()
 {
     ios::sync_with_stdio(0);

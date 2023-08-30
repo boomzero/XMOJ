@@ -17,7 +17,6 @@ bool count(int tmp, int tmpp)
 }
 int main()
 {
-
 	int a, b, c;
 	scanf("%d%d%d", &a, &b, &c);
 	hash[1] = z[1].v = 1;

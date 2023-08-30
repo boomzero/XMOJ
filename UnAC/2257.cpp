@@ -7,7 +7,6 @@ class BigNumber
 private:
     unsigned char Data[205] = {0};
     unsigned char Length = 0;
-
 public:
     BigNumber() {}
     BigNumber(ll x)

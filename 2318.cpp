@@ -27,7 +27,6 @@ int ap[N], bp[N], as[N], bs[N];
 int dp[N][N], ans, w, mx;
 pair<int, int> p;
 deque<pair<int, int>> q1, q2;
-
 signed main()
 {
 	memset(dp, 0x80, sizeof(dp));

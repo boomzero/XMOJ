@@ -8,12 +8,10 @@
 #define rep(i, a, n) for (int i = a; i <= n; i++)
 #define per(i, n, a) for (int i = n; i >= a; i--)
 #define enter putchar('\n')
-
 using namespace std;
 typedef long long ll;
 const int M = 10005;
 const int INF = 1000000009;
-
 int read()
 {
    int ans = 0, op = 1;
@@ -32,31 +30,25 @@ int read()
    }
    return ans * op;
 }
-
 int b, c, r, row[11], col[11], blo[11], maxd;
 char s[11];
-
 int B(int x, int y)
 {
    return ((x - 1) / 3 * 3 + (y - 1) / 3) + 1;
 }
-
 int h()
 {
    return max(r, max(b, c));
 }
-
 int cal(int x)
 {
    return (!x) ? -1 : 1;
 }
-
 void change(int i, int j)
 {
    row[i] ^= 1, col[j] ^= 1, blo[B(i, j)] ^= 1;
    r += cal(row[i]), c += cal(col[j]), b += cal(blo[B(i, j)]);
 }
-
 void dfs(int x, int y, int d)
 {
    if (d > maxd)
@@ -78,7 +70,6 @@ void dfs(int x, int y, int d)
    else
       (y == 9) ? dfs(x + 1, 1, d) : dfs(x, y + 1, d);
 }
-
 int main()
 {
    freopen("bsudoku.in", "r", stdin);

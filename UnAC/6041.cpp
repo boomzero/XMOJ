@@ -32,7 +32,6 @@ int main()
 		g[i].emplace_back(a);
 		g[i].emplace_back(b);
 	}
-
 	int ans = 0, pa = 0;
 	for (int i = 1; i <= m; i++)
 	{
