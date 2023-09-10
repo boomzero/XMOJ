@@ -1,98 +1,98 @@
-#include <set>
-#include <cstdio>
-#include <cstring>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
-int n, m, t, cnt, l = 1, r = 0, first[100010], v[100010], w[100010], nxt[100010];
-int f1[100010], f2[100010], f[100010], tmp[100010];
-multiset<int> S;
-multiset<int>::iterator it;
-inline void add(int x, int y, int z)
+typedef long long ll;
+const ll N = 100005;
+ll n, m, Count, l = 1, r, EdgeCount, Head[N];
+ll f1[N], f2[N], f[N], Temp[N];
+struct EDGE
 {
-	nxt[++t] = first[x];
-	first[x] = t;
-	v[t] = y;
-	w[t] = z;
+	ll To, Weight, Next;
+} Edges[N * 2];
+void AddEdge(ll u, ll v, ll w)
+{
+	EdgeCount++;
+	Edges[EdgeCount].To = v;
+	Edges[EdgeCount].Weight = w;
+	Edges[EdgeCount].Next = Head[u];
+	Head[u] = EdgeCount;
 }
-inline void dfs(int x, int fa)
+void DFS(ll u, ll Father)
 {
-	for (int i = first[x]; i; i = nxt[i])
+	for (ll i = Head[u]; i; i = Edges[i].Next)
 	{
-		int to = v[i];
-		if (to == fa)
+		ll v = Edges[i].To;
+		ll w = Edges[i].Weight;
+		if (v == Father)
 			continue;
-		dfs(to, x);
-		if (f1[x] < f1[to] + w[i])
+		DFS(v, u);
+		if (f1[u] < f1[v] + w)
 		{
-			f2[x] = f1[x];
-			f1[x] = f1[to] + w[i];
+			f2[u] = f1[u];
+			f1[u] = f1[v] + w;
 		}
-		else if (f2[x] < f1[to] + w[i])
-			f2[x] = f1[to] + w[i];
-		r = max(r, f1[x] + f2[x]);
+		else if (f2[u] < f1[v] + w)
+			f2[u] = f1[v] + w;
+		r = max(r, f1[u] + f2[u]);
 	}
 }
-inline void dp(int x, int fa, int k)
+void DP(ll u, ll Father, ll k)
 {
-	for (int i = first[x]; i; i = nxt[i])
-		if (v[i] != fa)
-			dp(v[i], x, k);
-	int top = 0;
-	for (int i = first[x]; i; i = nxt[i])
+	for (ll i = Head[u]; i; i = Edges[i].Next)
+		if (Edges[i].To != Father)
+			DP(Edges[i].To, u, k);
+	ll TempSize = 0;
+	for (ll i = Head[u]; i; i = Edges[i].Next)
 	{
-		int to = v[i];
-		if (to == fa)
+		ll v = Edges[i].To;
+		if (v == Father)
 			continue;
-		f[to] += w[i];
-		(f[to] >= k) ? (++cnt) : (tmp[++top] = f[to]);
-	}
-	sort(tmp + 1, tmp + top + 1);
-	S.clear();
-	for (int i = 1; i <= top; ++i)
-	{
-		it = S.lower_bound(k - tmp[i]);
-		if (it != S.end())
-			S.erase(it), cnt++;
+		f[v] += Edges[i].Weight;
+		if (f[v] >= k)
+			Count++;
 		else
-			S.insert(tmp[i]);
+		{
+			TempSize++;
+			Temp[TempSize] = f[v];
+		}
 	}
-	f[x] = S.size() ? *S.rbegin() : 0;
-}
-inline bool check(int mid)
-{
-	cnt = 0, dp(1, 0, mid);
-	return cnt >= m;
-}
-inline long long read()
-{
-	long long s = 0;
-	char c = getchar();
-	while (c < '0' || c > '9')
-		c = getchar();
-	while (c >= '0' && c <= '9')
-		s = s * 10 + c - 48, c = getchar();
-	return s;
+	sort(Temp + 1, Temp + TempSize + 1);
+	multiset<ll> Set;
+	for (ll i = 1; i <= TempSize; ++i)
+	{
+		auto it = Set.lower_bound(k - Temp[i]);
+		if (it != Set.end())
+		{
+			Set.erase(it);
+			Count++;
+		}
+		else
+			Set.insert(Temp[i]);
+	}
+	f[u] = Set.size() ? *Set.rbegin() : 0;
 }
 int main()
 {
 	freopen("track.in", "r", stdin);
 	freopen("track.out", "w", stdout);
-	int x, y, z;
-	n = read(), m = read();
-	for (int i = 1; i < n; ++i)
+	scanf("%lld%lld", &n, &m);
+	for (ll i = 1; i < n; ++i)
 	{
-		x = read(), y = read(), z = read();
-		add(x, y, z), add(y, x, z);
+		ll x, y, z;
+		scanf("%lld%lld%lld", &x, &y, &z);
+		AddEdge(x, y, z);
+		AddEdge(y, x, z);
 	}
-	dfs(1, 0);
+	DFS(1, 0);
 	while (l < r)
 	{
-		int mid = (l + r + 1) >> 1;
-		if (check(mid))
-			l = mid;
+		ll Middle = (l + r + 1) / 2;
+		Count = 0;
+		DP(1, 0, Middle);
+		if (Count >= m)
+			l = Middle;
 		else
-			r = mid - 1;
+			r = Middle - 1;
 	}
-	printf("%d", l);
+	printf("%lld\n", l);
 	return 0;
 }

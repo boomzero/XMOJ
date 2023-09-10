@@ -1,3 +1,4 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 const int MAXN = 50010, MAXT = 15000010, MAXLOG = 40;
