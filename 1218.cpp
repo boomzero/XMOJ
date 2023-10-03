@@ -1,66 +1,60 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int Max = 5000;
-const int inf = 1e9;
-int n, m, ans = 1e9, tot;
-int dis[20][20], f[20][Max];
-int p[Max], num[Max], pos[Max], sum[Max], condition[Max];
-inline int get_int()
+typedef long long ll;
+const ll N = 25;
+const ll M = 5005;
+const ll INF = 0x7FFF'FFFF;
+ll n, m;
+ll Distance[N][N], f[N][M];
+ll p[M], Number[M], Position[M], Sum[M], Condition[M];
+ll LowBit(ll x)
 {
-	int x = 0, f = 1;
-	char c;
-	for (c = getchar(); (!isdigit(c)) && (c != '-'); c = getchar())
-		;
-	if (c == '-')
-	{
-		f = -1;
-		c = getchar();
-	}
-	for (; isdigit(c); c = getchar())
-		x = (x << 3) + (x << 1) + c - '0';
-	return x * f;
+	return x & (-x);
 }
-inline int mn(int x, int y) { return x < y ? x : y; }
 int main()
 {
-	n = get_int(), m = get_int();
-	memset(f, 0x3f, sizeof(f));
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
-			dis[i][j] = 10000000;
-	for (int i = 1; i <= m; i++)
+	scanf("%lld%lld", &n, &m);
+	fill(f[0], f[0] + N * M, INF);
+	fill(Distance[0], Distance[0] + N * N, INF);
+	for (ll i = 1; i <= m; i++)
 	{
-		int x = get_int() - 1, y = get_int() - 1, z = get_int();
-		dis[x][y] = dis[y][x] = mn(z, dis[x][y]);
+		ll x, y, z;
+		scanf("%lld%lld%lld", &x, &y, &z);
+		x--, y--;
+		Distance[x][y] = Distance[y][x] = min(z, Distance[x][y]);
 	}
-	for (int i = 0; i < n; i++)
-		pos[1 << i] = i, f[0][1 << i] = 0;
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < (1 << n); j++)
+	for (ll i = 0; i < n; i++)
+	{
+		Position[1 << i] = i;
+		f[0][1 << i] = 0;
+	}
+	for (ll i = 0; i < n; i++)
+		for (ll j = 0; j < (1 << n); j++)
 		{
-			tot = 0;
-			for (int to = 0; to < n; to++)
+			ll Total = 0;
+			for (ll To = 0; To < n; To++)
 			{
-				if ((1 << to) & j)
+				if ((1 << To) & j)
 					continue;
-				p[tot] = 1 << to;
-				num[tot] = 10000000;
-				for (int k = j; k; k -= k & (-k))
+				p[Total] = 1 << To;
+				Number[Total] = INF;
+				for (ll k = j; k; k -= LowBit(k))
 				{
-					int from = pos[k & (-k)];
-					num[tot] = mn(num[tot], dis[from][to] * (i + 1));
+					ll From = Position[LowBit(k)];
+					Number[Total] = min(Number[Total], Distance[From][To] * (i + 1));
 				}
-				tot++;
+				Total++;
 			}
-			for (int k = 1; k < (1 << tot); k++)
+			for (ll k = 1; k < (1 << Total); k++)
 			{
-				condition[k] = condition[k - (k & (-k))] | p[pos[k & (-k)]];
-				sum[k] = sum[k - (k & (-k))] + num[pos[k & (-k)]];
-				f[i + 1][j | condition[k]] = mn(f[i + 1][j | condition[k]], f[i][j] + sum[k]);
+				Condition[k] = Condition[k - (LowBit(k))] | p[Position[LowBit(k)]];
+				Sum[k] = Sum[k - (LowBit(k))] + Number[Position[LowBit(k)]];
+				f[i + 1][j | Condition[k]] = min(f[i + 1][j | Condition[k]], f[i][j] + Sum[k]);
 			}
 		}
-	for (int i = 0; i <= n; i++)
-		ans = mn(ans, f[i][(1 << n) - 1]);
-	cout << ans << "\n";
+	ll Answer = INF;
+	for (ll i = 0; i <= n; i++)
+		Answer = min(Answer, f[i][(1 << n) - 1]);
+	printf("%lld\n", Answer);
 	return 0;
 }

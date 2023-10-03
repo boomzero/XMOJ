@@ -1,61 +1,63 @@
-#include <cstdio>
-#include <vector>
-#include <cstring>
-#include <algorithm>
-#define N 300005
-#define ll long long
+#include <bits/stdc++.h>
 using namespace std;
-int n, m, q, Max, pos, tot, root[N];
-struct Seg
+typedef long long ll;
+const ll N = 300005;
+ll n, m, q, Max, Position, Total, Root[N];
+struct SEGMENT
 {
-	int num, l, r;
-} T[N * 40];
+	ll Number, l, r;
+} SegmentTree[N * 40];
 vector<ll> Q[N];
-#define mid ((l + r) >> 1)
-int Query(int &root, int l, int r, int x)
+ll Query(ll &Root, ll l, ll r, ll x)
 {
 	if (l == r)
 		return l;
-	int Size = mid - l + 1 - T[T[root].l].num;
+	ll mid = l + ((r - l) >> 1);
+	ll Size = mid - l + 1 - SegmentTree[SegmentTree[Root].l].Number;
 	if (Size >= x)
-		return Query(T[root].l, l, mid, x);
-	return Query(T[root].r, mid + 1, r, x - Size);
+		return Query(SegmentTree[Root].l, l, mid, x);
+	return Query(SegmentTree[Root].r, mid + 1, r, x - Size);
 }
-void Modify(int &root, int l, int r, int pos)
+void Modify(ll &Root, ll l, ll r, ll x)
 {
-	if (!root)
-		root = ++tot;
-	T[root].num++;
+	if (!Root)
+	{
+		Total++;
+		Root = Total;
+	}
+	SegmentTree[Root].Number++;
 	if (l == r)
 		return;
-	if (pos <= mid)
-		Modify(T[root].l, l, mid, pos);
+	ll mid = l + ((r - l) >> 1);
+	if (x <= mid)
+		Modify(SegmentTree[Root].l, l, mid, x);
 	else
-		Modify(T[root].r, mid + 1, r, pos);
+		Modify(SegmentTree[Root].r, mid + 1, r, x);
 }
-ll DelR(int x, ll val)
+ll DelR(ll x, ll val)
 {
-	pos = Query(root[n + 1], 1, Max, x);
-	Modify(root[n + 1], 1, Max, pos);
-	ll now = (pos <= n) ? (ll)pos * m : Q[n + 1][pos - n - 1];
+	Position = Query(Root[n + 1], 1, Max, x);
+	Modify(Root[n + 1], 1, Max, Position);
+	ll now = (Position <= n) ? Position * m : Q[n + 1][Position - n - 1];
 	Q[n + 1].push_back(val ? val : now);
 	return now;
 }
-ll DelC(int x, int y)
+ll DelC(ll x, ll y)
 {
-	pos = Query(root[x], 1, Max, y);
-	Modify(root[x], 1, Max, pos);
-	ll now = (pos < m) ? (ll)(x - 1) * m + pos : Q[x][pos - m];
+	Position = Query(Root[x], 1, Max, y);
+	Modify(Root[x], 1, Max, Position);
+	ll now = (Position < m) ? (x - 1) * m + Position : Q[x][Position - m];
 	Q[x].push_back(DelR(x, now));
 	return now;
 }
 int main()
 {
-	int x, y;
-	scanf("%d%d%d", &n, &m, &q), Max = max(m, n) + q;
-	while (q--)
+	ll x, y;
+	scanf("%lld%lld%lld", &n, &m, &q);
+	Max = max(m, n) + q;
+	while (q-- > 0)
 	{
-		scanf("%d%d", &x, &y);
+		scanf("%lld%lld", &x, &y);
 		printf("%lld\n", (y == m) ? DelR(x, 0) : DelC(x, y));
 	}
 	return 0;

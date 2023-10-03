@@ -1,22 +1,25 @@
 #include <bits/stdc++.h>
-struct objective
+using namespace std;
+typedef long long ll;
+const ll N = 105;
+struct NODE
 {
-    char str[105];
+    char str[N];
     int count;
 };
-int lenb = 0;
-struct objective b[60000];
+int LengthB = 0;
+struct NODE b[60000];
 void check(char temp[])
 {
     int i;
-    if (lenb == 0)
+    if (LengthB == 0)
     {
         strcpy(b[0].str, temp);
         b[0].count = 1;
-        lenb++;
+        LengthB++;
         return;
     }
-    for (i = 0; i < lenb; i++)
+    for (i = 0; i < LengthB; i++)
     {
         if (strcmp(b[i].str, temp) == 0)
         {
@@ -24,20 +27,20 @@ void check(char temp[])
             return;
         }
     }
-    strcpy(b[lenb].str, temp);
-    b[lenb].count = 1;
-    lenb++;
+    strcpy(b[LengthB].str, temp);
+    b[LengthB].count = 1;
+    LengthB++;
 }
 int cmp(const void *a, const void *b)
 {
-    struct objective x, y;
-    x = *(struct objective *)a;
-    y = *(struct objective *)b;
+    struct NODE x, y;
+    x = *(struct NODE *)a;
+    y = *(struct NODE *)b;
     return strcmp(x.str, y.str);
 }
 int main(int argc, char *argv[])
 {
-    char a[105], temp[105];
+    char a[N], temp[N];
     int i, j, len, k, t;
     scanf("%s", a);
     len = strlen(a);
@@ -52,8 +55,8 @@ int main(int argc, char *argv[])
             check(temp);
         }
     }
-    qsort(b, lenb, sizeof(b[0]), cmp);
-    for (i = 0; i < lenb; i++)
+    qsort(b, LengthB, sizeof(b[0]), cmp);
+    for (i = 0; i < LengthB; i++)
     {
         if (b[i].count > 1)
             printf("%s %d\n", b[i].str, b[i].count);

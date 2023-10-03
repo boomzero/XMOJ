@@ -1,44 +1,44 @@
 #include <bits/stdc++.h>
-#define int long long
+typedef long long ll;
 using namespace std;
-const int N = 510, mod = 1e9 + 7;
-int n, k, dp[6][N][N];
+const ll N = 505;
+const ll MOD = 1e9 + 7;
+ll n, k, f[6][N][N];
 char s[N];
-bool pipei(int l, int r)
+int main()
 {
-  return (s[l] == '(' || s[l] == '?') & (s[r] == ')' || s[r] == '?');
-}
-signed main()
-{
-  freopen("bracket.in", "r", stdin);
-  freopen("bracket.out", "w", stdout);
-  ios::sync_with_stdio(false);
-  cin.tie(0);
-  cout.tie(0);
-  cin >> n >> k >> s + 1;
-  for (int i = 1; i <= n; i++)
-    dp[0][i][i - 1] = 1;
-  for (int len = 1; len <= n; len++)
-  {
-    for (int l = 1; l + len - 1 <= n; l++)
+    freopen("bracket.in", "r", stdin);
+    freopen("bracket.out", "w", stdout);
+    scanf("%lld%lld%s", &n, &k, s + 1);
+    for (ll i = 1; i <= n; i++)
+        f[0][i][i - 1] = 1;
+    for (ll Length = 1; Length <= n; Length++)
     {
-      int r = l + len - 1;
-      if (len <= k)
-        dp[0][l][r] = dp[0][l][r - 1] && (s[r] == '*' || s[r] == '?');
-      if (len >= 2)
-      {
-        dp[1][l][r] = pipei(l, r) * (dp[2][l + 1][r - 1] + dp[3][l + 1][r - 1] + dp[4][l + 1][r - 1] + dp[0][l + 1][r - 1]) % mod;
-        for (int i = l; i < r; i++)
+        for (ll l = 1; l + Length - 1 <= n; l++)
         {
-          (dp[2][l][r] += dp[3][l][i] * dp[0][i + 1][r]) %= mod;
-          (dp[3][l][r] += (dp[2][l][i] + dp[3][l][i]) * dp[1][i + 1][r]) %= mod;
-          (dp[4][l][r] += (dp[5][l][i] + dp[4][l][i]) * dp[1][i + 1][r]) %= mod;
-          (dp[5][l][r] += dp[4][l][i] * dp[0][i + 1][r]) %= mod;
+            ll r = l + Length - 1;
+            if (Length <= k && (s[r] == '*' || s[r] == '?'))
+                f[0][l][r] = f[0][l][r - 1];
+            if (Length >= 2)
+            {
+                if ((s[l] == '(' || s[l] == '?') && (s[r] == ')' || s[r] == '?'))
+                    f[1][l][r] = (f[0][l + 1][r - 1] +
+                                  f[2][l + 1][r - 1] +
+                                  f[3][l + 1][r - 1] +
+                                  f[4][l + 1][r - 1]) %
+                                 MOD;
+                for (ll i = l; i < r; i++)
+                {
+                    f[2][l][r] = (f[2][l][r] + f[0][i + 1][r] * f[3][l][i]) % MOD;
+                    f[3][l][r] = (f[3][l][r] + f[1][i + 1][r] * (f[2][l][i] + f[3][l][i])) % MOD;
+                    f[4][l][r] = (f[4][l][r] + f[1][i + 1][r] * (f[5][l][i] + f[4][l][i])) % MOD;
+                    f[5][l][r] = (f[5][l][r] + f[0][i + 1][r] * f[4][l][i]) % MOD;
+                }
+            }
+            f[5][l][r] = (f[5][l][r] + f[0][l][r]) % MOD;
+            f[3][l][r] = (f[3][l][r] + f[1][l][r]) % MOD;
         }
-      }
-      (dp[5][l][r] += dp[0][l][r]) %= mod;
-      (dp[3][l][r] += dp[1][l][r]) %= mod;
     }
-  }
-  cout << dp[3][1][n];
+    printf("%lld\n", f[3][1][n]);
+    return 0;
 }
