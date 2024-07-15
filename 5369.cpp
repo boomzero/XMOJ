@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, m;
 struct node {
     node *prev = nullptr, *next = nullptr;
     int val = 0;
 };
+
 int main() {
     cin >> n >> m;
     node *head = new node, *tail = head;
@@ -36,3 +38,4 @@ int main() {
     }
     return 0;
 }
+

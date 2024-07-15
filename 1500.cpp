@@ -1,68 +1,79 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 200010, M = 2e6 + 5;
-struct E
-{
-	int to, next;
-} e[M];
-int n, u, v, len, root, h[N], num, dfn[N], low[N];
-char c;
-bool cut[N];
-void add(int u, int v)
-{
-	e[++len].to = v;
-	e[len].next = h[u];
-	h[u] = len;
+vector<int> g[2005];
+int idx, dfn[2005], low[2005], fa[2005];
+bool ap[2005];
+
+void tarjan(int u) {
+    dfn[u] = low[u] = ++idx;
+    int chc = 0;
+    for (auto v: g[u]) {
+        if (!dfn[v]) {
+            chc++;
+            fa[v] = u;
+            tarjan(v);
+            low[u] = min(low[u], low[v]);
+            if (fa[u] == 0 && chc > 1)
+                ap[u] = true; // NOLINT(*-branch-clone)
+            else if (fa[u] != 0 && dfn[u] <= low[v])
+                ap[u] = true;
+        } else if (v != fa[u]) {
+            low[u] = min(low[u], dfn[v]);
+        }
+    }
 }
-void tarjan(int u)
-{
-	dfn[u] = low[u] = ++num;
-	int cnt = 0;
-	for (int j = h[u]; j; j = e[j].next)
-	{
-		int v = e[j].to;
-		if (!dfn[v])
-		{
-			tarjan(v);
-			low[u] = min(low[u], low[v]);
-			if (low[v] >= dfn[u])
-			{
-				cnt++;
-				if (u != root || cnt > 1)
-					cut[u] = true;
-			}
-		}
-		else
-			low[u] = min(low[u], dfn[v]);
-	}
+
+void solve(int n) {
+    for (int i = 1; i <= n; i++) {
+        if (dfn[i] == 0) {
+            tarjan(i);
+        }
+    }
 }
-int main()
-{
-	while (~scanf("%d", &n) && n)
-	{
-		memset(h, 0, sizeof(h));
-		memset(dfn, 0, sizeof(dfn));
-		memset(cut, false, sizeof(cut));
-		len = 0, num = 0;
-		while (~scanf("%d", &u) && u)
-		{
-			while (~scanf("%c", &c) && c != '\n')
-			{
-				scanf("%d", &v);
-				add(u, v);
-				add(v, u);
-			}
-		}
-		for (root = 1; root <= n; root++)
-		{
-			if (!dfn[root])
-				tarjan(root);
-		}
-		int ans = 0;
-		for (int i = 1; i <= n; i++)
-			if (cut[i])
-				ans++;
-		printf("%d\n", ans);
-	}
-	return 0;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    while (true) {
+        idx = 0;
+        memset(dfn, 0, sizeof(dfn));
+        memset(low, 0, sizeof(low));
+        memset(fa, 0, sizeof(fa));
+        memset(ap, 0, sizeof(ap));
+        int n;
+        cin >> n;
+        if (n == 0) break;
+        for (int i = 1; i <= n; i++) {
+            g[i].clear();
+        }
+        while (true) {
+            string s;
+            while (s.empty() || s == "\n") {
+                getline(cin, s);
+            }
+            if (s == "0") break;
+            const char *ptr = s.c_str();
+            int offset, a;
+            int num;
+            bool ay = true;
+            while (sscanf(ptr, "%d%n", &num, &offset) == 1) {
+                if (ay) {
+                    ay = false;
+                    a = num;
+                } else {
+                    g[a].emplace_back(num);
+                    g[num].emplace_back(a);
+                }
+                ptr += offset;
+            }
+        }
+        solve(n);
+        int ans = 0;
+        for (int i = 1; i <= n; i++) {
+            if (ap[i]) ans++;
+        }
+        cout << ans << endl;
+    }
+    return 0;
 }
+

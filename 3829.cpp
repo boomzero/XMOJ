@@ -1,23 +1,21 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll INF = 0x7FFF'FFFF'FFFF'FFFF;
-ll n, t, ans = INF;
-int main()
-{
+
+int main() {
     freopen("a.in", "r", stdin);
     freopen("a.out", "w", stdout);
-    scanf("%lld%lld", &n, &t);
-    for (ll i = 1; i <= n; i++)
-    {
-        ll c, _t;
-        scanf("%lld%lld", &c, &_t);
-        if (_t <= t)
-            ans = min(ans, c);
+    int n, t;
+    cin >> n >> t;
+    int minc = -1;
+    for (int i = 0; i < n; ++i) {
+        int tc, tt;
+        cin >> tc >> tt;
+        if (tt <= t && (minc == -1 || minc > tc)) {
+            minc = tc;
+        }
     }
-    if (ans == INF)
-        printf("TLE\n");
-    else
-        printf("%lld\n", ans);
+    if (minc == -1) cout << "TLE" << endl;
+    else cout << minc << endl;
     return 0;
 }

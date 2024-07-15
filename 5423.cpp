@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, m[150] = {0};
 double cm = 100;
 bool cc = false; //fd, tm
+
 int main() {
     cin >> n;
     for (int i = 1; i <= n; ++i) {
@@ -28,3 +30,5 @@ int main() {
     printf("%.2f", cm);
     return 0;
 }
+
+

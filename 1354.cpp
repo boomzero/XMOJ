@@ -1,78 +1,86 @@
-#include <stdio.h>
-#include <string.h>
-struct node
-{
-	int l, r;
-	int sum;
-} a[400010];
-void Bulid(int n, int l, int r)
-{
-	a[n].l = l;
-	a[n].r = r;
-	a[n].sum = 0;
-	if (l == r)
-		return;
-	Bulid(2 * n, l, (l + r) / 2);
-	Bulid(2 * n + 1, (l + r) / 2 + 1, r);
+#include <bits/stdc++.h>
+
+using namespace std;
+constexpr int mx = 200005;
+int a[mx << 2], val[mx << 2], lazy[mx << 2];
+
+void push_up(int rt) {
+    val[rt] = val[rt * 2] + val[rt * 2 + 1];
 }
-void Insert(int n, int v, int num)
-{
-	a[n].sum += num;
-	if (a[n].l == a[n].r)
-		return;
-	if (v <= (a[n].l + a[n].r) / 2)
-		Insert(n * 2, v, num);
-	else
-		Insert(n * 2 + 1, v, num);
+
+void build(int rt, int l, int r) {
+    if (l == r) {
+        val[rt] = a[l];
+        return;
+    }
+    int mid = (l + r) / 2;
+    build(rt * 2, l, mid);
+    build(rt * 2 + 1, mid + 1, r);
+    push_up(rt);
 }
-void Change(int n, int v, int num)
-{
-	if (v == a[n].l && v == a[n].r)
-	{
-		a[n].sum += num;
-		return;
-	}
-	else
-		if (v <= (a[n].l + a[n].r) / 2)
-		Change(n * 2, v, num);
-	else
-		Change(n * 2 + 1, v, num);
-	a[n].sum = a[n * 2].sum + a[n * 2 + 1].sum;
+
+void push_down(int rt, int l, int r) {
+    if (lazy[rt]) {
+        lazy[rt * 2] += lazy[rt];
+        lazy[rt * 2 + 1] += lazy[rt];
+        int mid = (l + r) / 2;
+        val[rt * 2] += lazy[rt] * (mid - l + 1);
+        val[rt * 2 + 1] += lazy[rt] * (r - mid);
+        lazy[rt] = 0;
+    }
 }
-int Sum(int n, int l, int r)
-{
-	if (l == a[n].l && r == a[n].r)
-		return a[n].sum;
-	if (r <= (a[n].l + a[n].r) / 2)
-		return Sum(n * 2, l, r);
-	else
-		if (l > (a[n].l + a[n].r) / 2)
-		return Sum(n * 2 + 1, l, r);
-	else
-		return Sum(n * 2, l, (a[n].l + a[n].r) / 2) + Sum(n * 2 + 1, (a[n].l + a[n].r) / 2 + 1, r);
+
+int query(int rt, int l, int r, int ql, int qr) {
+    if (ql <= l && qr >= r) {
+        return val[rt];
+    }
+    if (ql > r || qr < l) {
+        return 0;
+    }
+    int mid = (l + r) / 2;
+    push_down(rt, l, r);
+    return query(rt * 2, l, mid, ql, qr) + query(rt * 2 + 1, mid + 1, r, ql, qr);
 }
-int main()
-{
-	int i, j, n, m, Q, L, R;
-	scanf("%d", &n);
-	Bulid(1, 1, n);
-	for (i = 1; i <= n; i++)
-	{
-		scanf("%d", &m);
-		Insert(1, i, m);
-	}
-	scanf("%d", &m);
-	while (m--)
-	{
-		scanf("%d %d %d", &Q, &L, &R);
-		if (Q == 1)
-		{
-			Change(1, L, R);
-		}
-		else if (Q == 2)
-		{
-			printf("%d\n", Sum(1, L, R));
-		}
-	}
-	return 0;
+
+
+void update(int rt, int l, int r, int ul, int ur, int k) {
+    if (ul <= l && ur >= r) {
+        val[rt] += k * (r - l + 1);
+        lazy[rt] += k;
+        return;
+    }
+    if (ul > r || ur < l) {
+        return;
+    }
+    push_down(rt, l, r);
+    int mid = (l + r) / 2;
+    update(rt * 2, l, mid, ul, ur, k);
+    update(rt * 2 + 1, mid + 1, r, ul, ur, k);
+    push_up(rt);
 }
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    for (int i = 1; i <= n; ++i) {
+        scanf("%d", &a[i]);
+    }
+    build(1, 1, n);
+    int q;
+    scanf("%d", &q);
+    for (int i = 1; i <= q; ++i) {
+        int op;
+        scanf("%d", &op);
+        if (op == 1) {
+            int ca, x;
+            scanf("%d%d", &ca, &x);
+            update(1, 1, n, ca, ca, x);
+        } else {
+            int ca, cb;
+            scanf("%d%d", &ca, &cb);
+            printf("%d\n", query(1, 1, n, ca, cb));
+        }
+    }
+    return 0;
+}
+

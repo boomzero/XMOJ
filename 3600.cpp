@@ -1,48 +1,42 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n, m, q, s, t, dist[100010];
-queue<int> q1;
-queue<int> q2;
-struct Edge
-{
-	int v, w;
-};
-vector<Edge> g[100010];
-int main()
-{
-	cin >> n >> m;
-	for (int i = 0; i < m; i++)
-	{
-		int a, b, d;
-		cin >> a >> b >> d;
-		g[a].push_back((Edge){b, d});
-		g[b].push_back((Edge){a, d});
-	}
-	cin >> s >> t;
-	memset(dist, -1, sizeof(dist));
-	dist[s] = 0;
-	q1.push(s);
-	while (!(q1.empty() && q2.empty()))
-	{
-		if (q1.empty())
-			swap(q1, q2);
-		int u = q1.front();
-		q1.pop();
-		if (u == t)
-			break;
-		for (int i = 0; i < g[u].size(); i++)
-		{
-			int v = g[u][i].v, w = g[u][i].w;
-			if (dist[v] == -1 || dist[u] + w < dist[v])
-			{
-				dist[v] = dist[u] + w;
-				if (w == 0)
-					q1.push(v);
-				else
-					q2.push(v);
-			}
-		}
-	}
-	cout << dist[t];
-	return 0;
+
+vector<pair<int, int>> g[10005];
+int n, m, s, t;
+int dist[10005] = {0};
+
+int main() {
+    cin >> n >> m;
+    for (int i = 1; i <= m; i++) {
+        int a, b, d;
+        cin >> a >> b >> d;
+        g[a].emplace_back(b, d);
+        g[b].emplace_back(a, d);
+    }
+    memset(dist, -1, sizeof(dist));
+    cin >> s >> t;
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.emplace(0, s);
+    dist[s] = 0;
+
+    while (!pq.empty()) {
+        int c = pq.top().second;
+        int d = pq.top().first;
+        pq.pop();
+
+        if (d > dist[c]) continue;
+        if (c == t) break;
+
+        for (auto i : g[c]) {
+            if (dist[i.first] == -1 || dist[i.first] > dist[c] + i.second) {
+                dist[i.first] = dist[c] + i.second;
+                pq.emplace(dist[i.first], i.first);
+            }
+        }
+    }
+
+    cout << dist[t] << endl;
+    return 0;
 }

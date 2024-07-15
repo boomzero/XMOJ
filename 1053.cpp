@@ -1,58 +1,85 @@
-// 交叉点建图，直接指向的w=0，需要手工的w=1
-#include <cstdio>
-#include <cstring>
-#include <algorithm>
+#include <bits/stdc++.h>
+
 using namespace std;
-const int MAXN = 110;
-const int INF = 100000000;
-int n, s, e; // 点的个数，起点，终点
-int w[MAXN][MAXN]; // w[i][j]表示是否连通 0默认 1需手动调节 INF不连通
-bool vis[MAXN]; // 标记是否使用
-int dist[MAXN]; // dist[i]表示从起点到点i的距离
-void dijkstra()
-{
-    memset(vis, false, sizeof(vis)); // 清除所有的点
-    for (int i = 1; i <= n; i++)
-        dist[i] = w[s][i];
-    dist[s] = 0;
-    vis[s] = true; // 标记起点
-    for (int i = 1; i < n; i++)
-    { // 循环n-1次
-        int x = 0, m = INF;
-        for (int y = 1; y <= n; y++) // 在所有未标号的节点中，选出dist值的最小点x
-            if (!vis[y] && dist[y] < m)
-                m = dist[x = y];
-        if (x == 0)
-            break;
-        vis[x] = true; // 给节点x标记
-        for (int y = 1; y <= n; y++) // 更新 松弛操作
-            if (!vis[y])
-                dist[y] = min(dist[y], dist[x] + w[x][y]);
+int n, a, b;
+vector<int> g[205];
+int dis[205] = {0};
+
+struct node {
+    int d = 0, v = 0;
+    vector<int> pt;
+
+    bool operator<(const node &rhs) const {
+        return d < rhs.d;
     }
-    if (dist[e] == INF)
-        printf("-1\n");
-    else
-        printf("%d\n", dist[e]);
-}
-int main()
-{
-    scanf("%d%d%d", &n, &s, &e);
-    for (int i = 1; i <= n; i++)
-    {
-        dist[i] = INF;
-        for (int j = 1; j <= n; j++)
-            w[i][j] = (i == j ? 0 : INF);
+
+    bool operator>(const node &rhs) const {
+        return rhs < *this;
     }
-    int path, y;
-    for (int i = 1; i <= n; i++)
-    {
-        scanf("%d", &path);
-        for (int j = 1; j <= path; j++)
-        {
-            scanf("%d", &y);
-            w[i][y] = (j == 1 ? 0 : 1); // 需手动调节
+
+    bool operator<=(const node &rhs) const {
+        return !(rhs < *this);
+    }
+
+    bool operator>=(const node &rhs) const {
+        return !(*this < rhs);
+    }
+
+    node(int d, int v, const vector<int> &pt) : d(d), v(v), pt(pt) {}
+
+    node() {
+        d = 0;
+        v = 0;
+        pt.resize(105);
+        for (int i = 1; i <= n; ++i) {
+            if (g[i].size() > 0)
+                pt[i] = g[i][0];
         }
     }
-    dijkstra();
+};
+
+int main() {
+    cin >> n >> a >> b;
+    fill(dis, dis + 1 + n, numeric_limits<int>::max());
+    for (int i = 1; i <= n; ++i) {
+        int p;
+        cin >> p;
+        for (int j = 1; j <= p; ++j) {
+            int v;
+            cin >> v;
+            g[i].push_back(v);
+        }
+    }
+    dis[a] = 0;
+    priority_queue<node, vector<node>, greater<node>> pq;
+    node st;
+    st.v = a;
+    pq.emplace(st);
+    while (!pq.empty()) {
+        int c = pq.top().v;
+        node cn = pq.top();
+        pq.pop();
+        if (c == b) break;
+        for (int i: g[c]) {
+            if (i == cn.pt[c]) {
+                if (dis[i] > dis[c]) {
+                    pq.emplace(dis[c], i, cn.pt);
+                    dis[i] = dis[c];
+                }
+            } else {
+                if (dis[i] > dis[c] + 1) {
+                    vector<int> tpt = cn.pt;
+                    tpt[c] = i;
+                    pq.emplace(dis[c] + 1, i, tpt);
+                    dis[i] = dis[c] + 1;
+                }
+            }
+        }
+    }
+    if (dis[b] == numeric_limits<int>::max())
+        cout << -1 << endl;
+    else
+        cout << dis[b] << endl;
     return 0;
 }
+

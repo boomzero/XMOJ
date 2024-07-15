@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, cnt = 0, ss = 0, arr[50] = {0};
+
 void dfs(int v) {
     ss++;
     arr[ss] = v;
@@ -25,8 +27,12 @@ void dfs(int v) {
     dfs(v + 2);
     ss--;
 }
+
 int main() {
     cin >> n;
     dfs(1);
     return 0;
 }
+
+
+

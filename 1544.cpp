@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int l1, l2, f[1500][1500] = {{0}}, mans = 0;
 string a, b;
+
 int main() {
     cin >> a >> b;
     l1 = a.length(), l2 = b.length();
@@ -16,3 +18,5 @@ int main() {
     cout << mans << endl;
     return 0;
 }
+
+

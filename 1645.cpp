@@ -1,21 +1,27 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n, x;
-long long ans = 1;
-int gcd(int a, int b)
-{
-	return (b == 0) ? a : gcd(b, a % b);
+
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
 }
-int main()
-{
-	ios::sync_with_stdio(false);
-	cin.tie(0), cout.tie(0);
-	cin >> n;
-	for (int i = 0; i < n; ++i)
-	{
-		cin >> x;
-		ans = ans * x / gcd(ans, x);
-	}
-	cout << ans;
-	return 0;
+
+int lcm(int a, int b) {
+    return a * b / gcd(a, b);
 }
+
+int classes[10] = {0}, n;
+
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        cin >> classes[i];
+    }
+    int ans = classes[1];
+    for (int i = 2; i <= n; ++i) {
+        ans = lcm(ans, classes[i]);
+    }
+    cout << ans << endl;
+    return 0;
+}
+

@@ -1,38 +1,24 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-string s;
-int main()
-{
-	freopen("a.in", "r", stdin);
-	freopen("a.out", "w", stdout);
-	cin >> s;
-	if (s[0] != 'A')
-	{
-		cout << "WA";
-		return 0;
-	}
-	int times = 0;
-	for (int i = 2; i < s.size() - 1; i++)
-	{
-		if (s[i] == 'C')
-			times++;
-	}
-	if (times >= 2 || times == 0)
-	{
-		cout << "WA";
-		return 0;
-	}
-	for (int i = 1; i < s.size(); i++)
-	{
-		if (s[i] <= 'Z')
-		{
-			if (i < 2 || i >= s.size() - 1)
-			{
-				cout << "WA";
-				return 0;
-			}
-		}
-	}
-	cout << "AC";
-	return 0;
+
+int main() {
+    freopen("a.in", "r", stdin);
+    freopen("a.out", "w", stdout);
+    string in;
+    cin >> in;
+    bool ac = true;
+    if (in[0] != 'A') ac = false;
+    int cCnt = 0;
+    int p = -1;
+    for (char i: in) {
+        p++;
+        if (i == 'C' && p != 1 && p != in.length() - 1) cCnt++;
+        else if (isupper(i) && p != 0) ac = false;
+    }
+    if (cCnt != 1) ac = false;
+    if (ac) cout << "AC" << endl;
+    else cout << "WA" << endl;
+    return 0;
 }
+

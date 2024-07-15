@@ -1,61 +1,56 @@
 #include <bits/stdc++.h>
+
+#define end (s.length() - 1)
 using namespace std;
-#define int long long
-#define N 210000
-int n, l, r, len;
-char a[N], ans[N];
-signed main()
-{
-	freopen("order.in", "r", stdin);
-	freopen("order.out", "w", stdout);
-	cin >> n;
-	for (int i = 1; i <= n; ++i)
-		cin >> a[i];
-	l = 1, r = n;
-	while (l <= r)
-	{
-		if (a[l] < a[r])
-		{
-			ans[++len] = a[l];
-			l += 1;
-		}
-		else if (a[r] < a[l])
-		{
-			ans[++len] = a[r];
-			r -= 1;
-		}
-		else
-		{
-			bool flag = true;
-			for (int i = 1; l + i <= r - i; ++i)
-			{
-				if (a[l + i] != a[r - i])
-				{
-					if (a[l + i] < a[r - i])
-					{
-						ans[++len] = a[l];
-						l += 1;
-					}
-					else
-					{
-						ans[++len] = a[r];
-						r -= 1;
-					}
-					flag = false;
-					break;
-				}
-			}
-			if (flag)
-			{
-				ans[++len] = a[l];
-				l += 1;
-			}
-		}
-	}
-	for (int i = 1; i <= n; ++i)
-	{
-		cout << ans[i];
-		if (i % 80 == 0)
-			cout << endl;
-	}
+string s;
+
+int main() {
+    freopen("order.in", "r", stdin);
+    freopen("order.out", "w", stdout);
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        char x;
+        cin >> x;
+        s.push_back(x);
+    }
+    int p=0;
+    while (!s.empty()) {
+    p++;
+        if (s[0] < s[end]) {
+            cout << s[0];
+            s.erase(s.begin());
+        } else if (s[0] > s[end]) {
+            cout << s[end];
+            s.erase(end, 1);
+        } else {
+            int l = 0, r = end;
+            bool done = false;
+            while (l < r) {
+                l++;
+                r--;
+                if (s[l] < s[r]) {
+                    cout << s[0];
+                    s.erase(s.begin());
+                    done = true;
+                    break;
+                } else if (s[l] > s[r]) {
+                    cout << s[end];
+                    s.erase(end, 1);
+                    done = true;
+                    break;
+                }
+            }
+            if (!done) {
+                cout << s[0];
+                s.erase(s.begin());
+            }
+    
+        }
+        if(p==80){ p=0; cout<<'\n';
+            }
+    }
+    cout << endl;
+    return 0;
 }
+

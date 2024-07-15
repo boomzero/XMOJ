@@ -1,31 +1,27 @@
-#include <iostream>
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
+#include <bits/stdc++.h>
+
 using namespace std;
-int a[1001][1001], b, c, d, e, f, dp[100001];
-int main()
-{
-	freopen("souvenir.in", "r", stdin);
-	freopen("souvenir.out", "w", stdout);
-	cin >> b >> c >> d;
-	e = d;
-	if (b == 1)
-	{
-		cout << d;
-		return 0;
-	}
-	for (int i = 1; i <= b; i++)
-	{
-		if (i != 2)
-			e += dp[e];
-		memset(dp, 0, sizeof(dp));
-		for (register int j = 1; j <= c; j++)
-			scanf("%d", &a[i][j]);
-		for (register int j = 1; j <= c; j++)
-			for (register int k = a[i - 1][j]; k <= e; k++)
-				if (a[i][j] - a[i - 1][j])
-					dp[k] = max(dp[k], dp[k - a[i - 1][j]] + (a[i][j] - a[i - 1][j]));
-	}
-	cout << e + dp[e];
+int price[105][105] = {0}, dp[10005];
+
+int main() {
+    freopen("souvenir.in", "r", stdin);
+    freopen("souvenir.out", "w", stdout);
+    int t, n, m;
+    cin >> t >> n >> m;
+    for (int i = 1; i <= t; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> price[i][j];
+        }
+    }
+    for (int i = 1; i <= t; i++) {
+        memset(dp, 0, sizeof(dp));
+        for (int j = 1; j <= n; j++) {
+            for (int k = price[i][j]; k <= m; k++) {
+                dp[k] = max(dp[k], dp[k - price[i][j]] + price[i + 1][j] - price[i][j]);
+            }
+        }
+        m += dp[m];
+    }
+    cout << m << endl;
+    return 0;
 }

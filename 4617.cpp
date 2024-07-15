@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 long long n, val[] = {0, 1, 5, 10, 20, 50, 100}, ans[15] = {0};
+
 int main() {
     cin >> n;
     ans[6] = n / 100;
@@ -23,3 +25,5 @@ int main() {
     }
     return 0;
 }
+
+

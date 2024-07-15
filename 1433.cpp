@@ -1,57 +1,52 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 50005;
-struct POSITION
-{
-    int x, y;
-} Position[N];
-int n, MaxX, c[N], AnswerCounter[N];
-int LowBit(int x)
-{
-    return x & (-x);
+vector<pair < int, int>>
+star;
+int yb[50005];
+
+int lb(int in) {
+    return in & (-in);
 }
-void Add(int Index, int Value)
-{
-    while (Index <= MaxX)
-    {
-        c[Index] += Value;
-        Index += LowBit(Index);
+
+map<int, int> star_map;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        int x, y;
+        cin >> x >> y;
+        x++;
+        y++; //so that x and y are always greater than zero
+        star.emplace_back(x, y);
     }
-}
-int Sum(int Index)
-{
-    int ReturnValue = 0;
-    while (Index > 0)
-    {
-        ReturnValue += c[Index];
-        Index -= LowBit(Index);
+    sort(star.begin(), star.end());
+    for (auto pa: star) {
+        int x = pa.first, y = pa.second;
+        //First, we check how many numbers in yb are lower than y
+        //What we are actually calculating is the sum of yb[1] to yb[y]
+        int fetch = y, sum = 0;
+        while (fetch) {
+            sum += yb[fetch];
+            fetch -= lb(fetch);
+        }
+        //Ok, now we have the sum
+        if (!star_map.count(sum)) star_map[sum] = 0; //If it doesn't exist yet, create it.
+        star_map[sum]++; //include this star in star_map
+        //Now we need to update yb[]
+        fetch = y; //reusing this
+        while (fetch <= 32005) {
+            yb[fetch]++;
+            fetch += lb(fetch);
+        }
     }
-    return ReturnValue;
-}
-int main()
-{
-    scanf("%d", &n);
-    for (int i = 1; i <= n; i++)
-    {
-        scanf("%d%d", &Position[i].x, &Position[i].y);
-        Position[i].x++;
-        Position[i].y++;
-        MaxX = max(MaxX, Position[i].x);
+    for (int i = 0; i < n; ++i) {
+        if (!star_map.count(i)) star_map[i] = 0;
+        cout << star_map[i] << endl;
     }
-    sort(Position + 1, Position + n + 1,
-         [](POSITION a, POSITION b)
-         {
-             if (a.y == b.y)
-                 return a.x < b.x;
-             return a.y < b.y;
-         });
-    for (int i = 1; i <= n; i++)
-    {
-        int Counter = 0;
-        AnswerCounter[Sum(Position[i].x)]++;
-        Add(Position[i].x, 1);
-    }
-    for (int i = 0; i < n; i++)
-        printf("%d\n", AnswerCounter[i]);
     return 0;
 }
+

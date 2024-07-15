@@ -1,31 +1,40 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 100005;
-char Temp[N];
-string s;
-void DFS(int i)
-{
-    if (i == 0)
-    {
-        printf("YES\n");
-        exit(0);
-    }
-    if (i >= 4 && s.substr(i - 4, 4) == "work")
-        DFS(i - 4);
-    if (i >= 6 && s.substr(i - 6, 6) == "worker")
-        DFS(i - 6);
-    if (i >= 5 && s.substr(i - 5, 5) == "erase")
-        DFS(i - 5);
-    if (i >= 6 && s.substr(i - 6, 6) == "eraser")
-        DFS(i - 6);
-}
-int main()
-{
+
+int main() {
     freopen("c.in", "r", stdin);
     freopen("c.out", "w", stdout);
-    scanf("%s", Temp);
-    s = Temp;
-    DFS(s.size());
-    printf("NO\n");
+    string s, t;
+    cin >> s;
+    int c = 0;
+    bool val = true;
+    while (s.length() > t.length()) {
+        if (s[c] == 'w') {
+            c += 4;
+            t.append("work");
+            if (s.length() < t.length()) break;
+            if (s[c] == 'e' && s[c + 1] == 'r' && s[c + 2] != 'a') {
+                t.append("er");
+                c += 2;
+            }
+        } else if (s[c] == 'e') {
+            c += 5;
+            t.append("erase");
+            if (s.length() < t.length()) break;
+            if (s[c] == 'r') {
+                t.append("r");
+                c += 1;
+            }
+        } else {
+            val = false;
+            break;
+        }
+    }
+    if (val && s == t) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
     return 0;
 }

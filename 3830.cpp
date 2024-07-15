@@ -1,38 +1,42 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 10005;
-struct DATA
-{
-    ll x, y, h;
-} Data[N];
-ll n;
-int main()
-{
+
+int main() {
     freopen("b.in", "r", stdin);
     freopen("b.out", "w", stdout);
-    scanf("%lld", &n);
-    for (ll i = 1; i <= n; i++)
-        scanf("%lld%lld%lld", &Data[i].x, &Data[i].y, &Data[i].h);
-    for (ll x = 0; x <= 100; x++)
-        for (ll y = 0; y <= 100; y++)
-        {
-            ll Index = 1;
-            while (Data[Index].h == 0)
-                Index++;
-            ll H = abs(x - Data[Index].x) + abs(y - Data[Index].y) + Data[Index].h;
-            bool flag = true;
-            for (ll i = 1; i <= n; i++)
-                if (max(H - abs(x - Data[i].x) - abs(y - Data[i].y), 0LL) != Data[i].h)
-                {
-                    flag = false;
+    int n;
+    cin >> n;
+    vector<pair<int, int>> dot;
+    map<pair<int, int>, int> dh;
+    for (int i = 0; i < n; ++i) {
+        int x, y, h;
+        cin >> x >> y >> h;
+        dot.emplace_back(x, y);
+        dh[make_pair(x, y)] = h;
+    }
+    for (int cx = 0; cx <= 100; ++cx) {
+        for (int cy = 0; cy <= 100; ++cy) {
+            int h;
+            for (auto i: dot) {
+                if (dh[i] == 0) continue; //check
+                h = max(dh[i] + abs(i.first - cx) + abs(i.second - cy), 0);
+                if (h == 0) continue;
+                break;
+            }
+            bool val = true;
+            for (auto i: dot) {
+                if (dh[i] != max(h - abs(i.first - cx) - abs(i.second - cy), 0)) {
+                    val = false;
                     break;
                 }
-            if (flag)
-            {
-                printf("%lld%lld %lld\n", x, y, H);
+            }
+            if (val) {
+                cout << cx << " " << cy << " " << h << endl;
                 return 0;
             }
         }
+    }
     return 0;
 }
+

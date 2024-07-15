@@ -1,43 +1,71 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int vis[1100000];
-int dis[1100000];
-struct A
-{
-    int s, c;
-};
-queue<A> que;
-void move(int, int);
-int main()
-{
-    int v = 0, s2;
-    for (int i = 0, x; i < 20; ++i)
-    {
-        cin >> x;
-        v |= x << i;
+int a[25] = {0}, cans = 0, mans = numeric_limits<int>::max();
+bool vis[25] = {false};
+
+void dfs(int n, bool f) {
+    vis[n] = true;
+    if (f) {
+        cans++;
+        a[n - 1] = (!a[n - 1]);
+        a[n] = (!a[n]);
+        a[n + 1] = (!a[n + 1]);
     }
-    vis[v] = true;
-    que.push((A){v, 0});
-    while (!que.empty())
-    {
-        A a = que.front();
-        que.pop();
-        if (a.s == 0)
-        {
-            cout << a.c;
-            break;
+    if (f) {
+        if (cans > mans) {
+            vis[n] = false;
+            cans--;
+            a[n - 1] = (!a[n - 1]);
+            a[n] = (!a[n]);
+            a[n + 1] = (!a[n + 1]);
+            return;
         }
-        move(a.s ^ 3, a.c + 1);
-        move(a.s ^ (3 << 18), a.c + 1);
-        for (int x = 1, y = 7; x <= 18; ++x, y <<= 1)
-            move(a.s ^ y, a.c + 1);
     }
+    int c = 0;
+    for (int i = 1; i <= 20; ++i) {
+        if (!a[i]) c++;
+    }
+    if (c == 20 && n == 20) {
+        mans = min(mans, cans);
+        vis[n] = false;
+        if (f) {
+            cans--;
+            a[n - 1] = (!a[n - 1]);
+            a[n] = (!a[n]);
+            a[n + 1] = (!a[n + 1]);
+        }
+        return;
+    } else if (n == 20) {
+        vis[n] = false;
+        if (f) {
+            cans--;
+            a[n - 1] = (!a[n - 1]);
+            a[n] = (!a[n]);
+            a[n + 1] = (!a[n + 1]);
+        }
+        return;
+    }
+    dfs(n + 1, true);
+    dfs(n + 1, false);
+    vis[n] = false;
+    if (f) {
+        cans--;
+        a[n - 1] = (!a[n - 1]);
+        a[n] = (!a[n]);
+        a[n + 1] = (!a[n + 1]);
+    }
+}
+
+int main() {
+    for (int i = 1; i <= 20; ++i) {
+        cin >> a[i];
+    }
+    dfs(1, true);
+    dfs(1, false);
+    cout << mans << endl;
     return 0;
 }
-void move(int s, int c)
-{
-    if (vis[s])
-        return;
-    vis[s] = true;
-    que.push((A){s, c});
-}
+
+
+

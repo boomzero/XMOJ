@@ -1,6 +1,8 @@
 #include<bits/stdc++.h>
+
 using namespace std;
 int n, v, x, c[100009], f[20009];
+
 int main() {
     cin >> n >> v;
     for (int i = 0; i < n; ++i) {

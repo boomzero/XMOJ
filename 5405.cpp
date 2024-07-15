@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, m;
 vector<int> e;
 int ans = 0;
+
 void dfs(int op) {
     vector<int> tmp = e;
     e[op] = e[op] - e[op + 1];
@@ -20,6 +22,7 @@ void dfs(int op) {
     }
     e = tmp;
 }
+
 int main() {
     cin >> n >> m;
     e.push_back(0);
@@ -34,3 +37,4 @@ int main() {
     cout << ans << endl;
     return 0;
 }
+

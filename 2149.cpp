@@ -2,7 +2,7 @@
 
 #define int long long
 using namespace std;
-int mod = 1000000007;
+int mod;
 
 struct mat {
     int a[3][3] = {0};
@@ -22,7 +22,11 @@ struct mat {
         }
         return res;
     }
-} base;
+} base, proc, orb;
+
+void init() {
+    base[1][1] = base[1][2] = base[2][1] = orb[1][1] = orb[1][2] = orb[2][1] = proc[1][1] = proc[1][2] = 1;
+}
 
 mat qpow(mat a, int n) {
     if (n == 1) return a;
@@ -31,17 +35,21 @@ mat qpow(mat a, int n) {
         return tmp * tmp;
     } else {
         mat tmp = qpow(a, n / 2);
-        return tmp * tmp * base;
+        return tmp * tmp * orb;
     }
 }
 
 signed main() {
-    int p, n;
-    cin >> p >> n;
-    base[1][2] = p - 1;
-    base[2][1] = 1;
-    base[2][2] = p - 2;
-    mat tmp = qpow(base, n);
-    cout << (tmp[1][1]) % mod << endl;
+    init();
+    int n;
+    cin >> n >> mod;
+    if (n <= 2) {
+        cout << 1 << endl;
+        return 0;
+    }
+    mat tmp = qpow(base, n - 2);
+    cout << (tmp[1][1] + tmp[2][1]) % mod << endl;
     return 0;
 }
+
+

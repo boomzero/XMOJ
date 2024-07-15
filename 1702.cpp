@@ -1,60 +1,63 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int main()
-{
-    char str[100], op, c1, c2;
-    int len = 0, n;
-    while ((str[len] = getchar()) != '.')
-        ++len;
-    str[++len] = '\0';
+
+int main() {
+    string s;
+    getline(cin, s);
+    int n;
     cin >> n;
-    for (int i = 0; i < n; ++i)
-    {
-        cin >> op;
-        if (op == 'D')
-        {
-            cin >> c1;
-            for (int j = 0; j < len; ++j)
-                if (str[j] == c1)
-                {
-                    for (int k = j + 1; k <= len; ++k)
-                        str[k - 1] = str[k];
-                    --len;
-                    break;
-                }
-            cout << str << endl;
-        }
-        else if (op == 'I')
-        {
-            cin >> c1 >> c2;
-            for (int j = len - 1; j >= 0; --j)
-                if (str[j] == c1)
-                {
-                    for (int k = len; k >= j; --k)
-                        str[k + 1] = str[k];
-                    str[j] = c2;
-                    ++len;
-                    break;
-                }
-            cout << str << endl;
-        }
-        else if (op == 'R')
-        {
-            cin >> c1 >> c2;
-            bool found = false;
-            for (int j = 0; j < len; ++j)
-            {
-                if (str[j] == c1)
-                {
-                    str[j] = c2;
-                    found = true;
-                }
+    for (int i = 0; i < n; ++i) {
+        char cmd;
+        cin >> cmd;
+        switch (cmd) {
+            case 'D': {
+                char x;
+                cin >> x;
+                int pos = s.find(x);
+                if (pos != -1)
+                    s.erase(pos, 1);
+                cout << s << endl;
+                break;
             }
-            if (found)
-                cout << str << endl;
-            else
-                cout << "Not found" << endl;
+            case 'I': {
+                char x;
+                string y;
+                cin >> x >> y;
+                int pos = -1;
+                for (int j = s.length() - 1; j >= 0; --j) {
+                    if (s[j] == x) {
+                        pos = j;
+                        break;
+                    }
+                }
+                if (pos != -1) {
+                    s.insert(pos, y);
+                }
+                cout << s << endl;
+                break;
+            }
+            case 'R': {
+                char x;
+                string y;
+                cin >> x >> y;
+                int pos = -1;
+                for (int j = s.length() - 1; j >= 0; --j) {
+                    if (s[j] == x) {
+                        pos = j;
+                        s.replace(pos, 1, y);
+                    }
+                }
+                if (pos != -1) {
+                    cout << s << endl;
+                } else {
+                    cout << "Not found" << endl;
+                }
+                break;
+            }
         }
     }
     return 0;
 }
+
+

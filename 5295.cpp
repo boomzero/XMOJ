@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 long long v, tw, n, c[200] = {0}, w[200] = {0}, t[200] = {0}, dp[2000][2000] = {{0}};
+
 int main() {
     cin >> n >> tw >> v;
     for (int i = 1; i <= n; ++i) {

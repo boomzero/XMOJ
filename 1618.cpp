@@ -1,212 +1,175 @@
 #include <bits/stdc++.h>
-const int N = 100005;
-int Root, Total, Father[N], Child[N][2], Value[N], Count[N], Size[N];
-void PushUp(int x)
-{
-    Size[x] = Size[Child[x][0]] + Size[Child[x][1]] + Count[x];
+
+using namespace std;
+const int MAXN = 100005;
+int root, tot;
+int v[MAXN];
+unsigned int w[MAXN];
+int c[MAXN], s[MAXN];
+int lc[MAXN], rc[MAXN];
+mt19937 rng(time(nullptr)); // NOLINT(*-msc51-cpp)
+
+int new_node(int val) {
+    tot++;
+    v[tot] = val;
+    w[tot] = rng();
+    lc[tot] = rc[tot] = 0;
+    c[tot] = s[tot] = 1;
+    return tot;
 }
-bool Get(int x)
-{
-    return x == Child[Father[x]][1];
+
+void upd(int k) {
+    s[k] = c[k] + s[lc[k]] + s[rc[k]];
 }
-void Clear(int x)
-{
-    Child[x][0] = Child[x][1] = Father[x] = Value[x] = Size[x] = Count[x] = 0;
+
+void lturn(int &k) {
+    int tmp = rc[k];
+    rc[k] = lc[tmp];
+    lc[tmp] = k;
+    s[tmp] = s[k];
+    upd(k);
+    k = tmp;
 }
-void Rotate(int x)
-{
-    int y = Father[x];
-    int z = Father[y];
-    int chk = Get(x);
-    Child[y][chk] = Child[x][chk ^ 1];
-    if (Child[x][chk ^ 1])
-        Father[Child[x][chk ^ 1]] = y;
-    Child[x][chk ^ 1] = y;
-    Father[y] = x;
-    Father[x] = z;
-    if (z)
-        Child[z][y == Child[z][1]] = x;
-    PushUp(y);
-    PushUp(x);
+
+void rturn(int &k) {
+    int tmp = lc[k];
+    lc[k] = rc[tmp];
+    rc[tmp] = k;
+    s[tmp] = s[k];
+    upd(k);
+    k = tmp;
 }
-void Splay(int x)
-{
-    int f = Father[x];
-    while (f != 0)
-    {
-        if (Father[f])
-            Rotate(Get(x) == Get(f) ? f : x);
-        Rotate(x);
-        f = Father[x];
-    }
-    Root = x;
-}
-void Insert(int x)
-{
-    if (!Root)
-    {
-        Value[++Total] = x;
-        Count[Total]++;
-        Root = Total;
-        PushUp(Root);
+
+void insert(int &k, int val) { // NOLINT(*-no-recursion)
+    if (k == 0) {
+        k = new_node(val);
         return;
     }
-    int Current = Root;
-    int f = 0;
-    while (1)
-    {
-        if (Value[Current] == x)
-        {
-            Count[Current]++;
-            PushUp(Current);
-            PushUp(f);
-            Splay(Current);
-            break;
+    s[k]++;
+    if (v[k] == val) {
+        c[k]++;
+        return;
+    }
+    if (val > v[k]) {
+        insert(rc[k], val);
+        if (w[k] > w[rc[k]]) {
+            lturn(k);
         }
-        f = Current;
-        Current = Child[Current][Value[Current] < x];
-        if (!Current)
-        {
-            Value[++Total] = x;
-            Count[Total]++;
-            Father[Total] = f;
-            Child[f][Value[f] < x] = Total;
-            PushUp(Total);
-            PushUp(f);
-            Splay(Total);
-            break;
+    } else {
+        insert(lc[k], val);
+        if (w[k] > w[rc[k]]) {
+            rturn(k);
         }
     }
 }
-int rk(int x)
-{
-    int Answer = 0;
-    int Current = Root;
-    while (1)
-    {
-        if (x < Value[Current])
-        {
-            Current = Child[Current][0];
-        }
-        else
-        {
-            Answer += Size[Child[Current][0]];
-            if (x == Value[Current])
-            {
-                Splay(Current);
-                return Answer + 1;
+
+void del(int &k, int val) { // NOLINT(*-no-recursion)
+    if (k == 0) {
+        throw runtime_error("del");
+    }
+    if (v[k] == val) {
+        if (c[k] > 1) {
+            c[k]--;
+            s[k]--;
+        } else if (lc[k] == 0 || rc[k] == 0) {
+            k = lc[k] + rc[k];
+        } else {
+            if (w[lc[k]] > w[rc[k]]) {
+                lturn(k);
+            } else {
+                rturn(k);
             }
-            Answer += Count[Current];
-            Current = Child[Current][1];
+            del(k, val);
+        }
+    } else {
+        s[k]--;
+        if (val > v[k]) {
+            del(rc[k], val);
+        } else {
+            del(lc[k], val);
         }
     }
 }
-int kth(int x)
-{
-    int Current = Root;
-    while (1)
-    {
-        if (Child[Current][0] && x <= Size[Child[Current][0]])
-        {
-            Current = Child[Current][0];
-        }
-        else
-        {
-            x -= Count[Current] + Size[Child[Current][0]];
-            if (x <= 0)
-            {
-                Splay(Current);
-                return Value[Current];
-            }
-            Current = Child[Current][1];
-        }
+
+int query_rank(int k, int val) { // NOLINT(*-no-recursion)
+    if (k == 0) return 0;
+    if (v[k] == val) {
+        return s[lc[k]] + 1;
+    }
+    if (v[k] > val) {
+        return query_rank(lc[k], val);
+    }
+    return query_rank(rc[k], val) + c[k] + s[lc[k]];
+}
+
+int query_nth(int k, int n) { // NOLINT(*-no-recursion)
+    if (k == 0) return 0;
+    if (n <= s[lc[k]]) {
+        return query_nth(lc[k], n);
+    }
+    if (n > s[lc[k]] + c[k]) {
+        return query_nth(rc[k], n - s[lc[k]] - c[k]);
+    }
+    return v[k];
+}
+
+int ans;
+
+void query_pre(int k, int n) { // NOLINT(*-no-recursion)
+    if (k == 0) return;
+    if (v[k] < n) {
+        ans = v[k];
+        query_pre(rc[k], n);
+    } else {
+        query_pre(lc[k], n);
     }
 }
-int PreNode()
-{
-    int Current = Child[Root][0];
-    if (!Current)
-        return Current;
-    while (Child[Current][1])
-        Current = Child[Current][1];
-    Splay(Current);
-    return Current;
+
+int pre(int n) {
+    query_pre(root, n);
+    return ans;
 }
-int NextNode()
-{
-    int Current = Child[Root][1];
-    if (!Current)
-        return Current;
-    while (Child[Current][0])
-        Current = Child[Current][0];
-    Splay(Current);
-    return Current;
+
+void query_nxt(int k, int n) { // NOLINT(*-no-recursion)
+    if (k == 0) return;
+    if (v[k] > n) {
+        ans = v[k];
+        query_nxt(lc[k], n);
+    } else {
+        query_nxt(rc[k], n);
+    }
 }
-void Delete(int x)
-{
-    rk(x);
-    if (Count[Root] > 1)
-    {
-        Count[Root]--;
-        PushUp(Root);
-        return;
-    }
-    if (!Child[Root][0] && !Child[Root][1])
-    {
-        Clear(Root);
-        Root = 0;
-        return;
-    }
-    if (!Child[Root][0])
-    {
-        int Current = Root;
-        Root = Child[Root][1];
-        Father[Root] = 0;
-        Clear(Current);
-        return;
-    }
-    if (!Child[Root][1])
-    {
-        int Current = Root;
-        Root = Child[Root][0];
-        Father[Root] = 0;
-        Clear(Current);
-        return;
-    }
-    int Current = Root;
-    int Temp = PreNode();
-    Father[Child[Current][1]] = Temp;
-    Child[Temp][1] = Child[Current][1];
-    Clear(Current);
-    PushUp(Root);
+
+int nxt(int n) {
+    query_nxt(root, n);
+    return ans;
 }
-int n;
-int main()
-{
-    scanf("%d", &n);
-    while (n-- > 0)
-    {
-        int Operation, x;
-        scanf("%d%d", &Operation, &x);
-        if (Operation == 1)
-            Insert(x);
-        else if (Operation == 2)
-            Delete(x);
-        else if (Operation == 3)
-            printf("%d\n", rk(x));
-        else if (Operation == 4)
-            printf("%d\n", kth(x));
-        else if (Operation == 5)
-        {
-            Insert(x);
-            printf("%d\n", Value[PreNode()]);
-            Delete(x);
-        }
-        else
-        {
-            Insert(x);
-            printf("%d\n", Value[NextNode()]);
-            Delete(x);
+
+
+int main() {
+    int n;
+    scanf("%d", &n); // NOLINT(*-err34-c)
+    for (int i = 1; i <= n; i++) {
+        int op, x;
+        scanf("%d%d", &op, &x); // NOLINT(*-err34-c)
+        switch (op) {
+            case 1:
+                insert(root, x);
+                break;
+            case 2:
+                del(root, x);
+                break;
+            case 3:
+                printf("%d\n", query_rank(root, x));
+                break;
+            case 4:
+                printf("%d\n", query_nth(root, x));
+                break;
+            case 5:
+                printf("%d\n", pre(x));
+                break;
+            default:
+                printf("%d\n", nxt(x));
         }
     }
     return 0;

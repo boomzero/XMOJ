@@ -1,41 +1,77 @@
 #include <bits/stdc++.h>
+#include <chrono>
+
+#define int long long
 using namespace std;
-typedef long long ll;
-int n;
-map<int, int> sc;
-int main()
-{
+int n, ans = numeric_limits<int>::max();
+vector<pair<int, int>> d;
+int a[100005], b[100005];
+
+int f(int i) {
+    i--;
+    int y = d[i].second, cans = 0;
+    for (int j = 0; j < n; j++) {
+        cans += min(abs(d[j].first - d[j].second), abs(d[j].first) + abs(y - d[j].second));
+    }
+    ans = min(cans, ans);
+    return cans;
+}
+
+signed main() {
+ios_base::sync_with_stdio(false);cin.tie(0);
     freopen("move.in", "r", stdin);
     freopen("move.out", "w", stdout);
-    ll cf = 0, sf = 0, cy = -2000000000;
-    scanf("%d", &n);
-    for (int i = 0, a, b; i < n; ++i)
-    {
-        scanf("%d%d", &a, &b);
-        cf += abs(a - b);
-        if (abs(a) > abs(a - b))
-            continue;
-        sc[b] += 2;
-        if ((a < b && a < 0) || (a >= b && a >= 0))
-        {
-            sc[0]--;
-            sc[2 * b]--;
+    cin >> n;
+    if (n <= 1000) {
+        for (int i = 1; i <= n; i++) {
+            cin >> a[i] >> b[i];
         }
-        if ((a < b && a >= 0) || (a >= b && a < 0))
-        {
-            sc[2 * b - 2 * a]--;
-            sc[2 * a]--;
+        for (int i = 1; i <= n; i++) {
+            int y = b[i], cans = 0;
+            for (int j = 1; j <= n; j++) {
+                cans += min(abs(a[j] - b[j]), abs(a[j]) + abs(y - b[j]));
+            }
+            //cout << cans << endl;
+            ans = min(ans, cans);
+        }
+        cout << ans << endl;
+        return 0;
+    }
+    auto start = chrono::high_resolution_clock::now();
+    if (n == 0) return 0;
+    for (int i = 1; i <= n; i++) {
+        int a, b;
+        cin >> a >> b;
+        d.emplace_back(a, b);
+    }
+    sort(d.begin(), d.end(), [](pair<int, int> a, pair<int, int> b) { return a.second < b.second; });
+    int l = 1, r = n;
+    while (l < r - 1) {
+        int mid = (l + r) / 2;
+        int mmid = (mid + r) / 2;
+        if (f(mid) > f(mmid))
+            l = mid;
+        else
+            r = mmid;
+    }
+    f(1);
+    f(n);
+    srand(time(0));
+    auto end = chrono::high_resolution_clock::now();
+    while (chrono::duration_cast<chrono::milliseconds>(end - start).count() < 50) {
+        end = chrono::high_resolution_clock::now();
+        l = rand()%n;
+        r = rand()%n;
+        while (l < r - 1) {
+            int mid = (l + r) / 2;
+            int mmid = (mid + r) / 2;
+            if (f(mid) > f(mmid))
+                l = mid;
+            else
+                r = mmid;
         }
     }
-    ll ans = cf;
-    for (auto p : sc)
-    {
-        int ny = p.first, d = p.second;
-        cf += sf * (ny - cy);
-        cy = ny;
-        sf += d;
-        ans = min(ans, cf);
-    }
-    printf("%lld\n", ans);
+    cout << ans << endl;
     return 0;
 }
+

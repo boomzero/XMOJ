@@ -1,59 +1,56 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-typedef long double ld;
-typedef unsigned long long ull;
-const int MAXN = 60005;
-const int MAXLOG = 20;
-int n, q, hd[MAXN], sons[MAXN], to[MAXN * 2], nxt[MAXN * 2], tot, dep[MAXN], anc[MAXN][MAXLOG];
-void link(int father, int son)
-{
-    ++tot;
-    to[tot] = son;
-    nxt[tot] = hd[father];
-    hd[father] = tot;
+const int maxn = 60005, maxLog = 17;
+vector<int> g[maxn];
+int depth[maxn], anc[maxn][maxLog];
+
+void dfs(int u, int fa) {
+    depth[u] = depth[fa] + 1;
+    anc[u][0] = fa;
+    for (int i = 1; i < maxLog; i++) {
+        anc[u][i] = anc[anc[u][i - 1]][i - 1];
+    }
+    for (int v: g[u]) {
+        if (v != fa)
+            dfs(v, u);
+    }
 }
-void dfs(int x, int f)
-{
-    dep[x] = dep[f] + 1;
-    anc[x][0] = f;
-    for (int i = 1; i < MAXLOG; ++i)
-        anc[x][i] = anc[anc[x][i - 1]][i - 1];
-    for (int i = hd[x]; i; i = nxt[i])
-        if (to[i] != f)
-            dfs(to[i], x);
-}
-int lca(int x, int y)
-{
-    if (dep[x] < dep[y])
-        swap(x, y);
-    for (int i = MAXLOG - 1; i >= 0; i--)
-        if (dep[anc[x][i]] >= dep[y])
+
+int lca(int x, int y) {
+    if (depth[x] < depth[y]) swap(x, y);
+    for (int i = maxLog - 1; i >= 0; i--) {
+        if (depth[anc[x][i]] >= depth[y]) {
             x = anc[x][i];
-    if (x == y)
-        return x;
-    for (int i = MAXLOG - 1; i >= 0; i--)
-        if (anc[x][i] != anc[y][i])
-            x = anc[x][i], y = anc[y][i];
+        }
+    }
+    if (x == y) return x;
+    for (int i = maxLog - 1; i >= 0; i--) {
+        if (anc[x][i] != anc[y][i]) {
+            x = anc[x][i];
+            y = anc[y][i];
+        }
+    }
     return anc[x][0];
 }
-int main()
-{
-    scanf("%d", &n);
-    for (int i = 1; i < n; ++i)
-    {
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 1; i < n; i++) {
         int x, y;
-        scanf("%d%d", &x, &y);
-        link(x, y);
-        link(y, x);
+        cin >> x >> y;
+        g[x].push_back(y);
+        g[y].push_back(x);
     }
     dfs(1, 0);
-    scanf("%d", &q);
-    for (int i = 0; i < q; i++)
-    {
+    int q;
+    cin >> q;
+    for (int i = 1; i <= q; i++) {
         int x, y;
-        scanf("%d%d", &x, &y);
-        printf("%d\n", lca(x, y));
+        cin >> x >> y;
+        cout << lca(x, y) << endl;
     }
     return 0;
 }
+

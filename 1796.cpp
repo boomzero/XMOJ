@@ -2,7 +2,7 @@
 
 using namespace std;
 bool ext[100005];
-int chd[100005][15], tot = 1;
+int chd[100005][15], tot = 1; //this should be 10000 * 10, so 1e5
 
 bool ins(const string &s) {
     bool mkr = false, mod = false;

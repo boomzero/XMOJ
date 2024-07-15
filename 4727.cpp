@@ -1,73 +1,77 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int mac = 5e4 + 10;
-inline void in(int &read)
-{
-    int x = 0;
-    char ch = getchar();
-    while (ch < '0' || ch > '9')
-        ch = getchar();
-    while (ch >= '0' && ch <= '9')
-        x = (x << 3) + (x << 1) + ch - '0', ch = getchar();
-    read = x;
+
+const int MAXN = 200005;
+int a[MAXN] = {0}, val[MAXN << 2], lazy[MAXN << 2];
+
+void push_up(int rt) {
+    val[rt] = val[rt * 2] + val[rt * 2 + 1];
 }
-inline void out(int x)
-{
-    if (x >= 10)
-    {
-        out(x / 10);
-    }
-    putchar(x % 10 + '0');
-}
-int a[mac], L[mac], R[mac], id[mac], add[mac];
-void update(int l, int r, int c)
-{
-    int p = id[l], q = id[r];
-    if (p == q)
-        for (int i = l; i <= r; i++)
-            a[i] += c;
-    else
-    {
-        for (int i = p + 1; i <= q - 1; i++)
-            add[i] += c;
-        for (int i = l; i <= R[p]; i++)
-            a[i] += c;
-        for (int i = L[q]; i <= r; i++)
-            a[i] += c;
+
+void build(int rt, int l, int r) {
+    if (l == r) val[rt] = a[l];
+    else {
+        int mid = (l + r) / 2;
+        build(rt * 2, l, mid);
+        build(rt * 2 + 1, mid + 1, r);
+        push_up(rt);
     }
 }
-int main()
-{
+
+void push_down(int rt, int l, int r) {
+    if (lazy[rt] != 0) {
+        lazy[rt * 2] += lazy[rt];
+        lazy[rt * 2 + 1] += lazy[rt];
+        val[rt * 2] += ((l + r) / 2 - l + 1) * lazy[rt];
+        val[rt * 2 + 1] += (r - (l + r) / 2) * lazy[rt];
+        lazy[rt] = 0;
+    }
+}
+
+int query(int rt, int l, int r, int ql, int qr) {
+    if (ql > r || qr < l) {
+        return 0;
+    }
+    if (ql <= l && qr >= r)
+        return val[rt];
+    push_down(rt, l, r);
+    int mid = (l + r) / 2;
+    return query(rt * 2, l, mid, ql, qr) + query(rt * 2 + 1, mid + 1, r, ql, qr);
+}
+
+void update(int rt, int l, int r, int ul, int ur, int add) {
+    if (ul > r || ur < l) return;
+    if (ul <= l && ur >= r) {
+        val[rt] += add * (r - l + 1);
+        lazy[rt] += add;
+        return;
+    }
+    push_down(rt, l, r);
+    int mid = (l + r) / 2;
+    update(rt * 2, l, mid, ul, ur, add);
+    update(rt * 2 + 1, mid + 1, r, ul, ur, add);
+    push_up(rt);
+}
+
+int main() {
     int n;
-    in(n);
-    for (int i = 1; i <= n; i++)
-        in(a[i]);
-    int t = sqrt(n);
-    for (int i = 1; i <= t; i++)
-    {
-        L[i] = (i - 1) * t + 1;
-        R[i] = i * t;
+    scanf("%d", &n);
+    for (int i = 1; i <= n; ++i) {
+        scanf("%d", &a[i]);
     }
-    if (R[t] < n)
-        t++, L[t] = R[t - 1] + 1, R[t] = n;
-    for (int i = 1; i <= t; i++)
-        for (int j = L[i]; j <= R[i]; j++)
-            id[j] = i;
-    for (int i = 1; i <= n; i++)
-    {
-        int opt, l, r, c;
-        in(opt);
-        in(l);
-        in(r);
-        in(c);
-        if (!opt)
-        {
-            update(l, r, c);
-        }
-        else
-        {
-            out(a[r] + add[id[r]]);
-            putchar('\n');
+    build(1, 1, n);
+    for (int i = 1; i <= n; ++i) {
+        int op;
+        scanf("%d", &op);
+        if (op == 0) {
+            int ca, cb, x;
+            scanf("%d%d%d", &ca, &cb, &x);
+            update(1, 1, n, ca, cb, x);
+        } else {
+            int x, b;
+            scanf("%d%d%d", &b, &x, &b);
+            printf("%d\n", query(1, 1, n, x, x));
         }
     }
     return 0;

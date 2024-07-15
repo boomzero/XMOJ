@@ -1,68 +1,77 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 10005;
-unsigned int n, m, ve[N], vl[N], In[N], Out[N];
-struct EDGE
-{
-    unsigned int v, w;
-};
-vector<EDGE> G[N];
-queue<int> q;
-stack<int> topOrder;
-int main()
-{
+vector<pair<int, int> > g[1005], rg[1005];
+int in[1005], out[1005], ve[1005], vl[1005];
+
+int main() {
+    int n, m;
     cin >> n >> m;
-    for (unsigned int i = 0; i < m; i++)
-    {
-        unsigned int u, v, w;
-        cin >> u >> v >> w;
-        u--;
-        v--;
-        G[u].push_back((EDGE){v, w});
-        In[v]++;
-        Out[u]++;
+    for (int i = 1; i <= m; i++) {
+        int x, y, z;
+        cin >> x >> y >> z;
+        g[x].emplace_back(y, z);
+        rg[y].emplace_back(x, z);
+        in[y]++;
+        out[x]++;
     }
-    for (unsigned int i = 0; i < n; i++)
-        if (Out[i] == 0)
-        {
-            G[i].push_back((EDGE){n, 0});
-            In[n]++;
-            Out[i]++;
+    /*
+     * The point is, there may be more than one end node.
+     * Here we connect all the end nodes to a new node.
+     */
+    for (int i = 1; i <= n; i++) {
+        if (out[i] == 0) {
+            g[i].emplace_back(n + 1, 0);
+            rg[n + 1].emplace_back(i, 0);
+            in[n + 1]++;
+            out[i]++;
         }
-    n++;
-    memset(ve, 0, sizeof(ve));
-    for (unsigned int i = 0; i < n; i++)
-        if (In[i] == 0)
+    }
+    queue<int> q;
+    for (int i = 1; i <= n + 1; i++) {
+        if (in[i] == 0) {
             q.push(i);
-    while (!q.empty())
-    {
-        int u = q.front();
+        }
+    }
+    while (!q.empty()) {
+        int c = q.front();
         q.pop();
-        topOrder.push(u);
-        for (unsigned int i = 0; i < G[u].size(); i++)
-        {
-            int v = G[u][i].v;
-            In[v]--;
-            if (In[v] == 0)
-                q.push(v);
-            if (ve[u] + G[u][i].w > ve[v])
-                ve[v] = ve[u] + G[u][i].w;
+        for (auto pa: rg[c]) {
+            int u = pa.first, w = pa.second;
+            ve[c] = max(ve[c], ve[u] + w);
+        }
+        for (auto pa: g[c]) {
+            in[pa.first]--;
+            if (in[pa.first] == 0) {
+                q.push(pa.first);
+            }
         }
     }
-    fill(vl, vl + n, ve[n - 1]);
-    while (!topOrder.empty())
-    {
-        int u = topOrder.top();
-        topOrder.pop();
-        for (unsigned int i = 0; i < G[u].size(); i++)
-        {
-            int v = G[u][i].v;
-            if (vl[v] - G[u][i].w < vl[u])
-                vl[u] = vl[v] - G[u][i].w;
+    vl[n + 1] = ve[n + 1];
+    for (int i = 1; i <= n + 1; i++) {
+        if (out[i] == 0) {
+            q.push(i);
         }
     }
-    cout << ve[n - 1] << endl;
-    for (unsigned int u = 0; u < n - 1; u++)
-        cout << ve[u] << " " << vl[u] << endl;
+    cout << ve[n + 1] << endl;
+    while (!q.empty()) {
+        int c = q.front();
+        q.pop();
+        if (c != n + 1)
+            vl[c] = numeric_limits<int>::max();
+        for (auto pa: g[c]) {
+            int u = pa.first, w = pa.second;
+            vl[c] = min(vl[c], vl[u] - w);
+        }
+        for (auto pa: rg[c]) {
+            out[pa.first]--;
+            if (out[pa.first] == 0) {
+                q.push(pa.first);
+            }
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        cout << ve[i] << " " << vl[i] << endl;
+    }
     return 0;
 }
+

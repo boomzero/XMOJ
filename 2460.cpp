@@ -1,41 +1,40 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n, r, a[20], vis[20];
-void print()
-{
-    for (int i = 1; i <= r; ++i)
-    {
-        if (a[i] >= 10)
-        {
-            putchar(a[i] / 10 + '0');
-            putchar(a[i] % 10 + '0');
+int n, r;
+bool vis[30] = {false};
+int stackSize = 0, a[30];
+
+void dfs(int c) {
+    stackSize++;
+    vis[c] = true;
+    a[stackSize] = c;
+    if (stackSize == r) {
+        bool first = true;
+        for (int i = 1; i <= stackSize; ++i) {
+            if (!first) putchar(' ');
+            first = false;
+            printf("%d", a[i]);
         }
-        else
-            putchar(a[i] + '0');
-        if (i < r)
-            putchar(' ');
-    }
-    putchar('\n');
-}
-void dfs(int dep)
-{
-    if (dep == r + 1)
-    {
-        print();
+        putchar('\n');
+        vis[c] = false;
+        stackSize--;
         return;
     }
-    for (int i = 1; i <= n; ++i)
-        if (!vis[i])
-        {
-            a[dep] = i;
-            vis[i] = 1;
-            dfs(dep + 1);
-            vis[i] = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (!vis[i]) {
+            dfs(i);
         }
+    }
+    vis[c] = false;
+    stackSize--;
 }
-int main()
-{
-    scanf("%d%d", &n, &r);
-    dfs(1);
+
+int main() {
+    cin >> n >> r;
+    for (int i = 1; i <= n; ++i) {
+        dfs(i);
+    }
     return 0;
 }
+

@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 string flip(string in, int nf) {
     int p = 0;
     for (char &i: in) {
@@ -14,6 +16,7 @@ string flip(string in, int nf) {
     }
     return in;
 }
+
 int main() {
     int n;
     cin >> n;
@@ -28,3 +31,4 @@ int main() {
     }
     return 0;
 }
+

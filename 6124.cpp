@@ -1,5 +1,7 @@
 #include <iostream>
+
 using namespace std;
+
 int main() {
     freopen("ball.in", "r", stdin);
     freopen("ball.out", "w", stdout);
@@ -23,3 +25,4 @@ int main() {
     cout << n+1 << endl;
     return 0;
 }
+

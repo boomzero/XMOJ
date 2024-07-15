@@ -16,7 +16,7 @@ int main() {
         //cin >> theta >> v >> d >> g;
         scanf("%lf%lf%lf%lf", &theta, &v, &d, &g);
         double ans = 2 * (cos(dtr(theta)) * v) * (cos(dtr(90 - theta)) * v) / g;
-        while (v > 0.000001) { //TODO:adjust this!
+        while (v > 0.000001) { 
             v *= d;
             ans += 2 * (cos(dtr(theta)) * v) * (cos(dtr(90 - theta)) * v) / g;
         }

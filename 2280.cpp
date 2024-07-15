@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 int main() {
     freopen("credit.in", "r", stdin);
     freopen("credit.out", "w", stdout);
@@ -29,3 +31,5 @@ int main() {
     }
     return 0;
 }
+
+

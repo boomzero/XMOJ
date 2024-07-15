@@ -1,32 +1,33 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 1010;
-int n, g[N][N], vis[N], ans[N], tot;
-void print()
-{
-    for (int i = 1; i < n; ++i)
-        printf("%d-", ans[i]);
-    printf("%d\n", ans[n]);
-}
-void dfs(int u)
-{
-    ans[++tot] = u;
-    vis[u] = 1;
-    if (tot == n)
-    {
-        print();
-        return;
-    }
-    for (int i = 1; i <= n; ++i)
-        if (g[u][i] && !vis[i])
+int n;
+int graph[1100][1100] = {{0}};
+bool vis[1100] = {false};
+bool first = true;
+
+void dfs(int c) {
+    vis[c] = true;
+    if (!first) putchar('-');
+    first = false;
+    cout << c;
+    for (int i = 1; i <= n; ++i) {
+        if (graph[c][i] && !vis[i]) {
             dfs(i);
+        }
+    }
+//    vis[c] = false;
 }
-int main()
-{
-    scanf("%d", &n);
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= n; ++j)
-            scanf("%d", &g[i][j]);
+
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            cin >> graph[i][j];
+        }
+    }
     dfs(1);
     return 0;
 }
+
+

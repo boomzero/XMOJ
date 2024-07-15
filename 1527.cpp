@@ -1,17 +1,22 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1000005;
-ll n, m, a[N], b[N], f[N];
-int main()
-{
-    scanf("%lld%lld", &n, &m);
-    for (ll i = 1; i <= m; i++)
-        scanf("%lld%lld", &a[i], &b[i]);
-    for (ll i = 1; i <= m; i++)
-        for (ll j = n; j >= 0; j--)
-            if (j >= a[i])
-                f[j] = max(f[j], f[j - a[i]] + b[i] * a[i]);
-    printf("%lld\n", f[n]);
+
+int main() {
+    int c[30] = {0}, w[30] = {0}, dp[30001] = {0}, n, m;
+    cin >> n >> m;
+    for (int i = 1; i <= m; ++i) {
+        cin >> c[i] >> w[i];
+        w[i] *= c[i];
+    }
+    for (int i = 1; i <= m; ++i) {
+        for (int j = n; j >= 0; --j) {
+            if (j - c[i] >= 0)
+                dp[j] = max(dp[j], dp[j - c[i]] + w[i]);
+        }
+    }
+    cout << dp[n] << endl;
     return 0;
 }
+
+

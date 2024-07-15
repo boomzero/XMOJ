@@ -1,75 +1,77 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int inn = 100001;
-struct node
-{
-	int x, y, next;
-} a[inn];
-int n, m, low[inn], dfn[inn], lis[inn], tt[inn], belong[inn], out[inn], w[inn];
-int ans, naa, tg;
-bool b[inn];
-void tarjan(int q)
-{
-	int h;
-	low[q] = dfn[q] = ++naa;
-	tt[++ans] = q;
-	b[q] = true;
-	for (int t = lis[q]; t; t = a[t].next)
-	{
-		h = a[t].y;
-		if (!dfn[h])
-		{
-			tarjan(h);
-			low[q] = min(low[q], low[h]);
-		}
-		else if (b[h])
-			low[q] = min(dfn[h], low[q]);
-	}
-	if (dfn[q] == low[q])
-	{
-		tg++;
-		do
-		{
-			w[tg]++;
-			h = tt[ans];
-			ans--;
-			b[h] = false;
-			belong[h] = tg;
-		} while (q != h);
-	}
+int n, m;
+const int mn = 10010;
+vector<int> g[mn], scc[mn + 1];
+bool inStack[mn];
+int dfn[mn], low[mn], idx, scc_cnt, in_scc[mn];
+stack<int> st;
+
+void tarjan(int u) {
+    dfn[u] = low[u] = ++idx;
+    inStack[u] = true;
+    st.push(u);
+    for (int i: g[u]) {
+        if (!dfn[i]) {
+            tarjan(i);
+            low[u] = min(low[u], low[i]);
+        } else if (inStack[i]) {
+            low[u] = min(low[u], dfn[i]);
+        }
+    }
+    if (dfn[u] == low[u]) {
+        scc_cnt++;
+        int c = 0;
+        do {
+            c = st.top();
+            st.pop();
+            inStack[c] = false;
+            in_scc[c] = scc_cnt;
+            scc[scc_cnt].emplace_back(c);
+        } while (c != u);
+    }
 }
-int main()
-{
-	scanf("%d%d", &n, &m);
-	int xx, yy;
-	for (int i = 1; i <= m; i++)
-	{
-		scanf("%d%d", &xx, &yy);
-		a[i].x = xx;
-		a[i].y = yy;
-		a[i].next = lis[xx];
-		lis[xx] = i;
-	}
-	for (int i = 1; i <= n; i++)
-		if (!dfn[i])
-			tarjan(i);
-	for (int i = 1; i <= m; i++)
-		if (belong[a[i].x] != belong[a[i].y])
-			out[belong[a[i].x]]++;
-	int ttt = 0, num = 0;
-	for (int i = 1; i <= tg; i++)
-	{
-		if (!out[i])
-		{
-			ttt = i;
-			num++;
-		}
-	}
-	if (num == 1)
-	{
-		printf("%d", w[ttt]);
-		return 0;
-	}
-	printf("0");
-	return 0;
+
+void solve() {
+    for (int i = 1; i <= n; ++i) {
+        if (!dfn[i]) {
+            tarjan(i);
+        }
+    }
+}
+
+int out[mn], in[mn];
+
+int main() {
+    cin >> n >> m;
+    for (int i = 0; i < m; ++i) {
+        int a, b;
+        cin >> a >> b;
+        g[a].emplace_back(b);
+    }
+    solve();
+    for (int i = 1; i <= n; ++i) {
+        for (int j: g[i]) {
+            if (in_scc[j] == in_scc[i]) continue;
+            in[in_scc[j]]++;
+            out[in_scc[i]]++;
+        }
+    }
+    int ans = 0;
+    for (int i = 1; i <= scc_cnt; ++i) {
+        if (out[i] == 0) {
+            ans++;
+        }
+    }
+    if (ans != 1) {
+        cout << 0 << endl;
+        return 0;
+    }
+    for (int i = 1; i <= scc_cnt; ++i) {
+        if (out[i] == 0) {
+            cout << scc[i].size() << endl;
+        }
+    }
+    return 0;
 }

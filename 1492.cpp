@@ -1,16 +1,25 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 2005;
-const int INF = 0x7FFF'FFFF;
-int n, d[N], x[N];
-int main()
-{
-    scanf("%d", &n);
-    for (int i = 0; i < n; i++)
-        scanf("%d", &x[i]);
-    fill(d, d + n, INF);
-    for (int i = 0; i < n; i++)
-        *upper_bound(d, d + n, -x[i]) = -x[i];
-    printf("%d\n", lower_bound(d, d + n, INF) - d);
+int dp[2005] = {0}, h[2500] = {0}, n;
+
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        cin >> h[i];
+    }
+    for (int i = 1; i <= n; ++i) {
+        int max = -1;
+        for (int j = 1; j <= i; ++j) {
+            if (dp[j] > max && h[j] >= h[i]) max = dp[j];
+        }
+        dp[i] = max + 1;
+    }
+    int max = -1;
+    for (int i = 1; i <= n; ++i) {
+        if (dp[i] > max) max = dp[i];
+    }
+    cout << max << endl;
     return 0;
 }
+

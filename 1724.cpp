@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 typedef vector<int> num;
+
 void upd(num &in, int conv) {
     for (int i = 0; i < in.size(); i++) {
         if (in[i] >= conv) {
@@ -12,6 +14,7 @@ void upd(num &in, int conv) {
         }
     }
 }
+
 num add(num a, num b, int conv) {
     num ans;
     for (int i = 0; i < max(a.size(), b.size()); i++) {
@@ -32,11 +35,13 @@ num add(num a, num b, int conv) {
     upd(ans, conv);
     return ans;
 }
+
 num init() {
     num n;
     n.push_back(0);
     return n;
 }
+
 void print(num in) {
     for (int i = in.size() - 1; i >= 0; i--) {
         if (in[i] > 9) {
@@ -46,6 +51,7 @@ void print(num in) {
         }
     }
 }
+
 num input(int conv) {
     num n;
     string in;
@@ -60,13 +66,16 @@ num input(int conv) {
     upd(n, conv);
     return n;
 }
+
 num rev(num in) {
     reverse(in.begin(), in.end());
     return in;
 }
+
 bool isRev(num in) {
     return rev(in) == in;
 }
+
 int main() {
     int n;
     cin >> n;
@@ -86,3 +95,4 @@ int main() {
     cout << "Impossible" << endl;
     return 0;
 }
+

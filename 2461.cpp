@@ -1,31 +1,41 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n, a[20], vis[20];
-void print()
-{
-    for (int i = 1; i <= n; ++i)
-        printf("%d ", a[i]);
-    printf("\n");
-}
-void dfs(int dep)
-{
-    if (dep == n + 1)
-    {
-        print();
+int n;
+bool vis[30] = {false};
+int stackSize = 0, a[30];
+
+void dfs(int c) {
+    stackSize++;
+    vis[c] = true;
+    a[stackSize] = c;
+    if (stackSize == n) {
+        bool first = true;
+        for (int i = 1; i <= stackSize; ++i) {
+            if (!first) putchar(' ');
+            first = false;
+            printf("%d", a[i]);
+        }
+        putchar('\n');
+        vis[c] = false;
+        stackSize--;
         return;
     }
-    for (int i = 1; i <= n; ++i)
-        if (i != dep && !vis[i])
-        {
-            a[dep] = i;
-            vis[i] = 1;
-            dfs(dep + 1);
-            vis[i] = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (stackSize + 1 == i) continue;
+        if (!vis[i]) {
+            dfs(i);
         }
+    }
+    vis[c] = false;
+    stackSize--;
 }
-int main()
-{
-    scanf("%d", &n);
-    dfs(1);
+
+int main() {
+    cin >> n;
+    for (int i = 2; i <= n; ++i) {
+        dfs(i);
+    }
     return 0;
 }
+

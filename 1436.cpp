@@ -1,72 +1,53 @@
 #include <bits/stdc++.h>
+
+#define int long long
 using namespace std;
-typedef long long ll;
-const ll N = 800005;
-struct BRIDGE
-{
-    ll x, y;
-} People[N];
-ll T, n, m, k, ans, c[N], MaxY;
-ll LowBit(ll x)
-{
-    return x & (-x);
+vector<pair<int, int>> cross;
+
+int yb[1006];
+
+int lb(int in) {
+    return in & (-in);
 }
-void Add(ll Index, ll Value)
-{
-    while (Index <= MaxY)
-    {
-        c[Index] += Value;
-        Index += LowBit(Index);
-    }
-}
-ll Sum(ll Index)
-{
-    ll ReturnValue = 0;
-    while (Index > 0)
-    {
-        ReturnValue += c[Index];
-        Index -= LowBit(Index);
-    }
-    return ReturnValue;
-}
-int main()
-{
-    scanf("%lld", &T);
-    for (ll t = 0; t < T; t++)
-    {
-        memset(c, 0, sizeof(c));
-        MaxY = 0;
-        ans = 0;
-        scanf("%lld%lld%lld", &n, &m, &k);
-        for (ll i = 1; i <= k; i++)
-        {
-            scanf("%lld%lld", &People[i].x, &People[i].y);
-            People[i].x++;
-            People[i].y++;
-            MaxY = max(MaxY, People[i].y);
+
+signed main() {
+    int t;
+    cin >> t;
+    for (int tsk = 0; tsk < t; ++tsk) {
+        cross.clear();
+        memset(yb, 0, sizeof(yb));
+        int n, m, k;
+        cin >> n >> m >> k;
+        for (int i = 1; i <= k; ++i) {
+            int x, y;
+            cin >> x >> y;
+            cross.emplace_back(x, y);
         }
-        sort(People + 1, People + k + 1,
-             [](BRIDGE a, BRIDGE b)
-             {
-                 if (a.x == b.x)
-                     return a.y > b.y;
-                 return a.x < b.x;
-             });
-        ll SameXCount = 0;
-        for (ll i = 1; i <= k; i++)
-        {
-            ans += Sum(MaxY) - Sum(People[i].y);
-            if (People[i].x == People[i + 1].x)
-            {
-                SameXCount++;
-                ans -= SameXCount;
+        int ans = 0;
+        sort(cross.begin(), cross.end());
+        int cnt = 0;
+        for (auto pa: cross) {
+            cnt++;
+            int x = pa.first, y = pa.second;
+            //First, we check how many numbers in yb are lower than y
+            //What we are actually calculating is the sum of yb[1] to yb[y]
+            int fetch = y, sum = 0;
+            while (fetch) {
+                sum += yb[fetch];
+                fetch -= lb(fetch);
             }
-            else
-                SameXCount = 0;
-            // cout << i << "  " << People[i].x << " " << People[i].y << "  " << Sum(MaxY) << " " << Sum(People[i].y) << endl;
-            Add(People[i].y, 1);
+            sum = cnt - sum - 1;
+            ans += sum;
+            //Now we need to update yb[]
+            fetch = y; //reusing this
+            while (fetch <= 1005) {
+                yb[fetch]++;
+                fetch += lb(fetch);
+            }
         }
-        printf("Test case %lld: %lld\n", t + 1, ans);
+        cout << "Test case " << tsk + 1 << ": " << ans << endl;
     }
+
     return 0;
 }
+

@@ -1,8 +1,11 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, k, fam[1005] = {0}, md = 0, ans = 0, cid = 0, dt[1005];
 vector<int> g[1005];
+
 int idgen() { return ++cid; }
+
 void dfs(int d, int id) {
     fam[d] = 1;
     dt[id]++;
@@ -13,6 +16,7 @@ void dfs(int d, int id) {
         }
     }
 }
+
 int main() {
     cin >> n >> k;
     for (int i = 0; i < k; ++i) {
@@ -27,3 +31,4 @@ int main() {
     cout << ans << " " << md << endl;
     return 0;
 }
+

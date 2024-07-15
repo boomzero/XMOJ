@@ -1,50 +1,27 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-string s, s1, s2;
-int main()
-{
-    //    char c;
-    //    while(cin >> c, c!=',') s += c;
-    //    while(cin >> c, c!=',') s1 += c;
-    //    while(cin >> c) s2 += c;
-    cin >> s >> s1 >> s2;
-    if (s.size() < s1.size() || s.size() < s2.size())
-        cout << -1;
-    else
-    {
-        int l = 0;
-        while (l + s1.size() <= s.size())
-        {
-            int k = 0;
-            while (k < s1.size())
-            {
-                if (s[l + k] != s1[k])
-                    break;
-                k++;
-            }
-            if (k == s1.size())
-                break;
-            l++;
-        }
-        int r = s.size() - s2.size();
-        while (r >= 0)
-        {
-            int k = 0;
-            while (k < s2.size())
-            {
-                if (s[r + k] != s2[k])
-                    break;
-                k++;
-            }
-            if (k == s2.size())
-                break;
-            r--;
-        }
-        l += s1.size() - 1;
-        if (l >= r)
-            puts("-1");
-        else
-            printf("%d", r - l - 1);
+
+int main() {
+    string s, rs, s1, s2;
+    getline(cin, s);
+    getline(cin, s1);
+    getline(cin, s2);
+    rs = s;
+    reverse(rs.begin(), rs.end());
+    reverse(s2.begin(), s2.end());
+    int a = s.find(s1), b = rs.find(s2);
+    if (a == string::npos || b == string::npos) {
+        cout << -1 << endl;
+        return 0;
     }
+    a++, b++;
+    b += s2.length();
+    b = (int) s.length() - b;
+    if (a + (int) s1.length() >= b) {
+        cout << -1 << endl;
+        return 0;
+    }
+    cout << b - a - (int) s1.length() + 2 << endl;
     return 0;
 }

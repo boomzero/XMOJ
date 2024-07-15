@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 map<int, int> m;
+
 int main() {
     int n;
     cin >> n;
@@ -15,3 +17,4 @@ int main() {
     }
     return 0;
 }
+

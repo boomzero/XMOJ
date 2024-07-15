@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 //abcda
 int main() {
     int n;
@@ -28,3 +30,4 @@ int main() {
     cout << ans << endl;
     return 0;
 }
+

@@ -1,29 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
-int n, pencil[2][4], minn = 1000000000;
-int main()
-{
-	freopen("pencil.in", "r", stdin);
-	freopen("pencil.out", "w", stdout);
-	cin >> n;
-	for (int i = 0; i < 3; i++)
-	{
-		cin >> pencil[i][0] >> pencil[i][1];
+struct package{
+	long long num,price;
+};
+
+int main(){
+	freopen("pencil.in","r",stdin);
+	freopen("pencil.out","w",stdout);
+	int n;
+	cin>>n;
+	if(n==0){
+		cout<<0<<endl;
+		return 0;
 	}
-	if (n % pencil[0][0] != 0)
-		minn = min(minn, pencil[0][1] * (n / pencil[0][0] + 1));
-	else if (n % pencil[0][0] == 0)
-		minn = min(minn, pencil[0][1] * (n / pencil[0][0]));
-	if (n % pencil[1][0] != 0)
-		minn = min(minn, pencil[1][1] * (n / pencil[1][0] + 1));
-	else if (n % pencil[1][0] == 0)
-		minn = min(minn, pencil[1][1] * (n / pencil[1][0]));
-	if (n % pencil[2][0] != 0)
-		minn = min(minn, pencil[2][1] * (n / pencil[2][0] + 1));
-	else if (n % pencil[2][0] == 0)
-		minn = min(minn, pencil[2][1] * (n / pencil[2][0]));
-	cout << minn;
-	fclose(stdout);
-	fclose(stdout);
+	package pencils[4];
+	for(int i=1;i<=3;i++){
+		cin>>pencils[i].num>>pencils[i].price;
+	}
+	long long minMoney=0xfffffff;
+	for(int i=1;i<=3;i++){
+		int p=0;
+		if(pencils[i].num==0) continue;
+		while(true){
+			p++;
+			if((p*pencils[i].num)>=n){
+				break;
+			}
+		}
+		long long money=p*pencils[i].price;
+		//cout<<"Case "<<i<<": Money: "<<money<<" minMoney: "<<minMoney<<endl;
+		if(money<minMoney) minMoney=money;
+	}
+	cout<<minMoney<<endl;
 	return 0;
-}
+} 

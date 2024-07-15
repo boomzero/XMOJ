@@ -1,19 +1,27 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const int N = 105;
-char s[N];
-ll k, OneCount;
-int main()
-{
+
+int main() {
     freopen("c.in", "r", stdin);
     freopen("c.out", "w", stdout);
-    scanf("%s%lld", s, &k);
-    for (int i = 0; i < strlen(s); i++)
-        if (s[i] == '1')
-            OneCount++;
-        else
+    string in;
+    long long k, bt = 0;
+    cin >> in >> k;
+    for (long long i = 0; i < in.length(); ++i) {
+        if (in[i] != '1') {
             break;
-    printf("%c\n", (k <= OneCount) ? '1' : s[OneCount]);
+        }
+        bt++;
+    }
+    if (k <= in.size() && k <= bt) cout << 1 << endl;
+    else {
+        for (char i: in) {
+            if (i != '1') {
+                cout << i << endl;
+                break;
+            }
+        }
+    }
     return 0;
 }

@@ -1,59 +1,86 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 1005;
-const ll dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
-const ll dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
-ll n, k, Field[N][N], Cover[N][N][8];
-ll FastRead()
-{
-    ll x = 0;
-    char Char = getchar();
-    while (Char >= '0' && Char <= '9')
-    {
-        x = x * 10 + Char - '0';
-        Char = getchar();
+int n, k, expv;
+int grid[1005][1005], curr[1005][1005];
+char *p1, *p2, buf[100000];
+#define nc() (p1==p2 && (p2=(p1=buf)+fread(buf,1,100000,stdin),p1==p2)?EOF:*p1++)
+
+int read() {
+    int x = 0, f = 1;
+    char ch = nc();
+    while (ch < 48 || ch > 57) {
+        if (ch == '-')
+            f = -1;
+        ch = nc();
     }
-    return x;
+    while (ch >= 48 && ch <= 57)
+        x = x * 10 + ch - 48, ch = nc();
+    return x * f;
 }
-int main()
-{
+
+int main() {
     freopen("corndolly.in", "r", stdin);
     freopen("corndolly.out", "w", stdout);
-    // scanf("%lld%lld", &n, &k);
-    n = FastRead();
-    k = FastRead();
-    for (ll i = 0; i < k; i++)
-    {
-        ll x, y;
-        // scanf("%lld%lld", &x, &y);
-        x = FastRead();
-        y = FastRead();
-        Field[x - 1][y - 1]++;
-    }
-    for (ll i = 0; i < n; i++)
-        for (ll j = 0; j < n; j++)
-            for (ll Direction = 0; Direction < 8; Direction++)
-            {
-                ll x = i + dx[Direction];
-                ll y = j + dy[Direction];
-                while (x >= 0 && x < n && y >= 0 && y < n)
-                {
-                    Cover[i][j][Direction] += Field[x][y];
-                    x += dx[Direction];
-                    y += dy[Direction];
-                }
+    n = read(), k = read();
+    for (int i = 1; i <= k; i++) {
+        int r = read(), c = read();
+        grid[r][c] = true;
+        if (grid[r][c]) {
+            int nr = r, nc;
+            curr[r][c]++;
+            while (nr > 1) { //pb
+                nr--;
+                curr[nr][c]++;
             }
-    ll Answer = 0;
-    for (ll i = 0; i < n; i++)
-        for (ll j = 0; j < n; j++)
-        {
-            ll Count = Field[i][j];
-            for (ll Direction = 0; Direction < 8; Direction++)
-                Count += Cover[i][j][Direction];
-            if (Count == k)
-                Answer++;
+            nr = r;
+            while (nr < n) { //pb
+                nr++;
+                curr[nr][c]++;
+            }
+            nc = c;
+            while (nc > 1) { //pb
+                nc--;
+                curr[r][nc]++;
+            }
+            nc = c;
+            while (nc < n) { //pb
+                nc++;
+                curr[r][nc]++;
+            }
+            nr = r, nc = c;
+            while (nr > 1 && nc > 1) {
+                nc--;
+                nr--;
+                curr[nr][nc]++;
+            }
+            nr = r, nc = c;
+            while (nr < n && nc < n) {
+                nc++;
+                nr++;
+                curr[nr][nc]++;
+            }
+            nr = r, nc = c;
+            while (nr > 1 && nc < n) {
+                nc++;
+                nr--;
+                curr[nr][nc]++;
+            }
+            nr = r, nc = c;
+            while (nr < n && nc > 1) {
+                nc--;
+                nr++;
+                curr[nr][nc]++;
+            }
+            expv++;
         }
-    printf("%lld\n", Answer);
+    }
+    int ans = 0;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= n; j++) {
+            if (curr[i][j] >= expv) ans++;
+        }
+    }
+    cout << ans << endl;
     return 0;
 }

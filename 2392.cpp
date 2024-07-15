@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, b, a[105] = {0}, cnt = 0;
+
+
 int main() {
     priority_queue<int, vector<int>, greater<>> pq;
     cin >> n >> b;
@@ -42,3 +45,4 @@ int main() {
     cout << cnt << endl;
     return 0;
 }
+

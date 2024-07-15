@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, k, z, dp[100005] = {0};
 bool inv[100005] = {false};
 const long long mod = 1000000007;
+
 int main() {
     freopen("feeling.in", "r", stdin);
     freopen("feeling.out", "w", stdout);
@@ -24,3 +26,4 @@ int main() {
     cout << dp[n] << endl;
     return 0;
 }
+

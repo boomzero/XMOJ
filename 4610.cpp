@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 int main() {
     freopen("square.in", "r", stdin);
     freopen("square.out", "w", stdout);
@@ -20,3 +22,4 @@ int main() {
     printf("%.3f %.3f %.3f\n", ans[1], ans[2], ans[3]);
     return 0;
 }
+

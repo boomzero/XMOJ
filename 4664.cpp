@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 int tp(int n) {
     int ans = 1;
     for (int i = 1; i <= n; ++i) {
@@ -7,6 +9,7 @@ int tp(int n) {
     }
     return ans;
 }
+
 int main() {
     freopen("bend.in", "r", stdin);
     freopen("bend.out", "w", stdout);
@@ -38,3 +41,4 @@ int main() {
     }
     return 0;
 }
+

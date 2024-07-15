@@ -1,87 +1,52 @@
 #include <bits/stdc++.h>
+
+#define x first
+#define y second
 using namespace std;
-typedef pair<int, int> P;
-int cnt, tot, w, h, dp[110][110];
-bool vis[110][110];
-int dx[8] = {1, 2, 2, 1, -1, -2, -2, -1}, dy[8] = {2, 1, -1, -2, -2, -1, 1, 2};
-int t, x, y, ex, ey;
-queue<P> que;
-bool check_fill()
-{
-	for (int i = 0; i < w; i++)
-	{
-		for (int j = 0; j < h; j++)
-		{
-			if (dp[i][j] == 0)
-				return false;
-		}
-	}
-	return true;
+typedef pair<int, int> dot;
+
+int n, m, dirX[] = {0, -2, -1, 1, 2, 2, 1, -1, -2}, dirY[] = {0, 1, 2, 2, 1, -1, -2, -2, -1};
+dot start, endd;
+bool vis[150][150] = {{false}};
+int currS = 0;
+map<dot, int> stackSize;
+
+void bfs() {
+    queue<dot> q;
+    q.push(start);
+    vis[start.x][start.y] = true;
+    stackSize[make_pair(start.x, start.y)] = currS;
+    while (!q.empty()) {
+        dot c = q.front();
+        currS = stackSize[make_pair(c.x, c.y)];
+        if (c.x == endd.x && c.y == endd.y) {
+            cout << currS << endl;
+            break;
+        }
+        q.pop();
+        for (int i = 0; i < 9; i++) {
+            int nx = c.x + dirX[i], ny = c.y + dirY[i];
+            if (ny <= 0 || nx <= 0 || nx > n || ny > m) continue;
+            if (vis[nx][ny]) continue;
+            vis[nx][ny] = true;
+            stackSize[make_pair(nx, ny)] = currS + 1;
+            q.emplace(nx, ny);
+        }
+    }
 }
-bool check(int x, int y)
-{
-	if (x >= 0 && y >= 0 && x < w && y < h)
-		return true;
-	else
-		return false;
+
+int main() {
+    cin >> n >> m;
+    cin >> start.x >> start.y;
+    int k;
+    cin >> k;
+    for (int i = 1; i <= k; i++) {
+        cin >> endd.x >> endd.y;
+        memset(vis, false, sizeof(vis));
+        stackSize.clear();
+        currS = 0;
+        bfs();
+    }
+    return 0;
 }
-void bfs(int x, int y)
-{
-	vis[x][y] = true;
-	que.push(P(x, y));
-	while (!que.empty())
-	{
-		P n = que.front();
-		que.pop();
-		int x1 = n.first, y1 = n.second;
-		for (int i = 0; i < 8; i++)
-		{
-			int nx = x1 + dx[i], ny = y1 + dy[i];
-			if (check(nx, ny) == true && vis[nx][ny] == false)
-			{
-				vis[nx][ny] = true;
-				dp[nx][ny] = dp[x1][y1] + 1;
-				que.push(P(nx, ny));
-			}
-		}
-	}
-}
-int main()
-{
-	memset(vis, false, sizeof(vis));
-	cin >> w >> h >> x >> y;
-	cin >> t;
-	memset(dp, 0x3f3f3f3f, sizeof(dp));
-	dp[x][y] = 0;
-	bfs(x, y);
-	//	for(int j=0;j<t;j++) {
-	//		cnt=0;
-	//		cin>>ex>>ey;
-	//		if(!check(x,y)) {
-	//			cout<<0<<endl;
-	//			continue;
-	//		}
-	//		if(w==1&&h==1) {
-	//			cout<<1<<endl;
-	//			continue;
-	//		}
-	//		if(x==ex&&y==ey){
-	//			cout<<0<<endl;
-	//			continue;
-	//		}
-	//		for(int i=0;i<w;i++){
-	//			for(int j=0;j<h;j++){
-	//				cout<<dp[i][j]<<" ";
-	//			}
-	//			cout<<endl;
-	//		}
-	//		cout<<dp[ex][ey]<<endl;
-	//	}
-	for (int i = 0; i < t; i++)
-	{
-		int x1, y1;
-		cin >> x1 >> y1;
-		cout << dp[x1][y1] << endl;
-	}
-	return 0;
-}
+

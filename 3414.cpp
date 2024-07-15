@@ -1,22 +1,32 @@
 #include <iostream>
-#include <algorithm>
-#include <cmath>
+#include <vector>
+
 using namespace std;
-int n, x, y, i;
-int main()
-{
-	scanf("%d", &n);
-	int r[n + 1] = {0};
-	for (i = 1; i < n; i++)
-	{
-		scanf("%d%d", &x, &y);
-		r[x]++;
-		r[y]++;
-	}
-	r[1] = r[1] + 1;
-	for (i = 1; i <= n; i++)
-	{
-		// r[i]--;
-		printf("%d ", r[i] - 1);
-	}
+vector<int> g[60005];
+int cnt[60005];
+
+void dfs(int u, int fa) {
+    cnt[fa]++;
+    for (int v: g[u]) {
+        if (v == fa) continue;
+        dfs(v, u);
+    }
 }
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 1; i < n; i++) {
+        int x, y;
+        cin >> x >> y;
+        g[x].emplace_back(y);
+        g[y].emplace_back(x);
+    }
+    dfs(1, 0);
+    for (int i = 1; i <= n; i++) {
+        cout << cnt[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
+

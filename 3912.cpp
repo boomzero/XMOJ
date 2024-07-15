@@ -1,26 +1,23 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-typedef long double ld;
-const ll N = 1005;
-const ld INF = (numeric_limits<ld>::max)();
-ll n, t, a, h[N], Answer;
-ld MinDelta = INF;
-int main()
-{
+
+int main() {
     freopen("a.in", "r", stdin);
     freopen("a.out", "w", stdout);
-    scanf("%lld%lld%lld", &n, &t, &a);
-    for (ll i = 0; i < n; i++)
-    {
-        scanf("%lld", &h[i]);
-        ld Temp = abs(a - (t - h[i] * 0.006));
-        if (Temp < MinDelta)
-        {
-            MinDelta = Temp;
-            Answer = i + 1;
+    double n, t, a;
+    cin >> n >> t >> a;
+    double h[1005] = {0};
+    for (int i = 1; i <= n; ++i) {
+        cin >> h[i];
+    }
+    int minDis = numeric_limits<int>::max(), minPos;
+    for (int i = 1; i <= n; ++i) {
+        if (abs(a*1000 - (t*1000 - h[i] * 6)) < minDis) {
+            minDis = abs(a*1000 - (t*1000 - h[i] * 6));
+            minPos = i;
         }
     }
-    printf("%lld\n", Answer);
+    cout << minPos << endl;
     return 0;
 }

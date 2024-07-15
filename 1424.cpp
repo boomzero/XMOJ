@@ -1,37 +1,42 @@
 #include <bits/stdc++.h>
+
+#define int long long
 using namespace std;
-int n, m, s[1010];
-long long ans;
-struct P
-{
-    int id, t;
-} p[1010];
-bool cmp(const P &a, const P &b)
-{
-    return a.t < b.t || (a.t == b.t && a.id < b.id);
-}
-int main()
-{
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i <= n; ++i)
-    {
-        scanf("%d", &p[i].t);
-        p[i].id = i;
+
+signed main() {
+    int n, m;
+    cin >> n >> m;
+    vector<pair<int, int>> in;
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        int tmp;
+        cin >> tmp;
+        in.push_back({tmp, i + 1});
+        stable_sort(in.begin(), in.end());
     }
-    sort(p + 1, p + n + 1, cmp);
-    for (int i = 1; i <= m; ++i)
-        s[i] = p[i].t;
-    for (int i = m + 1; i <= n; ++i)
-    {
-        int which = i % m;
-        if (which == 0)
-            which = m;
-        ans += s[which];
-        s[which] += p[i].t;
+    bool f = true;
+    for (auto i: in) {
+        if (!f) cout << " ";
+        f = false;
+        cout << i.second;
     }
-    for (int i = 1; i < n; ++i)
-        printf("%d ", p[i].id);
-    printf("%d\n", p[n].id);
-    printf("%.2lf\n", (double)ans / n);
+//    for (int i = 0; i < in.size(); ++i) {
+//        sum += in[i].first * (n - i - 1);
+//    }
+    int p, q;
+
+    for (int i = 0; i < m; ++i) {
+        p = q = 0;
+        for (int j = i; j < n; j += (m)) {
+            q++;
+        }
+        for (int j = i; j < n; j += (m)) {
+            p++;
+            sum += in[j].first * (q - p);
+        }
+    }
+    cout << endl;
+    printf("%.2f", ((double) sum) / n);
     return 0;
 }
+

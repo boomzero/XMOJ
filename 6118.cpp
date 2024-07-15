@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
+
 using namespace std;
+
 int main() {
     freopen("balance.in", "r", stdin);
     freopen("balance.out", "w", stdout);
@@ -26,3 +28,4 @@ int main() {
     cout << minVal << endl;
     return 0;
 }
+

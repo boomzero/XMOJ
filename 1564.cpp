@@ -1,45 +1,33 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <algorithm>
-#define min(a, b) a < b ? a : b
+#include <bits/stdc++.h>
+
 using namespace std;
-int n, m, ans = 0x7f7f7f7f;
-int map[21][21], f[1 << 20][21];
-int main()
-{
-	scanf("%d", &n);
-	m = (1 << n) - 1;
-	for (int i = 1; i <= n; i++)
-	{
-		for (int j = 1; j <= n; j++)
-		{
-			scanf("%d", &map[i][j]);
-		}
-	}
-	memset(f, 0x7f, sizeof(f));
-	f[1][1] = 0;
-	for (int i = 3, k = 2, p = 4; i <= m; i += 2)
-	{
-		if (i > p)
-			p = p << 1, k++;
-		for (int j = 2; j <= k; j++)
-		{
-			if ((i >> j - 1) & 1)
-			{
-				int s = i ^ (1 << j - 1);
-				for (int l = 1; l < j; l++)
-				{
-					f[i][j] = min(f[i][j], f[s][l] + map[l][j]);
-				}
-				for (int l = j + 1; l <= k; l++)
-				{
-					f[i][j] = min(f[i][j], f[s][l] + map[l][j]);
-				}
-			}
-		}
-	}
-	for (int i = 2; i <= n; i++)
-		ans = min(ans, f[m][i] + map[i][1]);
-	cout << ans;
+int d[25][25], f[1 << 20][20];
+
+int main() {
+    memset(f, 0x3f, sizeof f);
+    f[1][0] = 0;
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> d[i][j];
+        }
+    }
+    for (int s = 1; s < (1 << n); ++s) {
+        for (int i = 0; i < n; ++i) {
+            if (!(s & (1 << i))) continue;
+            for (int j = 0; j < n; ++j) {
+                if (!(s & (1 << j))) continue;
+                if (i == j) continue;
+                f[s][i] = min(f[s][i], f[s ^ (1 << i)][j] + d[j][i]);
+            }
+        }
+    }
+    int minn = numeric_limits<int>::max();
+    for (int i = 0; i < n; ++i) {
+        minn = min(minn, f[(1 << n) - 1][i] + d[i][0]);
+    }
+    cout << minn << endl;
+    return 0;
 }
+

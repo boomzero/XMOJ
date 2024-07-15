@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 #define int long long
 using namespace std;
 int n;
+
 signed main() {
     cin >> n;
     int i = 0, c = 2;

@@ -1,25 +1,25 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n, avg, p[101], ans;
-int main()
-{
+
+int main() {
+    int n;
     cin >> n;
-    for (int i = 0; i < n; ++i)
-    {
-        cin >> p[i];
-        avg += p[i];
+    int a[200] = {0};
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+        sum += a[i];
     }
-    avg /= n;
-    for (int i = 0; i < n; ++i)
-        p[i] -= avg;
-    for (int i = 0; i < n; ++i)
-    {
-        if (p[i] != 0)
-        {
-            p[i + 1] += p[i];
-            ++ans;
+    int tg = sum / n;
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        if (a[i] != tg) {
+            ans++;
+            a[i + 1] += (a[i] - tg);
         }
     }
     cout << ans << endl;
     return 0;
 }
+

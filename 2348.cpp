@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+
 int main() {
     int n;
     cin >> n;
@@ -11,3 +13,4 @@ int main() {
     cout << ans % 1000000007 << endl;
     return 0;
 }
+

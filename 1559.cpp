@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int r, c, g[1005][1005] = {0};
 int dis[1005][1005] = {0}, dx[] = {0, 0, 1, -1}, dy[] = {1, -1, 0, 0};
+
 int dfs(int i, int j) {
     if (dis[i][j]) return dis[i][j];
     dis[i][j] = 1;
@@ -13,6 +15,7 @@ int dfs(int i, int j) {
     }
     return dis[i][j];
 }
+
 int read() {
     int x = 0, f = 1;
     char ch = getchar();
@@ -25,6 +28,7 @@ int read() {
         x = x * 10 + ch - '0', ch = getchar();
     return x * f;
 }
+
 int main() {
     memset(dis, 0, sizeof(dis));
     r = read(), c = read();

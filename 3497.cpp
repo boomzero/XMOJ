@@ -35,6 +35,9 @@ int qpow(int a, int pow, int mod) {
 signed main() {
     freopen("e.in", "r",stdin);
     freopen("e.out", "w",stdout);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
     cin >> s;
     int ans = 0;
     int q = 0;

@@ -1,17 +1,20 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int size = 110;
-int a[size], n;
-int main()
-{
-	freopen("a.in", "r", stdin);
-	freopen("a.out", "w", stdout);
-	scanf("%d", &n);
-	for (int i = 0; i < n; i++)
-	{
-		scanf("%d", &a[i]);
-	}
-	sort(a, a + n);
-	printf("%d", a[n - 1] - a[0]);
-	return 0;
+
+int main() {
+    freopen("a.in", "r", stdin);
+    freopen("a.out", "w", stdout);
+    int n;
+    cin >> n;
+    int min = numeric_limits<int>::max(), max = numeric_limits<int>::min();
+    for (int i = 0; i < n; ++i) {
+        int tmp;
+        cin >> tmp;
+        if (tmp > max) max = tmp;
+        if (tmp < min) min = tmp;
+    }
+    cout << max - min << endl;
+    return 0;
 }
+

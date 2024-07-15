@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n;
 int s[200] = {0}, ans[200] = {0}, stackSize = 0;
+
 void dfs(int sn) {
     stackSize++;
     n -= sn;
@@ -29,6 +31,7 @@ void dfs(int sn) {
     n += sn;
     stackSize--;
 }
+
 int main() {
     cin >> n;
     for (int i = 1; i <= n; ++i) {

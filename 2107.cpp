@@ -1,38 +1,33 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-typedef long long ll;
-const ll N = 105;
-const ll M = 25005;
-ll T, n, a[N];
-bool Visited[M];
-int main()
-{
+bool dp[50000] = {false};
+
+int main() {
     freopen("money.in", "r", stdin);
     freopen("money.out", "w", stdout);
-    scanf("%lld", &T);
-    while (T-- > 0)
-    {
-        memset(Visited, 0, sizeof(Visited));
-        ll MaxN = 0;
-        ll Answer = 0;
-        scanf("%lld", &n);
-        for (ll i = 1; i <= n; i++)
-        {
-            scanf("%lld", &a[i]);
-            MaxN = max(MaxN, a[i]);
+    int t;
+    cin >> t;
+    for (int i = 0; i < t; ++i) {
+        int ans = 0;
+        memset(dp, 0, sizeof(dp));
+        int a[200] = {0}, n, max = -1;
+        cin >> n;
+        for (int j = 1; j <= n; ++j) {
+            cin >> a[j];
+            if (a[j] > max) max = a[j];
         }
         sort(a + 1, a + n + 1);
-        for (ll i = 1; i <= n; i++)
-        {
-            if (Visited[a[i]])
-                continue;
-            Visited[a[i]] = true;
-            Answer++;
-            for (ll j = a[i]; j <= MaxN; j++)
-                if (Visited[j - a[i]])
-                    Visited[j] = true;
+        for (int j = 1; j <= n; ++j) {
+            if (dp[a[j]]) continue;
+            ans++;
+            dp[a[j]] = true;
+            for (int k = a[j]; k <= max; ++k) {
+                if (dp[k - a[j]]) dp[k] = true;
+            }
         }
-        printf("%lld\n", Answer);
+        cout << ans << endl;
     }
     return 0;
 }
+

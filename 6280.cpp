@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 #define int long long
 using namespace std;
+
 signed main() {
     freopen("decode.in", "r", stdin);
     freopen("decode.out", "w", stdout);

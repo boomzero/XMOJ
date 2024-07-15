@@ -1,54 +1,62 @@
 #include <bits/stdc++.h>
+
+#define int long long
 using namespace std;
-int c[5006], a[5006], n;
-int lowbit(int i)
-{
-	return i & (-i);
+int n;
+int a[100005], in[100005], tmp[100005];
+
+int lb(int x) {
+    return x & (-x);
 }
-void add(int k, int v)
-{
-	while (k <= n)
-	{
-		c[k] = c[k] + v;
-		k = k + lowbit(k);
-	}
-}
-int sum(int k)
-{
-	int res = 0;
-	while (k)
-	{
-		res = res + c[k];
-		k = k - lowbit(k);
-	}
-	return res;
-}
-int main()
-{
-	int ans, t;
-	cin >> t;
-	while (t--)
-	{
-		cin >> n;
-		memset(c, 0, sizeof(c));
-		for (int i = 0; i < n; i++)
-			scanf("%d", &a[i]);
-		int re = 0;
-		for (int i = 0; i < n; i++)
-		{
-			re = re + sum(n - a[i]);
-			add(n - a[i], 1);
-		}
-		int tp = re;
-		ans = re;
-		for (int i = 0; i < n - 1; i++)
-		{
-			add(n - a[i], -1);
-			tp = tp + sum(n - a[i]) - a[i];
-			add(n - a[i], 1);
-			ans = min(tp, ans);
-		}
-		cout << ans << '\n';
-	}
-	return 0;
+
+signed main() {
+    int t = 0;
+    cin >> t;
+    for (int qwq = 0; qwq < t; ++qwq) {
+
+        memset(a, 0, sizeof(a));
+        scanf("%d", &n); // NOLINT(*-err34-c)
+        int ans = 0, mans, tans;
+        for (int i = 1; i <= n; ++i) {
+            scanf("%d", &in[i]); // NOLINT(*-err34-c) //shut up, linter
+            tmp[i] = in[i]; //we might as well do the copying here
+        }
+        sort(tmp + 1, tmp + 1 + n);
+        unordered_map<int, int> idx;
+        for (int i = 1; i <= n; ++i) {
+            idx[tmp[i]] = i;
+        }
+        for (int i = 1; i <= n; ++i) {
+            in[i] = idx[in[i]];
+        }
+        //at this point, all the data is relabeled
+        for (int i = 1; i <= n; ++i) {
+            //We should check how many numbers are greater than this,
+            //but we can't,
+            //so,
+            //we check how many numbers are smaller than this
+            int lsCnt = 0; //We'll store that here.
+            int fetch = in[i]; //this is just a small var that I need to keep track of
+            while (fetch > 0) {
+                lsCnt += a[fetch];
+                fetch -= lb(fetch);
+            }
+            //ok, now?
+            ans += (i - lsCnt - 1);
+            //anyway, we still need to upd a[]
+            int updPt = in[i];
+            while (updPt <= n) {
+                a[updPt]++;
+                updPt += lb(updPt);
+            }
+        }
+        mans = tans = ans;
+        for (int i = 1; i <= n; ++i) {
+            tans += (n - in[i]);
+            tans -= (in[i] - 1);
+            mans = min(mans, tans);
+        }
+        printf("%lld\n", mans);
+    }
+    return 0;
 }

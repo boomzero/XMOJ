@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 double a, b, c, d;
+
 int main() {
     cin >> a >> b >> c >> d;
     for (double i = -1000; i <= 1000; i += 0.001) {
@@ -10,3 +12,4 @@ int main() {
     }
     return 0;
 }
+

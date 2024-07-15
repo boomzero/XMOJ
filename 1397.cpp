@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 vector<int> p;
 int main() {

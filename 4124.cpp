@@ -1,47 +1,53 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
+
 using namespace std;
-int n, m, ans;
-char s[55];
-int map[1010][55], tmp[5][5][5];
-int work(char c)
-{
-    if (c == 'A')
-        return 1;
-    if (c == 'T')
-        return 2;
-    if (c == 'G')
-        return 3;
-    if (c == 'C')
-        return 4;
-}
-int main()
-{
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i <= 2 * n; i++)
-    {
-        scanf("%s", s);
-        for (int j = 0; j < m; j++)
-            map[i][j + 1] = work(s[j]);
+int n, m;
+string ndna[505], tdna[505];
+
+bool ok(int x, int y, int k) {
+    unordered_set<string> nd, td;
+    bool ans = true;
+    for (int i = 1; i <= n; i++) {
+        string uid;
+        uid.push_back(ndna[i][x]);
+        uid.push_back(ndna[i][y]);
+        uid.push_back(ndna[i][k]);
+        nd.insert(uid);
     }
-    for (int i = 1; i <= m - 2; i++)
-        for (int j = i + 1; j <= m - 1; j++)
-            for (int k = j + 1; k <= m; k++)
-            {
-                bool flag = 0;
-                memset(tmp, 0, sizeof(tmp));
-                for (int l = 1; l <= n; l++)
-                    tmp[map[l][i]][map[l][j]][map[l][k]] = 1;
-                for (int l = n + 1; l <= 2 * n; l++)
-                    if (tmp[map[l][i]][map[l][j]][map[l][k]])
-                    {
-                        flag = 1;
-                        break;
-                    }
-                if (!flag)
-                    ans++;
+    for (int i = 1; i <= n; i++) {
+        string uid;
+        uid.push_back(tdna[i][x]);
+        uid.push_back(tdna[i][y]);
+        uid.push_back(tdna[i][k]);
+        td.insert(uid);
+    }
+    for (const string &i: nd) {
+        if (td.count(i)) {
+            ans = false;
+        }
+    }
+    return ans;
+}
+
+int main() {
+    //freopen("dat.txt", "r", stdin);
+    ios_base::sync_with_stdio(false);
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        cin >> ndna[i];
+    }
+    for (int i = 1; i <= n; i++) {
+        cin >> tdna[i];
+    }
+    int ans = 0;
+    for (int i = 0; i < m; ++i) {
+        for (int j = i + 1; j < m; ++j) {
+            for (int k = j + 1; k < m; ++k) {
+                if (i == j || j == k || i == k) continue;
+                if (ok(i, j, k)) ans++;
             }
-    cout << ans;
+        }
+    }
+    cout << ans << endl;
+    return 0;
 }

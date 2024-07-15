@@ -1,73 +1,57 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-int n;
-int t, a[50010], c[50010];
-char s[10];
-int lowbit(int x)
-{
-	return x & (-x);
+
+int lbit(int x) {
+    return x & (-x);
 }
-void add(int x, int d)
-{
-	while (x <= n)
-	{
-		c[x] += d;
-		x += lowbit(x);
-	}
-}
-void del(int x, int d)
-{
-	while (x <= n)
-	{
-		c[x] -= d;
-		x -= lowbit(x);
-	}
-}
-int sum(int x)
-{
-	int v = 0;
-	while (x > 0)
-	{
-		v += c[x];
-		x -= lowbit(x);
-	}
-	return v;
-}
-int main()
-{
-	scanf("%d", &t);
-	for (int i = 1; i <= t; i++)
-	{
-		printf("Case %d:\n", i);
-		scanf("%d", &n);
-		for (int i = 1; i <= n; i++)
-		{
-			scanf("%d", &a[i]);
-		}
-		memset(c, 0, sizeof(c));
-		for (int i = 1; i <= n; i++)
-			add(i, a[i]);
-		scanf("%s", s);
-		while (true)
-		{
-			if (s[0] == 'E')
-				break;
-			int i, j;
-			scanf("%d%d", &i, &j);
-			if (s[0] == 'A')
-			{
-				add(i, j);
-			}
-			else if (s[0] == 'S')
-			{
-				add(i, -j);
-			}
-			else
-			{
-				printf("%d\n", sum(j) - sum(i - 1));
-			}
-			scanf("%s", s);
-		}
-	}
-	return 0;
+
+int t, n, a[50005] = {0}, c[50005] = {0};
+
+int main() {
+    scanf("%d", &t);
+    for (int ys = 1; ys <= t; ++ys) {
+        printf("Case %d:\n", ys);
+        memset(a, 0, sizeof(a));
+        memset(c, 0, sizeof(c));
+        scanf("%d", &n);
+        for (int j = 1; j <= n; ++j) {
+            scanf("%d", &a[j]);
+        }
+        for (int j = 1; j <= n; ++j) {
+            for (int k = j - lbit(j) + 1; k <= j; ++k) {
+                c[j] += a[k];
+            }
+        }
+        while (true) {
+            char cmd[10];
+            scanf("%s", cmd);
+            if (strcmp(cmd, "End") == 0) break;
+            if (strcmp(cmd, "Add") == 0) {
+                int x, j;
+                scanf("%d%d", &x, &j);
+                for (int i = x; i <= n; i += lbit(i)) {
+                    c[i] += j;
+                }
+            } else if (strcmp(cmd, "Sub") == 0) {
+                int x, j;
+                scanf("%d%d", &x, &j);
+                for (int i = x; i <= n; i += lbit(i)) {
+                    c[i] -= j;
+                }
+            } else {
+                int x, j, a1 = 0, a2 = 0;
+                scanf("%d%d", &x, &j);
+                x--;
+                for (int i = x; i; i -= lbit(i)) {
+                    a1 += c[i];
+                }
+                for (int i = j; i; i -= lbit(i)) {
+                    a2 += c[i];
+                }
+                printf("%d\n", a2 - a1);
+            }
+        }
+    }
+    return 0;
 }

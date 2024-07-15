@@ -1,25 +1,32 @@
 #include <bits/stdc++.h>
+bool isPrime[10000005];
 using namespace std;
-int n, prime[10000010], tot;
-bool check[10000010];
-int main()
-{
-	cin >> n;
-	for (int i = 2; i <= 10000010; ++i)
-	{
-		if (!check[i])
-		{
-			prime[tot++] = i;
-			if (tot == n)
-				break;
-		}
-		for (int j = 0; j < tot && i * prime[j] < 10000010; ++j)
-		{
-			check[i * prime[j]] = 1;
-			if (i % prime[j] == 0)
-				break;
-		}
-	}
-	cout << prime[n - 1];
-	return 0;
+
+void eratos(int n) {
+    isPrime[0] = isPrime[1] = false;
+    for (int i = 2; i <= n; ++i) {
+        isPrime[i] = true;
+    }
+    for (int i = 2; i * i <= n; ++i) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= n; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    eratos(10000000);
+    int cnt=0,i=1;
+    while (cnt<n){
+        i++;
+        if (isPrime[i]){
+            cnt++;
+        }
+    }
+    cout<<i<<endl;
+    return 0;
 }

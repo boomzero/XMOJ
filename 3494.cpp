@@ -1,19 +1,31 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-const int N = 205;
-char s[N], t[N];
-int main()
-{
+
+string swap(string in) {
+    in.insert(in.begin(), in[in.length() - 1]);
+    in.pop_back();
+    return in;
+}
+
+int main() {
     freopen("b.in", "r", stdin);
     freopen("b.out", "w", stdout);
-    scanf("%s%s", s, t);
-    reverse(s, s + strlen(s));
-    reverse(t, t + strlen(t));
-    strcpy(s + strlen(s), s);
-    char *FoundedPos = strstr(s, t);
-    if (FoundedPos == NULL)
-        puts("-1");
-    else
-        printf("%d\n", (int)(FoundedPos - s));
+    string s, t;
+    cin >> s >> t;
+    string ori = s;
+    int ans = 0;
+    bool f = true;
+    while (true) {
+        if (s == ori && !f) {
+            cout << -1 << endl;
+            return 0;
+        }
+        f = false;
+        if (s == t) break;
+        ans++;
+        s = swap(s);
+    }
+    cout << ans << endl;
     return 0;
 }

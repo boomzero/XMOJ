@@ -1,69 +1,60 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-struct Num
-{
-    int x, y;
-} h[1000010];
-int n, x, y, tot;
-char op[10];
-bool cmp(const Num &n1, const Num &n2)
-{
-    if (n1.x != n2.x)
-        return n1.x < n2.x;
-    return n1.y > n2.y;
-}
-void push(int x, int y)
-{
-    h[++tot] = (Num){x, y};
-    int k = tot;
-    while (k > 1)
-    {
-        int i = k / 2;
-        if (cmp(h[k], h[i]))
-        {
-            swap(h[i], h[k]);
-            k = i;
-        }
-        else
-            break;
+
+struct ip {
+    int num, val;
+
+    bool operator<(const ip &rhs) const {
+        if (num > rhs.num)
+            return true;
+        if (rhs.num > num)
+            return false;
+        return val < rhs.val;
     }
-}
-Num pop()
-{
-    Num ans = h[1];
-    swap(h[1], h[tot--]);
-    int k = 1;
-    while (k + k <= tot)
-    {
-        int i = k + k;
-        if (i + 1 <= tot && cmp(h[i + 1], h[i]))
-            ++i;
-        if (cmp(h[i], h[k]))
-        {
-            swap(h[i], h[k]);
-            k = i;
-        }
-        else
-            break;
+
+    bool operator>(const ip &rhs) const {
+        return rhs < *this;
     }
-    return ans;
-}
-int main()
-{
+
+    bool operator<=(const ip &rhs) const {
+        return !(rhs < *this);
+    }
+
+    bool operator>=(const ip &rhs) const {
+        return !(*this < rhs);
+    }
+};
+
+priority_queue<ip> p;
+
+int main() {
+    int n;
     scanf("%d", &n);
-    while (n--)
-    {
-        scanf("%s", op);
-        if (op[0] == 'a')
-        {
-            scanf("%d%d", &x, &y);
-            push(x, y);
-        }
-        else
-        {
-            Num n2 = pop();
-            printf("%d %d\n", n2.x, n2.y);
+    for (int i = 0; i < n; ++i) {
+        char c;
+        c = getchar();
+        while (c == '\n' || c == ' ')
+            c = getchar();
+        switch (c) {
+            case 'a': {
+                int t, val;
+                scanf("%d%d", &t, &val);
+                ip tmp = {t, val};
+                p.push(tmp);
+                break;
+            }
+            case 'q': {
+                printf("%d %d\n", p.top().num,p.top().val);
+                p.pop();
+                break;
+            }
+            default: {
+                abort();
+            }
         }
     }
     return 0;
 }
+
+

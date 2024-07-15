@@ -1,36 +1,33 @@
 #include <bits/stdc++.h>
+#define int long long
 using namespace std;
-struct A
-{
-	int t, id;
-} a[1010];
-int n, t1;
-double tot;
-bool cmp(const A &a, const A &b)
-{
-	if (a.t != b.t)
-		return a.t < b.t;
-	return a.id < b.id;
-}
-int main()
-{
-	ios::sync_with_stdio(false);
-	cin >> n;
-	for (int i = 1; i <= n; i++)
-	{
-		cin >> a[i].t;
-	}
-	for (int i = 1; i <= n; i++)
-	{
-		a[i].id = i;
-	}
-	sort(a + 1, a + n + 1, cmp);
-	for (int i = 1; i <= n; i++)
-	{
-		tot += t1;
-		t1 += a[i].t;
-	}
-	for (int i = 1; i <= n; i++)
-		printf("%d ", a[i].id);
-	printf("\n%.2lf", tot * 1.0 / n);
+
+signed main() {
+    int n;
+    cin >> n;
+    vector<pair<int, int>> in;
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        int tmp;
+        cin >> tmp;
+        in.push_back({tmp, i + 1});
+        stable_sort(in.begin(), in.end());
+    }
+
+    bool f = true;
+    for (auto i: in) {
+        if (!f) cout << " ";
+        f = false;
+        cout << i.second;
+    }
+    for (int i = 0; i < in.size(); ++i) {
+        sum += in[i].first * (n - i - 1);
+    }
+//    for (int i: in) {
+//        sum += sum;
+//        sum += i;
+//    }
+    cout << endl;
+    printf("%.2f", ((double) sum) / n);
+    return 0;
 }

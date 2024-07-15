@@ -1,26 +1,50 @@
-#include <iostream>
+#include <bits/stdc++.h>
+
 using namespace std;
-int e[7] = {0, 1, 2, 3, 5, 10, 20};
-int a[1001], p = 1, f[1001], ans = 0, t, v, x[1001];
-int main()
-{
-	for (int i = 1; i <= 6; i++)
-	{
-		cin >> t;
-		for (int j = 1; j <= t; j++)
-		{
-			a[p] = e[i];
-			p++;
-			v += e[i];
-		}
-	}
-	f[0] = 1;
-	for (int i = 1; i <= p - 1; i++)
-		for (int j = v; j >= 0; j--)
-			if (f[j] == 1)
-				f[j + a[i]] = 1;
-	for (int i = 1; i <= v; i++)
-		if (f[i] == 1)
-			ans++;
-	cout << "Total=" << ans << endl;
+
+int val(int num) {
+    switch (num) {
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        case 3:
+            return 3;
+        case 4:
+            return 5;
+        case 5:
+            return 10;
+        case 6:
+            return 20;
+        default:
+            return 0;
+    }
 }
+
+int main() {
+    int a[7] = {0}, n = 0, w[2000] = {0}, p = 0, dp[3000] = {0};
+    for (int i = 1; i <= 6; ++i) {
+        cin >> a[i];
+        n += a[i];
+        for (int j = 0; j < a[i]; ++j) {
+            p++;
+            w[p] = val(i);
+        }
+    }
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1000; j >= w[i]; --j) {
+            dp[j] = max(dp[j], dp[j - w[i]] + w[i]);
+        }
+    }
+    set<int> el;
+    int ans = 0;
+    for (int i: dp) {
+        if (i != 0 && !el.count(i)) {
+            el.insert(i);
+            ans++;
+        }
+    }
+    cout << "Total=" << ans << endl;
+    return 0;
+}
+

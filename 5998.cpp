@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int n, a[100005], b[100005];
 priority_queue<int> sm;
 priority_queue<int, vector<int>, greater<>> sp;
+
 signed main() {
     int ans = numeric_limits<int>::min();
     cin >> n;
@@ -75,3 +77,4 @@ signed main() {
     cout << ans << endl;
     return 0;
 }
+

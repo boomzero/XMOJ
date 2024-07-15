@@ -1,35 +1,51 @@
 #include <bits/stdc++.h>
+#define int long long
 using namespace std;
-int n, a[100010], tmp[100010];
-long long ans;
-void merge_sort(int s, int e)
-{
-	if (s >= e)
-		return;
-	int mid = (s + e) / 2, s1 = s, s2 = mid + 1, t = s;
-	merge_sort(s, mid);
-	merge_sort(mid + 1, e);
-	while (s1 <= mid && s2 <= e)
-		if (a[s1] < a[s2])
-			tmp[t++] = a[s1++];
-		else
-			ans += mid - s1 + 1, tmp[t++] = a[s2++];
-	while (s1 <= mid)
-		tmp[t++] = a[s1++];
-	while (s2 <= e)
-		tmp[t++] = a[s2++];
-	for (int i = s; i <= e; i++)
-		a[i] = tmp[i];
+int n;
+int a[100005], in[100005], tmp[100005];
+
+int lb(int x) {
+    return x & (-x);
 }
-int main()
-{
-	ios::sync_with_stdio(false);
-	scanf("%d", &n);
-	for (int i = 0; i < n; i++)
-	{
-		scanf("%d", &a[i]);
-	}
-	merge_sort(0, n - 1);
-	printf("%lld", ans);
-	return 0;
+
+signed main() {
+    memset(a, 0, sizeof(a));
+    scanf("%d", &n); // NOLINT(*-err34-c)
+    int ans = 0;
+    for (int i = 1; i <= n; ++i) {
+        scanf("%d", &in[i]); // NOLINT(*-err34-c) //shut up, linter
+        tmp[i] = in[i]; //we might as well do the copying here
+    }
+    sort(tmp + 1, tmp + 1 + n);
+    unordered_map<int, int> idx;
+    for (int i = 1; i <= n; ++i) {
+        idx[tmp[i]] = i;
+    }
+    for (int i = 1; i <= n; ++i) {
+        in[i] = idx[in[i]];
+    }
+    //at this point, all the data is relabeled
+    for (int i = 1; i <= n; ++i) {
+        //We should check how many numbers are greater than this,
+        //but we can't,
+        //so,
+        //we check how many numbers are smaller than this
+        int lsCnt = 0; //We'll store that here.
+        int fetch = in[i]; //this is just a small var that I need to keep track of
+        while (fetch > 0) {
+            lsCnt += a[fetch];
+            fetch -= lb(fetch);
+        }
+        //ok, now?
+        ans += (i - lsCnt - 1);
+        //anyway, we still need to upd a[]
+        int updPt = in[i];
+        while (updPt <= n) {
+            a[updPt]++;
+            updPt += lb(updPt);
+        }
+    }
+    printf("%lld\n", ans);
+
+    return 0;
 }

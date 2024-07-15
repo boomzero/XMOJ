@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 map<long long, long long> fab;
+
 long long f(int n) {
     if (n == 1 || n == 2) return 1;
     if (!fab.count(n)) {
@@ -8,6 +10,7 @@ long long f(int n) {
     }
     return fab[n];
 }
+
 int main() {
     fab[1] = fab[2] = 1;
     int n;
@@ -20,3 +23,4 @@ int main() {
     }
     return 0;
 }
+

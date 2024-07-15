@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 int f[5055][5055] = {{0}};int n, a, b;
 const long long mod = 1000000007;
+
 //f[i][j] = ((a % mod) * (f[i][j - 1] % mod)) % mod + ((b % mod) * (f[i - 1][j] % mod)) % mod;
 signed main() {
     freopen("matrix.in", "r", stdin);
@@ -22,3 +24,4 @@ signed main() {
     cout << f[n][n] % mod << endl;
     return 0;
 }
+

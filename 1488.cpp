@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 map<int, int> m;
 int arr[1500] = {0}, sa[1500] = {0};
+
 int main() {
     int n;
     cin >> n;
@@ -23,3 +25,4 @@ int main() {
     cout << endl;
     return 0;
 }
+
