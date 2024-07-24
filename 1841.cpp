@@ -3,7 +3,7 @@
 #include <cstring>
 #include <algorithm>
 using namespace std;
-int n, q, sum[100005 << 2], x1, x2, y1, y2;
+int n, q, sum[100005 << 2], x1, x2, yy1, y2;
 namespace IO
 {
 	void read(int &x)
@@ -56,14 +56,14 @@ int main()
 	while (q--)
 	{
 		read(x1);
-		read(y1);
+		read(yy1);
 		read(x2);
 		read(y2);
 		int num = query(1, 1, n, min(x1, x2), max(x1, x2));
-		if (y1 <= num && y2 <= num)
-			printf("%d\n", abs(x2 - x1) + abs(y2 - y1));
+		if (yy1 <= num && y2 <= num)
+			printf("%d\n", abs(x2 - x1) + abs(y2 - yy1));
 		else
-			printf("%d\n", abs(y1 - num) + abs(y2 - num) + abs(x2 - x1));
+			printf("%d\n", abs(yy1 - num) + abs(y2 - num) + abs(x2 - x1));
 	}
 	return 0;
 }
