@@ -8,7 +8,7 @@ int idx;
 int x, y, opt;
 vector<int> e[N];
 int ap[N], f[N];
-bool vis[N], read[N];
+bool vis[N], readd[N];
 // int cec=0;
 // int ce[N*10][2];
 bool flag;
@@ -66,7 +66,7 @@ int work(int x)
 	vis[x] = true;
 	for (int i = 1; i <= n; ++i)
 	{
-		if (!read[i])
+		if (!readd[i])
 			continue;
 		if (!vis[i])
 		{
@@ -85,7 +85,7 @@ void init(int x)
 		ans[i] = 0;
 		e[i].clear();
 		ap[i] = 0;
-		read[i] = 0;
+		readd[i] = 0;
 	}
 	idx = 0, n = 0;
 	flag = false;
@@ -106,8 +106,8 @@ signed main()
 			e[x].push_back(y);
 			e[y].push_back(x);
 			n = max(n, max(x, y));
-			read[x] = 1;
-			read[y] = 1;
+			readd[x] = 1;
+			readd[y] = 1;
 		}
 		if (n == 0)
 			break;
