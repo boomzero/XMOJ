@@ -11,3 +11,5 @@ CPH/
 *.in
 *.out
 Captcha/
+
+cmake-build-debug/
