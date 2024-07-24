@@ -381,7 +381,6 @@ add_executable(XMOJ
         2669.cpp
         2713.cpp
         2714.cpp
-        2720.cpp
         2757.cpp
         2758.cpp
         2764.cpp
