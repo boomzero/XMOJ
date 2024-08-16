@@ -3,7 +3,7 @@ import shutil
 
 # Create subdirectories if they don't exist
 for i in range(1, 9):
-    subdir = f'{i}xxx_files'
+    subdir = f'{i}000-{i}999'
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
